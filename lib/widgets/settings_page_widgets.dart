@@ -71,7 +71,7 @@ class CustomAboutDialog extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      _launchUrl(Uri.parse('https://github.com/music-soul1-1/nure-timetable/blob/main/LICENSE.txt'));
+                      _launchUrl(Uri.parse('https://github.com/music-soul1-1/nure-timetable/blob/main/LICENSE'));
                     },
                     child: const Text("MIT")
                   ),
