@@ -9,6 +9,8 @@ Uses [nure-cist-api](https://github.com/mindenit/nure-cist-api).
 - cross-platform.
 - uses [nure-cist-api](https://github.com/mindenit/nure-cist-api).
 - Material design.
+- dark and light themes.
+- offline support.
 
 
 ## Plans
@@ -20,7 +22,12 @@ Uses [nure-cist-api](https://github.com/mindenit/nure-cist-api).
 
 
 ## Screenshots
+Windows:
+![image](https://github.com/music-soul1-1/nure-timetable/assets/72669184/c85fb945-3836-4fd5-9770-3c26c35d0dce)
+![image2](https://github.com/music-soul1-1/nure-timetable/assets/72669184/ce09bd50-53ad-44f6-8137-a9b13ba832f6)
 
+Android:
+![imgonline-com-ua-twotoone-kpiWCmWmVtg0i](https://github.com/music-soul1-1/nure-timetable/assets/72669184/cbce1fbf-5600-416f-b58e-e779671829ff)
 
 
 ## Dependencies
