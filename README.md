@@ -19,6 +19,7 @@ Uses [nure-cist-api](https://github.com/mindenit/nure-cist-api).
 - host web version
 - add support for viewing teachers schedule
 - refactor and optimize code
+- update some dependencies
 
 
 ## Screenshots
@@ -28,6 +29,14 @@ Windows:
 
 Android:
 ![imgonline-com-ua-twotoone-kpiWCmWmVtg0i](https://github.com/music-soul1-1/nure-timetable/assets/72669184/cbce1fbf-5600-416f-b58e-e779671829ff)
+
+
+## For developers
+
+If you are going to change models (that use JsonSerializableGenerator), please regenetate part files before starting debugging:
+```
+flutter pub run build_runner build
+```
 
 
 ## Dependencies
