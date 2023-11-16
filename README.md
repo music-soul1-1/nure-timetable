@@ -14,6 +14,7 @@ Uses [nure-cist-api](https://github.com/mindenit/nure-cist-api).
 
 
 ## Plans
+- automate schedule date picker (so that the app shows schedule for current semester automatically)
 - change app icons for every platform (currently Windows and Android)
 - add English locale
 - host web version
