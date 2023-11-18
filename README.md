@@ -11,6 +11,7 @@ Uses [nure-cist-api](https://github.com/mindenit/nure-cist-api).
 - Material design.
 - dark and light themes.
 - offline support.
+- add more features.
 
 
 ## Plans

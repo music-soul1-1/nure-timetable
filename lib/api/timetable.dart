@@ -71,7 +71,7 @@ class Timetable {
   }
 
   /// Gets lessons for a group/teacher.
-  Future<List<Lesson>> getLessons(String groupId, String startTime, String endTime, [bool isTeacher = false]) async {
+  Future<List<Lesson>> getLessons(int groupId, int startTime, int endTime, [bool isTeacher = false]) async {
     try {
       final url = '${domain}api/schedule?type=${isTeacher ? "teacher" : "group"}&id=$groupId&start_time=$startTime&end_time=$endTime';
       if (kDebugMode) {
@@ -94,12 +94,12 @@ class Timetable {
   }
 
   /// Gets next lesson for a group.
-  Future<Lesson?> getNextLesson(String groupId) async {
+  Future<Lesson?> getNextLesson(int groupId) async {
     try {
       var lessons = await getLessons(
         groupId,
-        (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString(),
-        (DateTime.now().add(const Duration(hours: 6)).millisecondsSinceEpoch ~/ 1000).toString()
+        (DateTime.now().millisecondsSinceEpoch ~/ 1000),
+        (DateTime.now().add(const Duration(hours: 6)).millisecondsSinceEpoch ~/ 1000),
       );
       if (lessons.isNotEmpty) {
         return lessons.first;

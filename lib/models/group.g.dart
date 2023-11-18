@@ -7,11 +7,11 @@ part of 'group.dart';
 // **************************************************************************
 
 Group _$GroupFromJson(Map<String, dynamic> json) => Group(
-      id: json['id'] as String,
-      name: json['name'] as String,
+      id: json['Id'] as int,
+      name: json['Name'] as String,
     );
 
 Map<String, dynamic> _$GroupToJson(Group instance) => <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
+      'Id': instance.id,
+      'Name': instance.name,
     };

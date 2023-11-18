@@ -201,17 +201,17 @@ class _SettingsPageState extends State<SettingsPage> {
                           initialEntryMode: DatePickerEntryMode.calendar,
                           initialDateRange: DateTimeRange(
                             start: DateTime.fromMillisecondsSinceEpoch(
-                                int.parse(settings.startTime) * 1000),
+                                settings.startTime * 1000),
                             end: DateTime.fromMillisecondsSinceEpoch(
-                                int.parse(settings.endTime) * 1000),
+                                settings.endTime * 1000),
                           ),
                         ).then((value) {
                           setState(() {
                             if (value != null) {
                               settings.startTime =
-                                  (value.start.millisecondsSinceEpoch ~/ 1000).toString();
+                                  (value.start.millisecondsSinceEpoch ~/ 1000);
                               settings.endTime =
-                                  (value.end.millisecondsSinceEpoch ~/ 1000).toString();
+                                  (value.end.millisecondsSinceEpoch ~/ 1000);
 
                               saveSettings(settings);
                             }

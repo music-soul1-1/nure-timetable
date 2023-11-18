@@ -23,8 +23,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Class for storing app settings.
 class AppSettings {
   Group group;
-  String startTime;
-  String endTime;
+  int startTime;
+  int endTime;
   String language;
   bool useSystemTheme;
   bool darkThemeEnabled;
@@ -62,9 +62,9 @@ class AppSettings {
 
   static AppSettings getDefaultSettings() {
     return AppSettings(
-      group: Group(id: "", name: ""),
-      startTime: "1693170000",
-      endTime: "1706738400",
+      group: Group(id: 0, name: ""),
+      startTime: 1693170000,
+      endTime: 1706738400,
       language: "uk",
       useSystemTheme: true,
       darkThemeEnabled: false,
@@ -73,8 +73,8 @@ class AppSettings {
 
   AppSettings copyWith({
     Group? group,
-    String? startTime,
-    String? endTime,
+    int? startTime,
+    int? endTime,
     String? language,
     bool? useSystemTheme,
     bool? darkThemeEnabled,
@@ -93,10 +93,10 @@ class AppSettings {
   /// 
   /// Returns `true` if all fields are not empty.
   bool checkFields() {
-    return group.id.isNotEmpty &&
+    return group.id.toString().isNotEmpty &&
         group.name.isNotEmpty &&
-        startTime.isNotEmpty &&
-        endTime.isNotEmpty &&
+        startTime.toString().isNotEmpty &&
+        endTime.toString().isNotEmpty &&
         language.isNotEmpty &&
         useSystemTheme.toString().isNotEmpty &&
         darkThemeEnabled.toString().isNotEmpty;

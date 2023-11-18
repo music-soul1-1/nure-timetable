@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
   /// If `updateFromAPI` is true, then lessons will be loaded from API, and then saved to local storage.
   Future<List<Lesson>> _loadLessons({bool updateFromAPI = false}) async {
     try {
-      if (settings.group.id != "") {
+      if (settings.group.id != 0) {
         var lessonList = await loadSchedule();
 
         if (lessonList.isNotEmpty && !updateFromAPI) {
@@ -158,8 +158,8 @@ class _HomePageState extends State<HomePage> {
       
                       final events = lessons.map((lesson) {
                         return LessonAppointment(
-                          startTime: DateTime.fromMillisecondsSinceEpoch(int.parse(lesson.startTime) * 1000),
-                          endTime: DateTime.fromMillisecondsSinceEpoch(int.parse(lesson.endTime) * 1000),
+                          startTime: DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000),
+                          endTime: DateTime.fromMillisecondsSinceEpoch(lesson.endTime * 1000),
                           lesson: lesson,
                           subject: lesson.subject.title,
                           color: lessonColor(lesson.type),
