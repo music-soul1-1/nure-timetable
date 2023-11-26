@@ -26,6 +26,7 @@ import 'package:calendar_view/calendar_view.dart';
 import 'package:nure_timetable/models/lesson_appointment.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:nure_timetable/widgets/home_page_widgets.dart';
+import 'package:nure_timetable/widgets/settings_page_widgets.dart';
 
 
 GlobalKey<WeekViewState> weekViewKey = GlobalKey<WeekViewState>();
@@ -151,7 +152,15 @@ class _HomePageState extends State<HomePage> {
                     }
                     else if (snapshot.hasError) {
                       // Handle error state
-                      return Text('Error: ${snapshot.error}');
+                      return Column(
+                        children: [
+                          Text('Error: ${snapshot.error}'),
+                          const Text("Спробуйте скинути налаштування:"),
+                          TextButton(
+                            onPressed: () => showRemoveSettingsDialog(context),
+                            child: const Text("Скинути налаштування"))
+                        ],
+                      );
                     }
                     else if (snapshot.hasData) {
                       final lessons = snapshot.data!;

@@ -26,16 +26,16 @@ import 'dart:convert';
 class Timetable {
   Timetable();
   /// The domain of the API.
-  static const domain = "https://nure-dev.pp.ua/";
+  static const domain = "https://api.mindenit.tech";
 
   /// Gets a list of groups.
   Future<List<Group>> getGroups() async {
     try {
-      const url = '${domain}api/groups';
+      const url = '$domain/groups';
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         List<Group> groups = data.map((item) => Group.fromJson(item)).toList();
         return groups;
       }
@@ -73,14 +73,14 @@ class Timetable {
   /// Gets lessons for a group/teacher.
   Future<List<Lesson>> getLessons(int groupId, int startTime, int endTime, [bool isTeacher = false]) async {
     try {
-      final url = '${domain}api/schedule?type=${isTeacher ? "teacher" : "group"}&id=$groupId&start_time=$startTime&end_time=$endTime';
+      final url = '$domain/schedule?type=${isTeacher ? "teacher" : "group"}&id=$groupId&start_time=$startTime&end_time=$endTime';
       if (kDebugMode) {
         print(url);
       }
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         List<Lesson> lessons = data.map((item) => Lesson.fromJson(item)).toList();
         return lessons;
       }
@@ -116,11 +116,11 @@ class Timetable {
   /// Gets a list of teachers.
   Future<List<Teacher>> getTeachers() async {
     try {
-      const url = '${domain}api/teachers';
+      const url = '$domain/teachers';
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         List<Teacher> teachers = data.map((item) => Teacher.fromJson(item)).toList();
         return teachers;
       }
