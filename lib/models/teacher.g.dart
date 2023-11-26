@@ -7,13 +7,13 @@ part of 'teacher.dart';
 // **************************************************************************
 
 Teacher _$TeacherFromJson(Map<String, dynamic> json) => Teacher(
-      id: json['id'] as String,
-      fullName: json['full_name'] as String,
-      shortName: json['short_name'] as String,
+      id: json['Id'] as int,
+      fullName: json['FullName'] as String,
+      shortName: json['ShortName'] as String,
     );
 
 Map<String, dynamic> _$TeacherToJson(Teacher instance) => <String, dynamic>{
-      'id': instance.id,
-      'full_name': instance.fullName,
-      'short_name': instance.shortName,
+      'Id': instance.id,
+      'FullName': instance.fullName,
+      'ShortName': instance.shortName,
     };

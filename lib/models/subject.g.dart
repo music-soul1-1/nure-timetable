@@ -7,13 +7,13 @@ part of 'subject.dart';
 // **************************************************************************
 
 Subject _$SubjectFromJson(Map<String, dynamic> json) => Subject(
-      id: json['id'] as String,
-      brief: json['brief'] as String,
-      title: json['title'] as String,
+      id: json['Id'] as int,
+      brief: json['Brief'] as String,
+      title: json['Title'] as String,
     );
 
 Map<String, dynamic> _$SubjectToJson(Subject instance) => <String, dynamic>{
-      'id': instance.id,
-      'brief': instance.brief,
-      'title': instance.title,
+      'Id': instance.id,
+      'Brief': instance.brief,
+      'Title': instance.title,
     };

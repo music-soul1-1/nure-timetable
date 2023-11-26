@@ -33,7 +33,7 @@ class LessonAppointment extends CalendarEventData {
   }) : super(
     title: lesson.subject.brief,
     event: lesson.type,
-    date: DateTime.fromMillisecondsSinceEpoch(int.parse(lesson.startTime) * 1000),
+    date: DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000),
     startTime: startTime,
     endTime: endTime,
     color: lessonColor(lesson.type),

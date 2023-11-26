@@ -104,7 +104,7 @@ class CustomAboutDialog extends StatelessWidget {
                   ),
                   TextButton(
                     child: const Text("Mindenit team"),
-                    onPressed: () => _launchUrl(Uri.parse('https://nure-dev.pp.ua/')),
+                    onPressed: () => _launchUrl(Uri.parse('https://docs.mindenit.tech')),
                   ),
                   TextButton(
                     child: const Text("GitHub"),

@@ -200,7 +200,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
                   lesson.startTimeToString()} - ${
                   lesson.endTimeToString()}; ${
                     DateFormat.yMMMMd("uk_UA").format(
-                      DateTime.fromMillisecondsSinceEpoch(int.parse(lesson.startTime) * 1000)
+                      DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000)
                 )}',
                 style: const TextStyle(
                   fontSize: 16,

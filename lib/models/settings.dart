@@ -19,15 +19,17 @@ import 'dart:convert';
 import 'package:nure_timetable/models/group.dart';
 import 'package:nure_timetable/models/lesson.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nure_timetable/models/theme_colors.dart';
 
 /// Class for storing app settings.
 class AppSettings {
   Group group;
-  String startTime;
-  String endTime;
+  int startTime;
+  int endTime;
   String language;
   bool useSystemTheme;
   bool darkThemeEnabled;
+  ThemeColors themeColors;
 
   AppSettings({
     required this.group,
@@ -36,6 +38,7 @@ class AppSettings {
     required this.language,
     required this.useSystemTheme,
     required this.darkThemeEnabled,
+    required this.themeColors,
   });
 
   Map<String, dynamic> toJson() {
@@ -46,6 +49,7 @@ class AppSettings {
       'language': language,
       'useSystemTheme': useSystemTheme,
       'darkThemeEnabled': darkThemeEnabled,
+      'themeColors': themeColors.toJson(),
     };
   }
 
@@ -57,27 +61,37 @@ class AppSettings {
       language: json['language'],
       useSystemTheme: json['useSystemTheme'],
       darkThemeEnabled: json['darkThemeEnabled'],
+      themeColors: ThemeColors.fromJson(json['themeColors']),
     );
   }
 
   static AppSettings getDefaultSettings() {
     return AppSettings(
-      group: Group(id: "", name: ""),
-      startTime: "1693170000",
-      endTime: "1706738400",
+      group: Group(id: 0, name: ""),
+      startTime: 1693170000,
+      endTime: 1706738400,
       language: "uk",
       useSystemTheme: true,
       darkThemeEnabled: false,
+      themeColors: ThemeColors(
+        lecture: "0xFFAD8827",
+        practice: "0xFF1C8834",
+        laboratory: "0xFF5A2194",
+        consultation: "0xFF1E7F85",
+        exam: "0xFF8E1D1D",
+        other: "0xFF9A1A95",
+      ),
     );
   }
 
   AppSettings copyWith({
     Group? group,
-    String? startTime,
-    String? endTime,
+    int? startTime,
+    int? endTime,
     String? language,
     bool? useSystemTheme,
     bool? darkThemeEnabled,
+    ThemeColors? themeColors,
   }) {
     return AppSettings(
       group: group ?? this.group,
@@ -86,6 +100,7 @@ class AppSettings {
       language: language ?? this.language,
       useSystemTheme: useSystemTheme ?? this.useSystemTheme,
       darkThemeEnabled: darkThemeEnabled ?? this.darkThemeEnabled,
+      themeColors: themeColors ?? this.themeColors,
     );
   }
 
@@ -93,15 +108,17 @@ class AppSettings {
   /// 
   /// Returns `true` if all fields are not empty.
   bool checkFields() {
-    return group.id.isNotEmpty &&
+    return group.id.toString().isNotEmpty &&
         group.name.isNotEmpty &&
-        startTime.isNotEmpty &&
-        endTime.isNotEmpty &&
+        startTime.toString().isNotEmpty &&
+        endTime.toString().isNotEmpty &&
         language.isNotEmpty &&
         useSystemTheme.toString().isNotEmpty &&
-        darkThemeEnabled.toString().isNotEmpty;
+        darkThemeEnabled.toString().isNotEmpty &&
+        themeColors.lecture.toString().isNotEmpty;
   }
 }
+
 
 String settingsToJson(AppSettings settings) {
   return jsonEncode(settings.toJson());

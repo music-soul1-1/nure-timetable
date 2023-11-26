@@ -26,6 +26,7 @@ import 'package:calendar_view/calendar_view.dart';
 import 'package:nure_timetable/models/lesson_appointment.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:nure_timetable/widgets/home_page_widgets.dart';
+import 'package:nure_timetable/widgets/settings_page_widgets.dart';
 
 
 GlobalKey<WeekViewState> weekViewKey = GlobalKey<WeekViewState>();
@@ -78,7 +79,7 @@ class _HomePageState extends State<HomePage> {
   /// If `updateFromAPI` is true, then lessons will be loaded from API, and then saved to local storage.
   Future<List<Lesson>> _loadLessons({bool updateFromAPI = false}) async {
     try {
-      if (settings.group.id != "") {
+      if (settings.group.id != 0) {
         var lessonList = await loadSchedule();
 
         if (lessonList.isNotEmpty && !updateFromAPI) {
@@ -151,15 +152,23 @@ class _HomePageState extends State<HomePage> {
                     }
                     else if (snapshot.hasError) {
                       // Handle error state
-                      return Text('Error: ${snapshot.error}');
+                      return Column(
+                        children: [
+                          Text('Error: ${snapshot.error}'),
+                          const Text("Спробуйте скинути налаштування:"),
+                          TextButton(
+                            onPressed: () => showRemoveSettingsDialog(context),
+                            child: const Text("Скинути налаштування"))
+                        ],
+                      );
                     }
                     else if (snapshot.hasData) {
                       final lessons = snapshot.data!;
       
                       final events = lessons.map((lesson) {
                         return LessonAppointment(
-                          startTime: DateTime.fromMillisecondsSinceEpoch(int.parse(lesson.startTime) * 1000),
-                          endTime: DateTime.fromMillisecondsSinceEpoch(int.parse(lesson.endTime) * 1000),
+                          startTime: DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000),
+                          endTime: DateTime.fromMillisecondsSinceEpoch(lesson.endTime * 1000),
                           lesson: lesson,
                           subject: lesson.subject.title,
                           color: lessonColor(lesson.type),

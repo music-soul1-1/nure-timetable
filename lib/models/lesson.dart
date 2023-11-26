@@ -33,7 +33,6 @@ class Lesson {
     required this.endTime,
     required this.auditory,
     required this.type,
-    required this.updatedAt,
     required this.groups,
     required this.numberPair,
     required this.teachers,
@@ -44,20 +43,23 @@ class Lesson {
 
   Map<String, dynamic> toJson() => _$LessonToJson(this);
 
-  @JsonKey(name: 'id')
-  final String id;
-  @JsonKey(name: 'start_time')
-  final String startTime;
-  @JsonKey(name: 'end_time')
-  final String endTime;
+  @JsonKey(name: 'Id')
+  final int id;
+  @JsonKey(name: 'StartTime')
+  final int startTime;
+  @JsonKey(name: 'EndTime')
+  final int endTime;
+  @JsonKey(name: 'Auditory')
   final String auditory;
+  @JsonKey(name: 'Type')
   final String type;
-  @JsonKey(name: 'updatedAt')
-  final String updatedAt;
+  @JsonKey(name: 'Groups')
   final List<Group> groups;
-  @JsonKey(name: 'number_pair')
+  @JsonKey(name: 'NumberPair')
   final int numberPair;
+  @JsonKey(name: 'Teachers')
   final List<Teacher> teachers;
+  @JsonKey(name: 'Subject')
   final Subject subject;
 
 
@@ -65,14 +67,14 @@ class Lesson {
   /// 
   /// Example: 8:30
   String startTimeToString() {
-    return DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(int.parse(startTime) * 1000));
+    return DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(startTime * 1000));
   }
 
   /// Converts the end time to a string.
   /// 
   /// Example: 9:50
   String endTimeToString() {
-    return DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(int.parse(endTime) * 1000));
+    return DateFormat.Hm().format(DateTime.fromMillisecondsSinceEpoch(endTime * 1000));
   }
 }
 
