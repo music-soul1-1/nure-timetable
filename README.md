@@ -1,13 +1,13 @@
 # NureTimetable
 
 Schedule app for Kharkiv National University of Radio Electronics. Written in Flutter.
-Uses [nure-cist-api](https://github.com/mindenit/nure-cist-api).
+Uses [nure-api](https://github.com/mindenit/nure-api).
 
 
 ## Features
 - view schedule for your group.
 - cross-platform.
-- uses [nure-cist-api](https://github.com/mindenit/nure-cist-api).
+- uses [nure-api](https://github.com/mindenit/nure-api).
 - Material design.
 - dark and light themes.
 - offline support.
