@@ -6,6 +6,7 @@ Uses [nure-api](https://github.com/mindenit/nure-api).
 
 ## Features
 - view schedule for your group.
+- fast app start.
 - cross-platform.
 - uses [nure-api](https://github.com/mindenit/nure-api).
 - Material design.
