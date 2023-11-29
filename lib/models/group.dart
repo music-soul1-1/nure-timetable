@@ -28,8 +28,8 @@ class Group {
 
   Map<String, dynamic> toJson() => _$GroupToJson(this);
 
-  @JsonKey(name: 'Id')
+  @JsonKey(name: 'id')
   final int id;
-  @JsonKey(name: 'Name')
+  @JsonKey(name: 'name')
   final String name;
 }

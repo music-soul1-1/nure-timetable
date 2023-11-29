@@ -169,6 +169,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: const Text('Використовувати системну тему'),
                       onToggle: (value) {
                         settings.useSystemTheme = value;
+                        widget.themeManager.toggleTheme(value ? (systemBrightness == Brightness.dark) : settings.darkThemeEnabled);
                         saveSettings(settings);
                       },
                       initialValue: settings.useSystemTheme,

@@ -27,8 +27,7 @@ part 'lesson.g.dart';
 /// Class for storing lesson data.
 @JsonSerializable()
 class Lesson {
-  Lesson(
-    {required this.id,
+  Lesson({
     required this.startTime,
     required this.endTime,
     required this.auditory,
@@ -43,23 +42,21 @@ class Lesson {
 
   Map<String, dynamic> toJson() => _$LessonToJson(this);
 
-  @JsonKey(name: 'Id')
-  final int id;
-  @JsonKey(name: 'StartTime')
+  @JsonKey(name: 'startTime')
   final int startTime;
-  @JsonKey(name: 'EndTime')
+  @JsonKey(name: 'endTime')
   final int endTime;
-  @JsonKey(name: 'Auditory')
+  @JsonKey(name: 'auditory')
   final String auditory;
-  @JsonKey(name: 'Type')
+  @JsonKey(name: 'type')
   final String type;
-  @JsonKey(name: 'Groups')
+  @JsonKey(name: 'groups')
   final List<Group> groups;
-  @JsonKey(name: 'NumberPair')
+  @JsonKey(name: 'numberPair')
   final int numberPair;
-  @JsonKey(name: 'Teachers')
+  @JsonKey(name: 'teachers')
   final List<Teacher> teachers;
-  @JsonKey(name: 'Subject')
+  @JsonKey(name: 'subject')
   final Subject subject;
 
 

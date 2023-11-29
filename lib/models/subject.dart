@@ -29,10 +29,10 @@ class Subject {
 
   Map<String, dynamic> toJson() => _$SubjectToJson(this);
 
-  @JsonKey(name: 'Id')
+  @JsonKey(name: 'id')
   final int id;
-  @JsonKey(name: 'Brief')
+  @JsonKey(name: 'brief')
   final String brief;
-  @JsonKey(name: 'Title')
+  @JsonKey(name: 'title')
   final String title;
 }

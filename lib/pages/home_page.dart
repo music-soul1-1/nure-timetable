@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     //SharedPreferences.getInstance().then((value) => value.clear());
     loadSettings().then((value) => setState(() {
-      widget.themeManager.toggleTheme(value.useSystemTheme ? (systemBrightness == Brightness.dark) : settings.darkThemeEnabled);
+      widget.themeManager.toggleTheme(value.useSystemTheme ? (systemBrightness == Brightness.dark) : value.darkThemeEnabled);
       settings = value;
     }));
   }

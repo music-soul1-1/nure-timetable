@@ -80,7 +80,7 @@ Widget customEventTileBuilder(date, events, boundary, start, end) {
 
 
 Widget customCalendarHeaderBuilder(startDate, endDate, EventController controller, GlobalKey<WeekViewState> weekViewKey) {
-  final nextLesson = controller.events.reversed
+  final nextLesson = controller.events
       .map((event) => event as LessonAppointment)
       .where((event) => event.startTime!.isAfter(DateTime.now()) && event.startTime!.isBefore(DateTime.now().add(const Duration(hours: 8))))
       .firstOrNull;

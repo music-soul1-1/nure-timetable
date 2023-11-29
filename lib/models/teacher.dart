@@ -33,10 +33,10 @@ class Teacher {
 
   Map<String, dynamic> toJson() => _$TeacherToJson(this);
 
-  @JsonKey(name: 'Id')
+  @JsonKey(name: 'id')
   final int id;
-  @JsonKey(name: 'FullName')
+  @JsonKey(name: 'fullName')
   final String fullName;
-  @JsonKey(name: 'ShortName')
+  @JsonKey(name: 'shortName')
   final String shortName;
 }

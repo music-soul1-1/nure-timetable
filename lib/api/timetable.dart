@@ -113,6 +113,20 @@ class Timetable {
     }
   }
 
+  Lesson? getNextLessonFromList(List<Lesson> lessons) {
+    try {
+      if (lessons.isNotEmpty) {
+        return lessons.where((lesson) => lesson.startTime >= (DateTime.now().millisecondsSinceEpoch ~/ 1000)).first;
+      }
+      else {
+        return null;
+      }
+    }
+    catch(error) {
+      throw Exception('Error in <getNextLessonFromList>: $error');
+    }
+  }
+
   /// Gets a list of teachers.
   Future<List<Teacher>> getTeachers() async {
     try {
