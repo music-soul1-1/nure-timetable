@@ -18,6 +18,7 @@
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:nure_timetable/theme/themes.dart';
 
 // Pages
 import 'pages/home_page.dart';
@@ -78,24 +79,8 @@ class _MyAppState extends State<MyApp> {
         title: 'NureTimetable',
         locale: const Locale('uk', 'UA'),
         themeMode: _themeManager.themeMode,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF00465F),
-            brightness: Brightness.light,
-            background: const Color.fromARGB(255, 240, 240, 240),
-          ),
-          useMaterial3: true,
-          fontFamily: 'Inter',
-        ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color(0xFF00465F),
-            brightness: Brightness.dark,
-            background: const Color.fromARGB(255, 0, 15, 19)
-          ),
-          useMaterial3: true,
-          fontFamily: 'Inter',
-        ),
+        theme: lightTheme,
+        darkTheme: darkTheme,
         home: DefaultTabController(
           length: 3,
           child: Scaffold(

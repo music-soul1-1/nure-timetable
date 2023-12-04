@@ -27,6 +27,7 @@ import 'package:nure_timetable/models/lesson_appointment.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:nure_timetable/widgets/home_page_widgets.dart';
 import 'package:nure_timetable/widgets/settings_page_widgets.dart';
+import 'package:nure_timetable/widgets/helper_widgets.dart';
 
 
 GlobalKey<WeekViewState> weekViewKey = GlobalKey<WeekViewState>();
@@ -60,6 +61,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _refresh() async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      snackbar("Оновлення розкладу...")
+    );
+
     // Updates lessons data
     await _loadLessons(updateFromAPI: true);
 
@@ -71,6 +76,11 @@ class _HomePageState extends State<HomePage> {
     loadSettings().then((value) => setState(() {
       widget.themeManager.toggleTheme(value.useSystemTheme ? (systemBrightness == Brightness.dark) : settings.darkThemeEnabled);
       settings = value;
+
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        snackbar("Розклад оновлено!")
+      );
     }));
   }
 
