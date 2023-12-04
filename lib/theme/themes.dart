@@ -21,10 +21,23 @@ var darkTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: const Color(0xFF00465F),
     brightness: Brightness.dark,
-    background: const Color.fromARGB(255, 0, 15, 19),
+    background: const Color.fromARGB(255, 0, 15, 19)
   ),
   useMaterial3: true,
   fontFamily: 'Inter',
+  snackBarTheme: const SnackBarThemeData(
+    behavior: SnackBarBehavior.fixed,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+    ),
+    insetPadding: EdgeInsets.all(10),
+    backgroundColor: Color(0xFF00465F),
+    contentTextStyle: TextStyle(
+      color: Color(0xFF06DDF6),
+      fontSize: 14,
+      fontFamily: 'Inter'
+    ),
+  ),
 );
 
 
@@ -36,4 +49,17 @@ var lightTheme = ThemeData(
   ),
   useMaterial3: true,
   fontFamily: 'Inter',
+  snackBarTheme: const SnackBarThemeData(
+    behavior: SnackBarBehavior.fixed,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+    ),
+    insetPadding: EdgeInsets.all(10),
+    backgroundColor: Color(0xFF00465F),
+    contentTextStyle: TextStyle(
+      color: Color.fromARGB(255, 255, 255, 255),
+      fontSize: 14,
+      fontFamily: 'Inter'
+    ),
+  ),
 );
