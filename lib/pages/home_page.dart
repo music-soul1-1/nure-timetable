@@ -89,14 +89,25 @@ class _HomePageState extends State<HomePage> {
   /// If `updateFromAPI` is true, then lessons will be loaded from API, and then saved to local storage.
   Future<List<Lesson>> _loadLessons({bool updateFromAPI = false}) async {
     try {
-      if (settings.group.id != 0) {
-        var lessonList = await loadSchedule();
+      var lessonList = await loadSchedule();
 
-        if (lessonList.isNotEmpty && !updateFromAPI) {
-          return lessonList;
-        }
+      if (lessonList.isNotEmpty && !updateFromAPI) {
+        return lessonList;
+      }
 
+      if (settings.group.id != 0 && settings.type == 'group') {
         final lessons = timetable.getLessons(settings.group.id, settings.startTime, settings.endTime);
+        settings.type = 'group';
+        await saveSettings(settings);
+
+        lessons.then((lessons) => saveSchedule(lessons));
+
+        return lessons;
+      }
+      else if (settings.teacher.id != 0 && settings.type == 'teacher') {
+        final lessons = timetable.getLessons(settings.teacher.id, settings.startTime, settings.endTime, true);
+        settings.type = 'teacher';
+        await saveSettings(settings);
 
         lessons.then((lessons) => saveSchedule(lessons));
 
@@ -117,30 +128,7 @@ class _HomePageState extends State<HomePage> {
     systemBrightness = MediaQuery.of(context).platformBrightness;
 
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 45,
-        backgroundColor: const Color(0xFF00465F),
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Icon(Icons.calendar_month_outlined,
-                size: 28,
-                color: Color(0xFF06DDF6),
-              ),
-            ),
-            Text(
-              settings.group.name,
-              style: const TextStyle(
-                color: Color(0xFF06DDF6),
-                fontSize: 20,
-                fontFamily: 'Inter',
-              ),
-            ),
-          ],
-        ),
-      ),
+      appBar: HomeHeader(settings, Icons.calendar_month_outlined),
       body: SingleChildScrollView(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -271,6 +259,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 
   void showErrorSnackbar(Object error) {
     var snackbar = SnackBar(

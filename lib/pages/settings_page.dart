@@ -22,6 +22,8 @@ import 'package:nure_timetable/models/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:nure_timetable/widgets/settings_page_widgets.dart';
+import 'package:nure_timetable/widgets/helper_widgets.dart';
+
 
 var systemBrightness = Brightness.dark;
 
@@ -93,30 +95,8 @@ class _SettingsPageState extends State<SettingsPage> {
     PackageInfo packageInfo;
 
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 45,
-        backgroundColor: const Color(0xFF00465F),
-        title: const Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Icon(
-                Icons.settings_rounded,
-                size: 28,
-                color: Color(0xFF06DDF6),
-              ),
-            ),
-            Text(
-              "Налаштування",
-              style: TextStyle(
-                color: Color(0xFF06DDF6),
-                fontSize: 20,
-                fontFamily: 'Inter',
-              ),
-            ),
-          ],
-        ),
+      appBar: Header(
+        "Налаштування", Icons.settings_rounded
       ),
       body: FutureBuilder<AppSettings>(
         future: settingsFuture,
@@ -218,6 +198,18 @@ class _SettingsPageState extends State<SettingsPage> {
                             }
                           });
                         });
+                      },
+                    ),
+                    SettingsTile.navigation(
+                      title: const Text("Тип розкладу:"),
+                      leading: const Icon(Icons.people_alt_outlined),
+                      value: Text(
+                        settings.type == 'group' ? 'Група' : 'Викладач',
+                      ),
+                      onPressed: (context) => {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          snackbar(settings.type == 'group' ? "Гарного навчання!" : "Гарного викладання!")
+                        ),
                       },
                     ),
                   ],

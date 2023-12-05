@@ -20,7 +20,10 @@ import 'package:flutter/material.dart';
 import 'package:nure_timetable/api/timetable.dart';
 import 'package:nure_timetable/models/group.dart';
 import 'package:nure_timetable/models/settings.dart';
+import 'package:nure_timetable/models/search_item.dart';
+import 'package:nure_timetable/models/teacher.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
+import 'package:nure_timetable/widgets/helper_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -41,16 +44,10 @@ class _GroupsPageState extends State<GroupsPage> {
   var timetable = Timetable();
   var settings = AppSettings.getDefaultSettings();
   List<Group> groups = [];
-  List<Group> searchResult = [];
+  List<Teacher> teachers = [];
+  List<SearchItem> searchResult = [];
+  List<SearchItem> allItems = [];
 
-
-  Future<AppSettings> saveSettings(AppSettings settings) async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = settingsToJson(settings);
-    prefs.setString('appSettings', jsonString);
-
-    return settings;
-  }
 
   Future<AppSettings> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -75,7 +72,7 @@ class _GroupsPageState extends State<GroupsPage> {
       widget.themeManager.toggleTheme(value.useSystemTheme ? (systemBrightness == Brightness.dark) : value.darkThemeEnabled);
       settings = value;
     }));
-    loadGroups();
+    loadItems();
   }
 
   void loadGroups() async {
@@ -84,6 +81,18 @@ class _GroupsPageState extends State<GroupsPage> {
       setState(() {
         groups;
       });
+    }
+    catch(error) {
+      if (kDebugMode) {
+        print(error);
+      }
+      showErrorSnackbar(error);
+    }
+  }
+
+  void loadItems() async {
+    try {
+      allItems = await getItems();
     }
     catch(error) {
       if (kDebugMode) {
@@ -109,31 +118,7 @@ class _GroupsPageState extends State<GroupsPage> {
     systemBrightness = MediaQuery.of(context).platformBrightness;
 
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 45,
-        backgroundColor: const Color(0xFF00465F),
-        title: const Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Icon(
-                Icons.people_alt,
-                size: 28,
-                color: Color(0xFF06DDF6),
-              ),
-            ),
-            Text(
-              "Групи",
-              style: TextStyle(
-                color: Color(0xFF06DDF6),
-                fontSize: 20,
-                fontFamily: 'Inter'
-              ),
-            ),
-          ],
-        ),
-      ),
+      appBar: Header("Групи", Icons.people_alt),
       body: Center(
         child: Column(
           children: [
@@ -142,11 +127,11 @@ class _GroupsPageState extends State<GroupsPage> {
               child: TextField(
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Введіть назву групи',
+                  labelText: "Введіть назву групи або ім'я викладача",
                 ),
                 onChanged: (value) async => {
                   setState(() {
-                    searchResult = timetable.searchGroup(groups, value);
+                    searchResult = allItems.where((element) => element.name.toLowerCase().contains(value.toLowerCase())).toList();
                   }),
                 },
               ),
@@ -154,17 +139,24 @@ class _GroupsPageState extends State<GroupsPage> {
             SizedBox(
               height: 450,
               child: ListView(
-                children: searchResult.map((group) => ListTile(
-                  title: Text(group.name),
+                children: searchResult.map((item) => ListTile(
+                  title: Text(item.name),
                   onTap: () async {
                     try {
-                      settings.group = group;
+                      if (item.type == 'group') {
+                        settings.group = item.group!;
+                        settings.type = "group";
+                      }
+                      else {
+                        settings.teacher = item.teacher!;
+                        settings.type = "teacher";
+                      }
                       
                       saveSettings(settings);
 
-                      const snackbar = SnackBar(
-                        content: Text('Групу змінено'),
-                        duration: Duration(seconds: 1),
+                      var snackbar = SnackBar(
+                        content: Text(settings.type == "group" ? 'Групу змінено' : 'Викладача змінено'),
+                        duration: const Duration(seconds: 1),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackbar);
                     }
