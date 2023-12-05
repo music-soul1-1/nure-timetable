@@ -16,11 +16,72 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:nure_timetable/models/settings.dart';
 
 
 SnackBar snackbar(String text, {int duration = 1}) {
   return SnackBar(
     content: Text(text),
     duration: Duration(seconds: duration),
+  );
+}
+
+
+/// Header for the app bar in home page (uses either group or teacher name).
+// ignore: non_constant_identifier_names
+AppBar HomeHeader(AppSettings settings, IconData iconData) {
+  return AppBar(
+    toolbarHeight: 45,
+    backgroundColor: const Color(0xFF00465F),
+    title: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: Icon(iconData,
+            size: 28,
+            color: const Color(0xFF06DDF6),
+          ),
+        ),
+        Text(
+          settings.type == 'group' ? settings.group.name : settings.teacher.shortName,
+          style: const TextStyle(
+            color: Color(0xFF06DDF6),
+            fontSize: 20,
+            fontFamily: 'Inter',
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
+/// Header for the app bar.
+// ignore: non_constant_identifier_names
+AppBar Header(String title, IconData iconData) {
+  return AppBar(
+    toolbarHeight: 45,
+    backgroundColor: const Color(0xFF00465F),
+    title: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: Icon(iconData,
+            size: 28,
+            color: const Color(0xFF06DDF6),
+          ),
+        ),
+        Text(
+          title,
+          style: const TextStyle(
+            color: Color(0xFF06DDF6),
+            fontSize: 20,
+            fontFamily: 'Inter',
+          ),
+        ),
+      ],
+    ),
   );
 }

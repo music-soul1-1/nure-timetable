@@ -18,6 +18,7 @@
 import 'dart:convert';
 import 'package:nure_timetable/models/group.dart';
 import 'package:nure_timetable/models/lesson.dart';
+import 'package:nure_timetable/models/teacher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nure_timetable/models/theme_colors.dart';
 
@@ -30,6 +31,9 @@ class AppSettings {
   bool useSystemTheme;
   bool darkThemeEnabled;
   ThemeColors themeColors;
+  Teacher teacher;
+  /// Type of schedule: group or teacher.
+  String type = "group";
 
   AppSettings({
     required this.group,
@@ -39,6 +43,8 @@ class AppSettings {
     required this.useSystemTheme,
     required this.darkThemeEnabled,
     required this.themeColors,
+    required this.teacher,
+    required this.type,
   });
 
   Map<String, dynamic> toJson() {
@@ -50,6 +56,8 @@ class AppSettings {
       'useSystemTheme': useSystemTheme,
       'darkThemeEnabled': darkThemeEnabled,
       'themeColors': themeColors.toJson(),
+      'teacher': teacher.toJson(),
+      'type': type,
     };
   }
 
@@ -62,6 +70,8 @@ class AppSettings {
       useSystemTheme: json['useSystemTheme'],
       darkThemeEnabled: json['darkThemeEnabled'],
       themeColors: ThemeColors.fromJson(json['themeColors']),
+      teacher: Teacher.fromJson(json['teacher']),
+      type: json['type'],
     );
   }
 
@@ -81,6 +91,8 @@ class AppSettings {
         exam: "0xFF8E1D1D",
         other: "0xFF9A1A95",
       ),
+      teacher: Teacher(id: 0, shortName: "", fullName: ""),
+      type: "group",
     );
   }
 
@@ -92,6 +104,8 @@ class AppSettings {
     bool? useSystemTheme,
     bool? darkThemeEnabled,
     ThemeColors? themeColors,
+    Teacher? teacher,
+    String? type,
   }) {
     return AppSettings(
       group: group ?? this.group,
@@ -101,6 +115,8 @@ class AppSettings {
       useSystemTheme: useSystemTheme ?? this.useSystemTheme,
       darkThemeEnabled: darkThemeEnabled ?? this.darkThemeEnabled,
       themeColors: themeColors ?? this.themeColors,
+      teacher: teacher ?? this.teacher,
+      type: type ?? this.type,
     );
   }
 
@@ -115,7 +131,9 @@ class AppSettings {
         language.isNotEmpty &&
         useSystemTheme.toString().isNotEmpty &&
         darkThemeEnabled.toString().isNotEmpty &&
-        themeColors.lecture.toString().isNotEmpty;
+        themeColors.lecture.toString().isNotEmpty &&
+        teacher.shortName.isNotEmpty &&
+        type.isNotEmpty;
   }
 }
 
@@ -166,4 +184,13 @@ Future<void> saveSchedule(List<Lesson> lessons) async {
   final prefs = await SharedPreferences.getInstance();
   final scheduleJsonList = lessons.map((lesson) => jsonEncode(lesson.toJson())).toList();
   prefs.setStringList('schedule', scheduleJsonList);
+}
+
+/// Saves settings in 'appSettings' key in SharedPreferences.
+Future<AppSettings> saveSettings(AppSettings settings) async {
+  final prefs = await SharedPreferences.getInstance();
+  final jsonString = settingsToJson(settings);
+  prefs.setString('appSettings', jsonString);
+
+  return settings;
 }
