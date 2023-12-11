@@ -34,6 +34,8 @@ class AppSettings {
   Teacher teacher;
   /// Type of schedule: group or teacher.
   String type = "group";
+  /// Last time schedule was updated (UNIX timestamp).
+  int lastUpdated;
 
   AppSettings({
     required this.group,
@@ -45,6 +47,7 @@ class AppSettings {
     required this.themeColors,
     required this.teacher,
     required this.type,
+    this.lastUpdated = 0,
   });
 
   Map<String, dynamic> toJson() {
@@ -58,6 +61,7 @@ class AppSettings {
       'themeColors': themeColors.toJson(),
       'teacher': teacher.toJson(),
       'type': type,
+      'lastUpdated': lastUpdated,
     };
   }
 
@@ -72,14 +76,15 @@ class AppSettings {
       themeColors: ThemeColors.fromJson(json['themeColors']),
       teacher: Teacher.fromJson(json['teacher']),
       type: json['type'],
+      lastUpdated: json['lastUpdated'],
     );
   }
 
   static AppSettings getDefaultSettings() {
     return AppSettings(
       group: Group(id: 0, name: ""),
-      startTime: 1693170000,
-      endTime: 1706738400,
+      startTime: DateTime.now().subtract(const Duration(days: 180)).millisecondsSinceEpoch ~/ 1000, // TODO: automatically set start time as the beginning of the current semester
+      endTime: DateTime.now().add(const Duration(days: 365)).millisecondsSinceEpoch ~/ 1000,
       language: "uk",
       useSystemTheme: true,
       darkThemeEnabled: false,
@@ -93,6 +98,7 @@ class AppSettings {
       ),
       teacher: Teacher(id: 0, shortName: "", fullName: ""),
       type: "group",
+      lastUpdated: 0,
     );
   }
 
@@ -106,6 +112,7 @@ class AppSettings {
     ThemeColors? themeColors,
     Teacher? teacher,
     String? type,
+    int? lastUpdated,
   }) {
     return AppSettings(
       group: group ?? this.group,
@@ -117,6 +124,7 @@ class AppSettings {
       themeColors: themeColors ?? this.themeColors,
       teacher: teacher ?? this.teacher,
       type: type ?? this.type,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
 
@@ -133,7 +141,8 @@ class AppSettings {
         darkThemeEnabled.toString().isNotEmpty &&
         themeColors.lecture.toString().isNotEmpty &&
         teacher.shortName.isNotEmpty &&
-        type.isNotEmpty;
+        type.isNotEmpty &&
+        lastUpdated.toString().isNotEmpty;
   }
 }
 

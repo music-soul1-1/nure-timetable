@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:nure_timetable/models/settings.dart';
+import 'package:nure_timetable/models/update_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:nure_timetable/widgets/settings_page_widgets.dart';
@@ -40,6 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
   var settings = AppSettings.getDefaultSettings();
   late Future<AppSettings> settingsFuture;
   SharedPreferences? prefs;
+  String latestVersion = "";
 
   @override
   void initState() {
@@ -86,6 +88,17 @@ class _SettingsPageState extends State<SettingsPage> {
     final jsonString = settingsToJson(settings);
     prefs?.setString('appSettings', jsonString);
     setState(() {
+    });
+  }
+
+  Future<void> checkForUpdates() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    getLatestVersion().then((updateInfo) => {
+      setState(() {
+        latestVersion = updateInfo.version;
+        showUpdateDialog(context, packageInfo, updateInfo);
+      }),
     });
   }
 
@@ -177,8 +190,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       onPressed: (context) {
                         showDateRangePicker(
                           context: context,
-                          firstDate: DateTime(2023, 1, 1),
-                          lastDate: DateTime(2033),
+                          firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                          lastDate: DateTime.now().add(const Duration(days: 365)),
                           initialEntryMode: DatePickerEntryMode.calendar,
                           initialDateRange: DateTimeRange(
                             start: DateTime.fromMillisecondsSinceEpoch(
@@ -199,6 +212,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           });
                         });
                       },
+                    ),
+                    SettingsTile.navigation(
+                      title: const Text("Останнє оновлення розкладу"),
+                      leading: const Icon(Icons.file_download_outlined),
+                      value: Text(DateTime.fromMillisecondsSinceEpoch(settings.lastUpdated * 1000).toLocal().toString().substring(0, 16)),
                     ),
                     SettingsTile.navigation(
                       title: const Text("Тип розкладу:"),
@@ -250,6 +268,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           )
                         });
                       },
+                    ),
+                    SettingsTile.navigation(
+                      title: const Text("Перевірити оновлення"),
+                      leading: const Icon(Icons.update),
+                      onPressed: (context) => checkForUpdates(),
                     ),
                   ]
                 )

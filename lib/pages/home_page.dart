@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _refresh() async {
     ScaffoldMessenger.of(context).showSnackBar(
-      snackbar("Оновлення розкладу...")
+      snackbar("Оновлення розкладу...", duration: 2)
     );
 
     // Updates lessons data
@@ -89,15 +89,14 @@ class _HomePageState extends State<HomePage> {
   /// If `updateFromAPI` is true, then lessons will be loaded from API, and then saved to local storage.
   Future<List<Lesson>> _loadLessons({bool updateFromAPI = false}) async {
     try {
-      var lessonList = await loadSchedule();
-
-      if (lessonList.isNotEmpty && !updateFromAPI) {
-        return lessonList;
+      if (!updateFromAPI) {
+        return await loadSchedule();
       }
 
       if (settings.group.id != 0 && settings.type == 'group') {
         final lessons = timetable.getLessons(settings.group.id, settings.startTime, settings.endTime);
         settings.type = 'group';
+        settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
         await saveSettings(settings);
 
         lessons.then((lessons) => saveSchedule(lessons));
@@ -107,6 +106,7 @@ class _HomePageState extends State<HomePage> {
       else if (settings.teacher.id != 0 && settings.type == 'teacher') {
         final lessons = timetable.getLessons(settings.teacher.id, settings.startTime, settings.endTime, true);
         settings.type = 'teacher';
+        settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
         await saveSettings(settings);
 
         lessons.then((lessons) => saveSchedule(lessons));
@@ -225,8 +225,8 @@ class _HomePageState extends State<HomePage> {
                             return customCalendarHeaderBuilder(startTime, endTime, controller, weekViewKey);
                           },
                           showLiveTimeLineInAllDays: false,
-                          minDay: DateTime(2023, 1, 1),
-                          maxDay: DateTime(2033, 3, 31),
+                          minDay: DateTime.fromMillisecondsSinceEpoch(settings.startTime * 1000),
+                          maxDay: DateTime.fromMillisecondsSinceEpoch(settings.endTime * 1000),
                           pageTransitionDuration: const Duration(milliseconds: 200),
                           hourIndicatorSettings: HourIndicatorSettings(
                             color: widget.themeManager.themeMode == ThemeMode.dark ? const Color.fromARGB(64, 0, 70, 95) : Colors.black12,

@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:nure_timetable/models/settings.dart';
+import 'package:nure_timetable/models/update_info.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -72,7 +74,7 @@ class CustomAboutDialog extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      _launchUrl(Uri.parse('https://github.com/music-soul1-1/nure-timetable'));
+                      _launchUrl('https://github.com/music-soul1-1/nure-timetable');
                     },
                     child: const Text("GitHub"),
                   ),
@@ -88,7 +90,7 @@ class CustomAboutDialog extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      _launchUrl(Uri.parse('https://github.com/music-soul1-1/nure-timetable/blob/main/LICENSE'));
+                      _launchUrl('https://github.com/music-soul1-1/nure-timetable/blob/main/LICENSE');
                     },
                     child: const Text("MIT")
                   ),
@@ -104,11 +106,11 @@ class CustomAboutDialog extends StatelessWidget {
                   ),
                   TextButton(
                     child: const Text("Mindenit team"),
-                    onPressed: () => _launchUrl(Uri.parse('https://github.com/mindenit')),
+                    onPressed: () => _launchUrl('https://github.com/mindenit'),
                   ),
                   TextButton(
                     child: const Text("GitHub"),
-                    onPressed: () => _launchUrl(Uri.parse('https://github.com/mindenit/nure-api')),
+                    onPressed: () => _launchUrl('https://github.com/mindenit/nure-api'),
                   ),
                 ],
               )
@@ -145,8 +147,56 @@ Future<dynamic> showRemoveSettingsDialog(BuildContext context) {
   );
 }
 
-Future<void> _launchUrl(Uri uri) async {
-  if (!await launchUrl(uri)) {
-    throw Exception('Could not launch $uri');
+Future<void> _launchUrl(String url) async {
+  if (!await launchUrl(Uri.parse(url))) {
+    throw Exception('Could not launch $url');
   }
+}
+
+
+Future<dynamic> showUpdateDialog(BuildContext context, PackageInfo packageInfo, UpdateInfo updateInfo) {
+  bool needsUpdate = compareVersions("v.${packageInfo.version}", updateInfo.version);
+  return showDialog(
+    context: context, 
+    builder: (BuildContext context) {
+      return needsUpdate ? 
+      AlertDialog(
+        title: const Text("Доступна нова версія"),
+        content: Text("Ваша версія: v.${packageInfo.version}\n"
+          "Остання версія: ${updateInfo.version}\n\n"
+          "Завантажити оновлення?",
+        ),
+        actions: [
+          TextButton(
+            child: const Text("Так"),
+            onPressed: () {
+              _launchUrl(Platform.isAndroid
+                      ? updateInfo.apkDownloadUrl
+                      : (Platform.isWindows
+                          ? updateInfo.exeDownloadUrl
+                          : updateInfo.url));
+            }
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("Ні"),
+          ),
+        ],
+      ) : 
+      AlertDialog(
+        title: const Text("Ви використовуєте останню версію"),
+        content: Text("Ваша версія: v.${packageInfo.version}\n"),
+        actions: [
+          TextButton(
+            onPressed: () => _launchUrl(updateInfo.url),
+            child: const Text("Перейти на GitHub")
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("Закрити"),
+          ),
+        ],
+      );
+    }
+  );
 }
