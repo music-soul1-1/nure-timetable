@@ -22,18 +22,19 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nure_timetable/models/lesson.dart';
 import 'package:nure_timetable/models/lesson_appointment.dart';
+import 'package:nure_timetable/models/theme_colors.dart';
 
 
 var isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
 
-Widget customEventTileBuilder(date, events, boundary, start, end) {
+Widget customEventTileBuilder(date, events, boundary, start, end, ThemeColors themeColors) {
   final event = events[0] as LessonAppointment;
   // Taken from calendar_view lib with small changes:
   return Container(
     margin: isMobile ? const EdgeInsets.only(right: 2) : const EdgeInsets.only(right: 10),
     decoration: BoxDecoration(
-      color: lessonColor(event.lesson.type),
+      color: lessonColor(event.lesson.type, themeColors),
       borderRadius:
           isMobile
               ? BorderRadius.circular(6)

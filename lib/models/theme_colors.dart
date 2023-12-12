@@ -36,20 +36,31 @@ class ThemeColors {
   Map<String, dynamic> toJson() => _$ThemeColorsToJson(this);
 
   @JsonKey(name: 'lecture')
-  final String lecture;
+  late String lecture;
 
   @JsonKey(name: 'practice')
-  final String practice;
+  late String practice;
 
   @JsonKey(name: 'laboratory')
-  final String laboratory;
+  late String laboratory;
 
   @JsonKey(name: 'consultation')
-  final String consultation;
+  late String consultation;
 
   @JsonKey(name: 'exam')
-  final String exam;
+  late String exam;
 
   @JsonKey(name: 'other')
-  final String other;
+  late String other;
+}
+
+ThemeColors getDefaultSettings() {
+  return ThemeColors(
+    lecture: "0xFFAD8827",
+    practice: "0xFF1C8834",
+    laboratory: "0xFF5A2194",
+    consultation: "0xFF1E7F85",
+    exam: "0xFF8E1D1D",
+    other: "0xFF9A1A95",
+  );
 }

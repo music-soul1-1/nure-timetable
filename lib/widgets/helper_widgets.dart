@@ -63,6 +63,7 @@ AppBar Header(String title, IconData iconData) {
   return AppBar(
     toolbarHeight: 45,
     backgroundColor: const Color(0xFF00465F),
+    foregroundColor: const Color(0xFF06DDF6),
     title: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
