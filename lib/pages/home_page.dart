@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io';
 import 'package:intl/intl.dart';
@@ -29,11 +28,9 @@ import 'package:nure_timetable/widgets/home_page_widgets.dart';
 import 'package:nure_timetable/widgets/settings_page_widgets.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
 
-
 GlobalKey<WeekViewState> weekViewKey = GlobalKey<WeekViewState>();
 var isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 var systemBrightness = Brightness.dark;
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.themeManager});
@@ -43,7 +40,6 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
 
 class _HomePageState extends State<HomePage> {
   var timetable = Timetable();
@@ -55,15 +51,16 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     //SharedPreferences.getInstance().then((value) => value.clear());
     loadSettings().then((value) => setState(() {
-      widget.themeManager.toggleTheme(value.useSystemTheme ? (systemBrightness == Brightness.dark) : value.darkThemeEnabled);
-      settings = value;
-    }));
+          widget.themeManager.toggleTheme(value.useSystemTheme
+              ? (systemBrightness == Brightness.dark)
+              : value.darkThemeEnabled);
+          settings = value;
+        }));
   }
 
   Future<void> _refresh() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      snackbar("Оновлення розкладу...", duration: 2)
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(snackbar("Оновлення розкладу...", duration: 2));
 
     // Updates lessons data
     await _loadLessons(updateFromAPI: true);
@@ -72,20 +69,21 @@ class _HomePageState extends State<HomePage> {
     for (var event in controller.events) {
       controller.remove(event);
     }
-    
-    loadSettings().then((value) => setState(() {
-      widget.themeManager.toggleTheme(value.useSystemTheme ? (systemBrightness == Brightness.dark) : settings.darkThemeEnabled);
-      settings = value;
 
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        snackbar("Розклад оновлено!")
-      );
-    }));
+    loadSettings().then((value) => setState(() {
+          widget.themeManager.toggleTheme(value.useSystemTheme
+              ? (systemBrightness == Brightness.dark)
+              : settings.darkThemeEnabled);
+          settings = value;
+
+          ScaffoldMessenger.of(context).removeCurrentSnackBar();
+          ScaffoldMessenger.of(context)
+              .showSnackBar(snackbar("Розклад оновлено!"));
+        }));
   }
 
   /// Loads lessons from API or cache.
-  /// 
+  ///
   /// If `updateFromAPI` is true, then lessons will be loaded from API, and then saved to local storage.
   Future<List<Lesson>> _loadLessons({bool updateFromAPI = false}) async {
     try {
@@ -94,7 +92,8 @@ class _HomePageState extends State<HomePage> {
       }
 
       if (settings.group.id != 0 && settings.type == 'group') {
-        final lessons = timetable.getLessons(settings.group.id, settings.startTime, settings.endTime);
+        final lessons = timetable.getLessons(
+            settings.group.id, settings.startTime, settings.endTime);
         settings.type = 'group';
         settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
         await saveSettings(settings);
@@ -102,9 +101,9 @@ class _HomePageState extends State<HomePage> {
         lessons.then((lessons) => saveSchedule(lessons));
 
         return lessons;
-      }
-      else if (settings.teacher.id != 0 && settings.type == 'teacher') {
-        final lessons = timetable.getLessons(settings.teacher.id, settings.startTime, settings.endTime, true);
+      } else if (settings.teacher.id != 0 && settings.type == 'teacher') {
+        final lessons = timetable.getLessons(
+            settings.teacher.id, settings.startTime, settings.endTime, true);
         settings.type = 'teacher';
         settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
         await saveSettings(settings);
@@ -112,12 +111,10 @@ class _HomePageState extends State<HomePage> {
         lessons.then((lessons) => saveSchedule(lessons));
 
         return lessons;
-      }
-      else {
+      } else {
         return [];
       }
-    }
-    catch (error) {
+    } catch (error) {
       showErrorSnackbar(error);
       return [];
     }
@@ -131,125 +128,140 @@ class _HomePageState extends State<HomePage> {
       appBar: HomeHeader(settings, Icons.calendar_month_outlined),
       body: SingleChildScrollView(
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: isMobile
-                    ? const EdgeInsets.all(0)
-                    : const EdgeInsets.only(left: 40, right: 40),
-                child: FutureBuilder<List<Lesson>>(
-                  future: _loadLessons(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // Handle loading state
-                      return const Padding(
-                        padding: EdgeInsets.all(80),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
-                    else if (snapshot.hasError) {
-                      // Handle error state
-                      return Column(
-                        children: [
-                          Text('Error: ${snapshot.error}'),
-                          const Text("Спробуйте скинути налаштування:"),
-                          TextButton(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: isMobile
+                  ? const EdgeInsets.all(0)
+                  : const EdgeInsets.only(left: 40, right: 40),
+              child: FutureBuilder<List<Lesson>>(
+                future: _loadLessons(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    // Handle loading state
+                    return const Padding(
+                      padding: EdgeInsets.all(80),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (snapshot.hasError) {
+                    // Handle error state
+                    return Column(
+                      children: [
+                        Text('Error: ${snapshot.error}'),
+                        const Text("Спробуйте скинути налаштування:"),
+                        TextButton(
                             onPressed: () => showRemoveSettingsDialog(context),
                             child: const Text("Скинути налаштування"))
-                        ],
-                      );
-                    }
-                    else if (snapshot.hasData) {
-                      final lessons = snapshot.data!;
-      
-                      final events = lessons.map((lesson) {
-                        return LessonAppointment(
-                          startTime: DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000),
-                          endTime: DateTime.fromMillisecondsSinceEpoch(lesson.endTime * 1000),
-                          lesson: lesson,
-                          subject: lesson.subject.title,
-                          color: lessonColor(lesson.type),
-                        );
-                      }).toList();
+                      ],
+                    );
+                  } else if (snapshot.hasData) {
+                    final lessons = snapshot.data!;
 
-                      controller.addAll(events);
-      
-                      return SizedBox(
-                        height: MediaQuery.of(context).size.height - (isMobile ? 125 : 100),
-                        child: WeekView(
-                          key: weekViewKey,
-                          backgroundColor: Colors.transparent,
-                          weekDayBuilder: (date) => customWeekDayBuilder(date, context),
-                          weekTitleHeight: 60,
-                          headerStyle: const HeaderStyle(
-                            leftIcon: Icon(Icons.arrow_back_rounded, color: Color(0xFF06DDF6),),
-                            rightIcon: Icon(Icons.arrow_forward_rounded, color: Color(0xFF06DDF6),),
-                            headerTextStyle: TextStyle(
-                              color: Color(0xFF06DDF6),
-                              fontSize: 16,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color(0xFF00465F),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                              ),
-                            ),
-                          ),
-                          controller: controller,
-                          eventTileBuilder: customEventTileBuilder,
-                          timeLineWidth: 50,
-                          // Taken from calendar_view lib with small changes:
-                          timeLineBuilder: (date) {
-                            final timeLineString = "${date.hour}:${date.minute}0";
-                            return Transform.translate(
-                              offset: const Offset(0, -8),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 7.0),
-                                child: Text(
-                                  timeLineString,
-                                  textAlign: TextAlign.right,
-                                  style: const TextStyle(
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          scrollOffset: 450,
-                          liveTimeIndicatorSettings: const HourIndicatorSettings(
+                    final events = lessons.map((lesson) {
+                      return LessonAppointment(
+                        startTime: DateTime.fromMillisecondsSinceEpoch(
+                            lesson.startTime * 1000),
+                        endTime: DateTime.fromMillisecondsSinceEpoch(
+                            lesson.endTime * 1000),
+                        lesson: lesson,
+                        subject: lesson.subject.title,
+                        color: lessonColor(lesson.type, settings.themeColors),
+                      );
+                    }).toList();
+
+                    controller.addAll(events);
+
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height -
+                          (isMobile ? 125 : 100),
+                      child: WeekView(
+                        key: weekViewKey,
+                        backgroundColor: Colors.transparent,
+                        weekDayBuilder: (date) =>
+                            customWeekDayBuilder(date, context),
+                        weekTitleHeight: 60,
+                        headerStyle: const HeaderStyle(
+                          leftIcon: Icon(
+                            Icons.arrow_back_rounded,
                             color: Color(0xFF06DDF6),
                           ),
-                          weekPageHeaderBuilder: (startTime, endTime) {
-                            return customCalendarHeaderBuilder(startTime, endTime, controller, weekViewKey);
-                          },
-                          showLiveTimeLineInAllDays: false,
-                          minDay: DateTime.fromMillisecondsSinceEpoch(settings.startTime * 1000),
-                          maxDay: DateTime.fromMillisecondsSinceEpoch(settings.endTime * 1000),
-                          pageTransitionDuration: const Duration(milliseconds: 200),
-                          hourIndicatorSettings: HourIndicatorSettings(
-                            color: widget.themeManager.themeMode == ThemeMode.dark ? const Color.fromARGB(64, 0, 70, 95) : Colors.black12,
+                          rightIcon: Icon(
+                            Icons.arrow_forward_rounded,
+                            color: Color(0xFF06DDF6),
                           ),
-                          initialDay: DateTime.now(),                        
-                          heightPerMinute: 1, // height occupied by 1 minute time span.
-                          onEventTap: (events, date) {
-                            if (events.isNotEmpty) {
-                              final lessonEvent = events[0] as LessonAppointment;
-                              showLessonInfoDialog(context, lessonEvent.lesson);
-                            }
-                          },
-                          startDay: WeekDays.monday,
+                          headerTextStyle: TextStyle(
+                            color: Color(0xFF06DDF6),
+                            fontSize: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xFF00465F),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                            ),
+                          ),
                         ),
-                      );
-                    }
-                    else {
-                      return const Text('No data');
-                    }
-                  },
-                ),
+                        controller: controller,
+                        eventTileBuilder: ((date, events, boundary, start, end) =>
+                            customEventTileBuilder(date, events, boundary, start, end, settings.themeColors)),
+                        timeLineWidth: 50,
+                        // Taken from calendar_view lib with small changes:
+                        timeLineBuilder: (date) {
+                          final timeLineString = "${date.hour}:${date.minute}0";
+                          return Transform.translate(
+                            offset: const Offset(0, -8),
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 7.0),
+                              child: Text(
+                                timeLineString,
+                                textAlign: TextAlign.right,
+                                style: const TextStyle(
+                                  fontSize: 13.0,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        scrollOffset: 450,
+                        liveTimeIndicatorSettings: const HourIndicatorSettings(
+                          color: Color(0xFF06DDF6),
+                        ),
+                        weekPageHeaderBuilder: (startTime, endTime) {
+                          return customCalendarHeaderBuilder(
+                              startTime, endTime, controller, weekViewKey);
+                        },
+                        showLiveTimeLineInAllDays: false,
+                        minDay: DateTime.fromMillisecondsSinceEpoch(
+                            settings.startTime * 1000),
+                        maxDay: DateTime.fromMillisecondsSinceEpoch(
+                            settings.endTime * 1000),
+                        pageTransitionDuration:
+                            const Duration(milliseconds: 200),
+                        hourIndicatorSettings: HourIndicatorSettings(
+                          color: widget.themeManager.themeMode == ThemeMode.dark
+                              ? const Color.fromARGB(64, 0, 70, 95)
+                              : Colors.black12,
+                        ),
+                        initialDay: DateTime.now(),
+                        heightPerMinute:
+                            1, // height occupied by 1 minute time span.
+                        onEventTap: (events, date) {
+                          if (events.isNotEmpty) {
+                            final lessonEvent = events[0] as LessonAppointment;
+                            showLessonInfoDialog(context, lessonEvent.lesson);
+                          }
+                        },
+                        startDay: WeekDays.monday,
+                      ),
+                    );
+                  } else {
+                    return const Text('No data');
+                  }
+                },
               ),
-            ],
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -259,7 +271,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 
   void showErrorSnackbar(Object error) {
     var snackbar = SnackBar(
@@ -285,7 +296,9 @@ class _HomePageState extends State<HomePage> {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: DateTime.now().compareWithoutTime(date) ? const Color(0xFF00465F) : Colors.transparent,
+              color: DateTime.now().compareWithoutTime(date)
+                  ? const Color(0xFF00465F)
+                  : Colors.transparent,
             ),
             child: SizedBox(
               width: 35,
@@ -298,8 +311,10 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(
                       fontSize: 16,
                       color: DateTime.now().day == date.day
-                        ? Colors.white
-                        : widget.themeManager.themeMode == ThemeMode.dark ? Colors.white : Colors.black87,
+                          ? Colors.white
+                          : widget.themeManager.themeMode == ThemeMode.dark
+                              ? Colors.white
+                              : Colors.black87,
                     ),
                   ),
                 ),

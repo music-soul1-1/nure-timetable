@@ -18,6 +18,7 @@
 import 'dart:ui';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:nure_timetable/models/lesson.dart';
+import 'package:nure_timetable/models/theme_colors.dart';
 
 
 /// Class for storing lesson appointment data.
@@ -25,43 +26,32 @@ class LessonAppointment extends CalendarEventData {
   final Lesson lesson;
 
   LessonAppointment({
-    required DateTime startTime,
-    required DateTime endTime,
+    required DateTime super.startTime,
+    required DateTime super.endTime,
     required this.lesson,
     required String subject,
-    required Color color,
+    required super.color,
   }) : super(
     title: lesson.subject.brief,
     event: lesson.type,
     date: DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000),
-    startTime: startTime,
-    endTime: endTime,
-    color: lessonColor(lesson.type),
   );
-
-  Map<String, dynamic> toMap() {
-    return {
-      'subject': lesson.subject.title,
-      'color': lessonColor(lesson.type),
-      'lesson': lesson,
-    };
-  }
 }
 
 /// Returns a color for a lesson type.
-Color lessonColor(String lessonType) {
+Color lessonColor(String lessonType, ThemeColors themeColors) {
   switch (lessonType) {
     case "Лк":
-      return const Color(0xFFAD8827);
+      return Color(int.parse(themeColors.lecture));
     case "Лб":
-      return const Color(0xFF5A2194);
+      return Color(int.parse(themeColors.laboratory));
     case "Пз":
-      return const Color(0xFF1C8834);
+      return Color(int.parse(themeColors.practice));
     case "Конс":
-      return const Color(0xFF1E7F85);
+      return Color(int.parse(themeColors.consultation));
     case "Екз":
-      return const Color(0xFF8E1D1D);
+      return Color(int.parse(themeColors.exam));
     default:
-      return const Color(0xFF9A1A95);
+      return Color(int.parse(themeColors.other));
   }
 }

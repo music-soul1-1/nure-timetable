@@ -24,6 +24,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:nure_timetable/widgets/settings_page_widgets.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
+import 'package:nure_timetable/pages/color_picker_page.dart';
 
 
 var systemBrightness = Brightness.dark;
@@ -179,6 +180,17 @@ class _SettingsPageState extends State<SettingsPage> {
                       initialValue: settings.darkThemeEnabled,
                       leading: const Icon(Icons.dark_mode),
                     ),
+                    SettingsTile(title: const Text("Кольори теми"),
+                      leading: const Icon(Icons.color_lens_outlined),
+                      onPressed: (context) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ColorPickerPage(themeManager: widget.themeManager, outerSettings: settings),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
                 SettingsSection(
@@ -234,7 +246,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 SettingsSection(
                   title: const Text("Інше"),
-                  tiles: <SettingsTile>[
+                  tiles: <SettingsTile>[                    
                     SettingsTile.navigation(
                       title: const Text("Скинути налаштування"),
                       leading: const Icon(Icons.restore),
