@@ -5,14 +5,14 @@ Uses [nure-api](https://github.com/mindenit/nure-api).
 
 
 ## Features
-- view schedule for your group.
+- view schedule for group or teacher.
 - fast app start.
 - cross-platform.
 - uses [nure-api](https://github.com/mindenit/nure-api).
 - Material design.
 - dark and light themes.
 - offline support.
-- add more features.
+- customize calendar theme colors.
 
 
 ## Plans
@@ -20,7 +20,6 @@ Uses [nure-api](https://github.com/mindenit/nure-api).
 - change app icons for every platform (currently Windows and Android)
 - add English locale
 - host web version
-- add support for viewing teachers schedule
 - refactor and optimize code
 - update some dependencies
 
