@@ -173,7 +173,7 @@ Future<dynamic> showUpdateDialog(BuildContext context, PackageInfo packageInfo, 
               _launchUrl(Platform.isAndroid
                       ? updateInfo.apkDownloadUrl
                       : (Platform.isWindows
-                          ? updateInfo.exeDownloadUrl
+                          ? updateInfo.zipDownloadUrl
                           : updateInfo.url));
             }
           ),
