@@ -119,15 +119,69 @@ class _SettingsPageState extends State<SettingsPage> {
             return const CircularProgressIndicator();
           }
           else if (snapshot.hasError) {
-            return Column(
-              children: [
-                Text('Error: ${snapshot.error}'),
-                const Text("Спробуйте скинути налаштування:"),
-                TextButton(
-                  onPressed: () => showRemoveSettingsDialog(context),
-                  child: const Text("Скинути налаштування"),
-                ),
-              ],
+            return SettingsList(
+                  platform: DevicePlatform.android,
+                  darkTheme: const SettingsThemeData(
+                    settingsListBackground: Color.fromARGB(255, 0, 15, 19),
+                    settingsSectionBackground: Color.fromARGB(255, 0, 25, 32),
+                    tileHighlightColor: Color.fromARGB(255, 0, 34, 47),
+                  ),
+                  lightTheme: const SettingsThemeData(
+                    settingsListBackground: Color.fromARGB(255, 240, 240, 240),
+                  ),
+                  sections: [
+                    settingsErrorSection(snapshot, context),
+                    SettingsSection(
+                      title: const Text("Інше"),
+                      tiles: <SettingsTile>[                    
+                        SettingsTile.navigation(
+                          title: const Text("Скинути налаштування"),
+                          leading: const Icon(Icons.restore),
+                          onPressed: (context) => showRemoveSettingsDialog(context),
+                        ),
+                        SettingsTile.navigation(
+                          title: const Text("Версія застосунку"), 
+                          leading: const Icon(Icons.info_outline),
+                          value: FutureBuilder(
+                            future: PackageInfo.fromPlatform(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Text("Завантаження...");
+                              }
+                              else if (snapshot.hasError) {
+                                return const Text("Помилка завантаження версії");
+                              }
+                              else {
+                                packageInfo = snapshot.data as PackageInfo;
+                                return Text(packageInfo.version);
+                              }
+                            }
+                          ),
+                          onPressed: (context) {
+                            PackageInfo.fromPlatform().then((info) => {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AboutAppDialog(packageInfo: info);
+                                }
+                              )
+                            });
+                          },
+                        ),
+                        SettingsTile.navigation(
+                          title: const Text("Перевірити оновлення"),
+                          leading: const Icon(Icons.update),
+                          onPressed: (context) => checkForUpdates(),
+                        ),
+                        SettingsTile.navigation(
+                          title: const Text("Надіслати відгук/повідомити про помилку"),
+                          leading: const Icon(Icons.bug_report_outlined),
+                          onPressed: (context) => showFeedbackDialog(context),
+                        ),
+                      ],
+                    ),
+                  ]
+                
             );
           }
           else {
@@ -275,7 +329,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           showDialog(
                             context: context,
                             builder: (context) {
-                              return CustomAboutDialog(packageInfo: info);
+                              return AboutAppDialog(packageInfo: info);
                             }
                           )
                         });
@@ -285,6 +339,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: const Text("Перевірити оновлення"),
                       leading: const Icon(Icons.update),
                       onPressed: (context) => checkForUpdates(),
+                    ),
+                    SettingsTile.navigation(
+                      title: const Text("Надіслати відгук/повідомити про помилку"),
+                      leading: const Icon(Icons.bug_report_outlined),
+                      onPressed: (context) => showFeedbackDialog(context),
                     ),
                   ]
                 )
