@@ -23,13 +23,13 @@ import 'package:http/http.dart' as http;
 class UpdateInfo {
   final String version;
   final String apkDownloadUrl;
-  final String zipDownloadUrl;
+  final String exeDownloadUrl;
   final String url;
 
   UpdateInfo({
     required this.version,
     required this.apkDownloadUrl,
-    required this.zipDownloadUrl,
+    required this.exeDownloadUrl,
     required this.url,
   });
 }
@@ -51,16 +51,16 @@ Future<UpdateInfo> getLatestVersion() async {
             .stringValue
             .contains('apk'))['browser_download_url']
             .stringValue;
-    final zipDownloadUrl = assets
+    final exeDownloadUrl = assets
         .firstWhere((element) => element['browser_download_url']
             .stringValue
-            .contains('zip'))['browser_download_url']
+            .contains('exe'))['browser_download_url']
             .stringValue;
 
     return UpdateInfo(
       version: json['tag_name'],
       apkDownloadUrl: apkDownloadUrl,
-      zipDownloadUrl: zipDownloadUrl,
+      exeDownloadUrl: exeDownloadUrl,
       url: json['html_url'],
     );
   }
