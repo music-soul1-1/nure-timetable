@@ -17,16 +17,19 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/models/update_info.dart';
+import 'package:nure_timetable/widgets/helper_widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:settings_ui/settings_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-class CustomAboutDialog extends StatelessWidget {
+class AboutAppDialog extends StatelessWidget {
   final PackageInfo packageInfo;
 
-  const CustomAboutDialog({
+  const AboutAppDialog({
     super.key,
     required this.packageInfo
   });
@@ -198,5 +201,72 @@ Future<dynamic> showUpdateDialog(BuildContext context, PackageInfo packageInfo, 
         ],
       );
     }
+  );
+}
+
+Future<dynamic> showFeedbackDialog(BuildContext context) {
+  return showDialog(
+    context: context, 
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Надіслати зворотній відгук?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("Закрити")
+          ),
+          TextButton(
+            onPressed: () {
+              _launchUrl("https://forms.gle/bCrh8KCNY3BiZgSs7");
+              Navigator.of(context).pop();
+            },
+            child: const Text("Заповнити гугл-форму"),
+          ),
+        ],
+      );
+    }
+  );
+}
+
+CustomSettingsSection settingsErrorSection(AsyncSnapshot<AppSettings> snapshot, BuildContext context) {
+  return CustomSettingsSection(
+    child: Center(
+      child: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 8.0),
+            child: Text("Помилка завантаження налаштувань:"),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                snapshot.error.toString(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: IconButton(
+                  icon: const Icon(Icons.copy),
+                  onPressed: () {
+                    Clipboard.setData(
+                      ClipboardData(
+                        text: snapshot.error.toString(),
+                      ),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      snackbar("Помилка скопійована в буфер обміну")
+                    );
+                  }
+                ),
+              ),
+            ],
+          ),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 5.0),
+            child: Text("Спробуйте скинути налаштування:"),
+          ),
+        ],
+      ),
+    ),
   );
 }

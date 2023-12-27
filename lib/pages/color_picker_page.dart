@@ -84,7 +84,11 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                         ),
                         actions: <Widget>[
                           TextButton(
-                            child: const Text('Застосувати'),
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text("Закрити")
+                          ),
+                          TextButton(
+                            child: const Text("Застосувати"),
                             onPressed: () async {
                               settings.themeColors.lecture = pickerColor.value.toString();
                               Navigator.of(context).pop();
@@ -116,6 +120,10 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                           ),
                         ),
                         actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text("Закрити")
+                          ),
                           TextButton(
                             child: const Text('Застосувати'),
                             onPressed: () async {
@@ -150,6 +158,10 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                         ),
                         actions: <Widget>[
                           TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text("Закрити")
+                          ),
+                          TextButton(
                             child: const Text('Застосувати'),
                             onPressed: () async {
                               settings.themeColors.laboratory = pickerColor.value.toString();
@@ -182,6 +194,10 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                           ),
                         ),
                         actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text("Закрити")
+                          ),
                           TextButton(
                             child: const Text('Застосувати'),
                             onPressed: () async {
@@ -216,6 +232,10 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                         ),
                         actions: <Widget>[
                           TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text("Закрити")
+                          ),
+                          TextButton(
                             child: const Text('Застосувати'),
                             onPressed: () async {
                               settings.themeColors.exam = pickerColor.value.toString();
@@ -248,6 +268,10 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                           ),
                         ),
                         actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text("Закрити")
+                          ),
                           TextButton(
                             child: const Text('Застосувати'),
                             onPressed: () async {
