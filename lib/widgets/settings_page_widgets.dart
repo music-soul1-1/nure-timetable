@@ -209,7 +209,7 @@ Future<dynamic> showFeedbackDialog(BuildContext context) {
     context: context, 
     builder: (context) {
       return AlertDialog(
-        title: const Text("Надіслати зворотній відгук?"),
+        title: const Text("Надіслати відгук?"),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
