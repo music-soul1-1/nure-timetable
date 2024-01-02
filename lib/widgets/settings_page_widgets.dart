@@ -1,5 +1,5 @@
 // NureTimetable is an app for viewing schedule for groups or teachers of Kharkiv National University of Radio Electronics.
-// Copyright (C) 2023  music-soul1-1
+// Copyright (C) 2023-2024  music-soul1-1
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ class AboutAppDialog extends StatelessWidget {
       applicationName: packageInfo.appName,
       applicationVersion: '${packageInfo.version}. Version code: ${packageInfo.buildNumber}',
       applicationIcon: const Icon(Icons.info_outline),
-      applicationLegalese: "© 2023 music-soul1-1",
+      applicationLegalese: "© 2023-2024 music-soul1-1",
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 15),
@@ -51,7 +51,7 @@ class AboutAppDialog extends StatelessWidget {
               const Text(
                 "NureTimetable is an app for viewing schedule for groups or teachers of \n"
                 "Kharkiv National University of Radio Electronics.\n"
-                "Copyright (C) 2023  music-soul1-1\n\n"
+                "Copyright (C) 2023-2024  music-soul1-1\n\n"
 
                 "This program is free software: you can redistribute it and/or modify\n"
                 "it under the terms of the GNU General Public License as published by\n"
