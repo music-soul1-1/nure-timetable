@@ -18,7 +18,6 @@
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:nure_timetable/theme/themes.dart';
 
 // Pages
 import 'pages/home_page.dart';
@@ -27,18 +26,23 @@ import 'pages/settings_page.dart';
 
 // Libraries
 import 'package:calendar_view/calendar_view.dart';
+import 'package:nure_timetable/locales/locales.dart';
+import 'package:nure_timetable/theme/themes.dart';
+import 'package:nure_timetable/models/settings.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 // Theme
 import 'theme/theme_manager.dart';
 
 
 var _themeManager = ThemeManager();
+final FlutterLocalization localization = FlutterLocalization.instance;
 
 // TODO: music-soul1-1: change app icons for every platform (currently windows and android)
 // TODO: music-soul1-1: add app locales
 void main() {
   runApp(const MyApp());
-  initializeDateFormatting('uk_UA');
+  initializeDateFormatting(localization.currentLocale?.languageCode == "uk" ? 'uk_UA' : 'en_UK');
 }
 
 
@@ -50,6 +54,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  var settings = AppSettings.getDefaultSettings();
 
   @override
   void dispose() {
@@ -60,7 +65,22 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _themeManager.addListener(themeListener);
+    loadSettings().then((value) => settings = value);
+
+    localization.init(
+      mapLocales: [
+        const MapLocale('en', AppLocale.EN),
+        const MapLocale('uk', AppLocale.UA),
+      ],
+      initLanguageCode: 'uk',
+    );
+    localization.onTranslatedLanguage = _onTranslatedLanguage;
+
     super.initState();
+  }
+
+  void _onTranslatedLanguage(Locale? locale) {
+    setState(() {});
   }
 
   themeListener(){
@@ -77,7 +97,8 @@ class _MyAppState extends State<MyApp> {
       controller: EventController(),
       child: MaterialApp(
         title: 'NureTimetable',
-        locale: const Locale('uk', 'UA'),
+        supportedLocales: localization.supportedLocales,
+        localizationsDelegates: localization.localizationsDelegates,
         themeMode: _themeManager.themeMode,
         theme: lightTheme,
         darkTheme: darkTheme,
@@ -86,9 +107,9 @@ class _MyAppState extends State<MyApp> {
           child: Scaffold(
             body: TabBarView(
               children: [
-                HomePage(themeManager: _themeManager,),
-                GroupsPage(title: "Групи", themeManager: _themeManager),
-                SettingsPage(themeManager: _themeManager),
+                HomePage(themeManager: _themeManager),
+                GroupsPage(themeManager: _themeManager),
+                SettingsPage(themeManager: _themeManager, localization: localization),
               ],
             ),
             bottomNavigationBar: Container(
@@ -101,25 +122,25 @@ class _MyAppState extends State<MyApp> {
                   ),
                 )
               ),
-              child: const TabBar(
+              child: TabBar(
                 tabs: [
                   Tab(
                     iconMargin: EdgeInsets.zero,
-                    icon: Icon(Icons.calendar_month),
-                    text: "Розклад",
+                    icon: const Icon(Icons.calendar_month),
+                    text: AppLocale.getSchedule(localization),
                     height: 50,
                   ),
                   Tab(
                     iconMargin: EdgeInsets.zero,
-                    icon: Icon(Icons.people_alt),
+                    icon: const Icon(Icons.people_alt),
                     height: 50,
-                    text: "Групи",
+                    text: AppLocale.getGroups(localization),
                   ),
                   Tab(
                     iconMargin: EdgeInsets.zero,
-                    icon: Icon(Icons.settings_rounded),
+                    icon: const Icon(Icons.settings_rounded),
                     height: 50,
-                    text: "Налаштування"
+                    text: AppLocale.getSettings(localization),
                   ),
                 ],
               ),

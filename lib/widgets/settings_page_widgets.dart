@@ -18,6 +18,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/models/update_info.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
@@ -131,18 +133,18 @@ Future<dynamic> showRemoveSettingsDialog(BuildContext context) {
     context: context, 
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text("Ви дійсно хочете скинути налаштування?"),
+        title: Text(AppLocale.doYouReallyWantToResetSettings.getString(context)),
         actions: [
           TextButton(
             onPressed: () {
               removeSettings(removeSchedule: true);
               Navigator.of(context).pop();
             },
-            child: const Text("Так"),
+            child: Text(AppLocale.yes.getString(context)),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Ні"),
+            child: Text(AppLocale.no.getString(context)),
           ),
         ],
       );
@@ -164,14 +166,14 @@ Future<dynamic> showUpdateDialog(BuildContext context, PackageInfo packageInfo, 
     builder: (BuildContext context) {
       return needsUpdate ? 
       AlertDialog(
-        title: const Text("Доступна нова версія"),
-        content: Text("Ваша версія: v.${packageInfo.version}\n"
-          "Остання версія: ${updateInfo.version}\n\n"
-          "Завантажити оновлення?",
+        title: Text(AppLocale.newVersionAvailable.getString(context)),
+        content: Text("${AppLocale.yourVersion.getString(context)}: v.${packageInfo.version}\n"
+          "${AppLocale.latestVersion.getString(context)}: ${updateInfo.version}\n\n"
+          "${AppLocale.downloadUpdate.getString(context)}",
         ),
         actions: [
           TextButton(
-            child: const Text("Так"),
+            child: Text(AppLocale.yes.getString(context)),
             onPressed: () {
               _launchUrl(Platform.isAndroid
                       ? updateInfo.apkDownloadUrl
@@ -182,21 +184,21 @@ Future<dynamic> showUpdateDialog(BuildContext context, PackageInfo packageInfo, 
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Ні"),
+            child: Text(AppLocale.no.getString(context)),
           ),
         ],
       ) : 
       AlertDialog(
-        title: const Text("Ви використовуєте останню версію"),
-        content: Text("Ваша версія: v.${packageInfo.version}\n"),
+        title: Text(AppLocale.youAreUsingLatestVersion.getString(context)),
+        content: Text("${AppLocale.yourVersion.getString(context)}: v.${packageInfo.version}\n"),
         actions: [
           TextButton(
             onPressed: () => _launchUrl(updateInfo.url),
-            child: const Text("Перейти на GitHub")
+            child: Text(AppLocale.goToGithub.getString(context))
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Закрити"),
+            child: Text(AppLocale.close.getString(context)),
           ),
         ],
       );
@@ -209,18 +211,18 @@ Future<dynamic> showFeedbackDialog(BuildContext context) {
     context: context, 
     builder: (context) {
       return AlertDialog(
-        title: const Text("Надіслати відгук?"),
+        title: Text(AppLocale.sendReview.getString(context)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Закрити")
+            child: Text(AppLocale.close.getString(context)),
           ),
           TextButton(
             onPressed: () {
               _launchUrl("https://forms.gle/bCrh8KCNY3BiZgSs7");
               Navigator.of(context).pop();
             },
-            child: const Text("Заповнити гугл-форму"),
+            child: Text(AppLocale.fillGoogleForm.getString(context)),
           ),
         ],
       );
@@ -233,9 +235,9 @@ CustomSettingsSection settingsErrorSection(AsyncSnapshot<AppSettings> snapshot, 
     child: Center(
       child: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 8.0),
-            child: Text("Помилка завантаження налаштувань:"),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text("${AppLocale.errorLoadingSettings.getString(context)}:"),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -254,16 +256,16 @@ CustomSettingsSection settingsErrorSection(AsyncSnapshot<AppSettings> snapshot, 
                       ),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
-                      snackbar("Помилка скопійована в буфер обміну")
+                      snackbar(AppLocale.errorCopiedToClipboard.getString(context))
                     );
                   }
                 ),
               ),
             ],
           ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 5.0),
-            child: Text("Спробуйте скинути налаштування:"),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5.0),
+            child: Text("${AppLocale.tryToResetSettings.getString(context)}:"),
           ),
         ],
       ),

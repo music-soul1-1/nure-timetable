@@ -16,6 +16,8 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:nure_timetable/models/settings.dart';
@@ -30,9 +32,10 @@ import 'package:nure_timetable/pages/color_picker_page.dart';
 var systemBrightness = Brightness.dark;
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key, required this.themeManager});
+  const SettingsPage({super.key, required this.themeManager, required this.localization});
 
   final ThemeManager themeManager;
+  final FlutterLocalization localization;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -110,7 +113,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: Header(
-        "Налаштування", Icons.settings_rounded
+        AppLocale.settings.getString(context), Icons.settings_rounded
       ),
       body: FutureBuilder<AppSettings>(
         future: settingsFuture,
@@ -132,24 +135,24 @@ class _SettingsPageState extends State<SettingsPage> {
                   sections: [
                     settingsErrorSection(snapshot, context),
                     SettingsSection(
-                      title: const Text("Інше"),
+                      title: Text(AppLocale.other.getString(context)),
                       tiles: <SettingsTile>[                    
                         SettingsTile.navigation(
-                          title: const Text("Скинути налаштування"),
+                          title: Text(AppLocale.resetSettings.getString(context)),
                           leading: const Icon(Icons.restore),
                           onPressed: (context) => showRemoveSettingsDialog(context),
                         ),
                         SettingsTile.navigation(
-                          title: const Text("Версія застосунку"), 
+                          title: Text(AppLocale.appVersion.getString(context)), 
                           leading: const Icon(Icons.info_outline),
                           value: FutureBuilder(
                             future: PackageInfo.fromPlatform(),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Text("Завантаження...");
+                                return Text(AppLocale.loading.getString(context));
                               }
                               else if (snapshot.hasError) {
-                                return const Text("Помилка завантаження версії");
+                                return Text(AppLocale.errorLoadingVersion.getString(context));
                               }
                               else {
                                 packageInfo = snapshot.data as PackageInfo;
@@ -169,12 +172,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           },
                         ),
                         SettingsTile.navigation(
-                          title: const Text("Перевірити оновлення"),
+                          title: Text(AppLocale.checkUpdates.getString(context)),
                           leading: const Icon(Icons.update),
                           onPressed: (context) => checkForUpdates(),
                         ),
                         SettingsTile.navigation(
-                          title: const Text("Надіслати відгук/повідомити про помилку"),
+                          title: Text(AppLocale.sendReviewOrBugReport.getString(context)),
                           leading: const Icon(Icons.bug_report_outlined),
                           onPressed: (context) => showFeedbackDialog(context),
                         ),
@@ -199,22 +202,51 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               sections: [
                 SettingsSection(
-                  title: const Text('Загальне'),
+                  title: Text(AppLocale.general.getString(context)),
                   tiles: <SettingsTile>[
-                    SettingsTile.navigation(
+                    SettingsTile(
+                      title: Text(AppLocale.appLanguage.getString(context)),
                       leading: const Icon(Icons.language),
-                      title: const Text('Мова застосунку'),
+                      value: Text(AppLocale.languages.firstWhere((element) => element['code'] == settings.language)['title']!),
                       onPressed: (context) {
-                        const snackbar = SnackBar(
-                          content: Text('На даний момент доступна лише українська мова'),
-                          duration: Duration(seconds: 2),
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(AppLocale.selectLanguage.getString(context)),
+                              content: SizedBox(
+                                width: double.minPositive,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: 2,
+                                  itemBuilder: (context, index) {                                    
+                                    return ListTile(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      title: Text(AppLocale.languages[index]['title']!),
+                                      onTap: () {
+                                        var code = AppLocale.languages[index]['code'];
+
+                                        if (code != null) {
+                                          widget.localization.translate(code);
+                                          settings.language = code;
+                                          saveSettings(settings);
+                                        }
+                                        Navigator.of(context).pop(); // Close the dialog
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          },
                         );
-                        ScaffoldMessenger.of(context).showSnackBar(snackbar);
                       },
-                      value: Text(settings.language),
                     ),
+
                     SettingsTile.switchTile(
-                      title: const Text('Використовувати системну тему'),
+                      title: Text(AppLocale.useSystemTheme.getString(context)),
                       onToggle: (value) {
                         settings.useSystemTheme = value;
                         widget.themeManager.toggleTheme(value ? (systemBrightness == Brightness.dark) : settings.darkThemeEnabled);
@@ -224,7 +256,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       leading: const Icon(Icons.format_paint),
                     ),
                     SettingsTile.switchTile(
-                      title: const Text('Темна тема'),
+                      title: Text(AppLocale.darkTheme.getString(context)),
                       enabled: !settings.useSystemTheme,
                       onToggle: (value) {
                         settings.darkThemeEnabled = value;
@@ -234,7 +266,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       initialValue: settings.darkThemeEnabled,
                       leading: const Icon(Icons.dark_mode),
                     ),
-                    SettingsTile(title: const Text("Кольори теми"),
+                    SettingsTile(title: Text(AppLocale.themeColors.getString(context)),
                       leading: const Icon(Icons.color_lens_outlined),
                       onPressed: (context) {
                         Navigator.push(
@@ -248,10 +280,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   ],
                 ),
                 SettingsSection(
-                  title: const Text("Розклад"),
+                  title: Text(AppLocale.schedule.getString(context)),
                   tiles: <SettingsTile>[
                     SettingsTile.navigation(
-                      title: const Text("Початкова та кінцева дати розкладу"),
+                      title: Text(AppLocale.startAndEndDateOfSchedule.getString(context)),
                       leading: const Icon(Icons.calendar_month_outlined),
                       onPressed: (context) {
                         showDateRangePicker(
@@ -280,43 +312,47 @@ class _SettingsPageState extends State<SettingsPage> {
                       },
                     ),
                     SettingsTile.navigation(
-                      title: const Text("Останнє оновлення розкладу"),
+                      title: Text(AppLocale.lastScheduleUpdate.getString(context)),
                       leading: const Icon(Icons.file_download_outlined),
                       value: Text(DateTime.fromMillisecondsSinceEpoch(settings.lastUpdated * 1000).toLocal().toString().substring(0, 16)),
                     ),
                     SettingsTile.navigation(
-                      title: const Text("Тип розкладу:"),
+                      title: Text("${AppLocale.typeOfSchedule.getString(context)}:"),
                       leading: const Icon(Icons.people_alt_outlined),
                       value: Text(
-                        settings.type == 'group' ? 'Група' : 'Викладач',
+                        settings.type == 'group' ? AppLocale.group.getString(context) : AppLocale.teacher.getString(context),
                       ),
                       onPressed: (context) => {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          snackbar(settings.type == 'group' ? "Гарного навчання!" : "Гарного викладання!")
+                          snackbar(
+                                settings.type == 'group'
+                                    ? AppLocale.happyLearning.getString(context)
+                                    : AppLocale.happyTeaching
+                                        .getString(context))
                         ),
                       },
                     ),
                   ],
                 ),
                 SettingsSection(
-                  title: const Text("Інше"),
+                  title: Text(AppLocale.other.getString(context)),
                   tiles: <SettingsTile>[                    
                     SettingsTile.navigation(
-                      title: const Text("Скинути налаштування"),
+                      title: Text(AppLocale.resetSettings.getString(context)),
                       leading: const Icon(Icons.restore),
                       onPressed: (context) => showRemoveSettingsDialog(context),
                     ),
                     SettingsTile.navigation(
-                      title: const Text("Версія застосунку"), 
+                      title: Text(AppLocale.appVersion.getString(context)), 
                       leading: const Icon(Icons.info_outline),
                       value: FutureBuilder(
                         future: PackageInfo.fromPlatform(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Text("Завантаження...");
+                            return Text(AppLocale.loading.getString(context));
                           }
                           else if (snapshot.hasError) {
-                            return const Text("Помилка завантаження версії");
+                            return Text(AppLocale.errorLoadingVersion.getString(context));
                           }
                           else {
                             packageInfo = snapshot.data as PackageInfo;
@@ -336,12 +372,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       },
                     ),
                     SettingsTile.navigation(
-                      title: const Text("Перевірити оновлення"),
+                      title: Text(AppLocale.checkUpdates.getString(context)),
                       leading: const Icon(Icons.update),
                       onPressed: (context) => checkForUpdates(),
                     ),
                     SettingsTile.navigation(
-                      title: const Text("Надіслати відгук/повідомити про помилку"),
+                      title: Text(AppLocale.sendReviewOrBugReport.getString(context)),
                       leading: const Icon(Icons.bug_report_outlined),
                       onPressed: (context) => showFeedbackDialog(context),
                     ),

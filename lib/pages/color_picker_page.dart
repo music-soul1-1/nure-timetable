@@ -17,6 +17,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
@@ -51,7 +53,7 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header("Обрати кольори теми", Icons.color_lens_outlined),
+      appBar: Header(AppLocale.selectThemeColors.getString(context), Icons.color_lens_outlined),
       body: SettingsList(
         platform: DevicePlatform.android,
         darkTheme: const SettingsThemeData(
@@ -64,17 +66,17 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
         ),
         sections: [ // TODO: change that to loop and create a method for settings tile
           SettingsSection(
-            title: const Text("Колірна тема"),
+            title: Text(AppLocale.colorTheme.getString(context)),
             tiles:  <SettingsTile>[
               SettingsTile.navigation(
-                title: const Text("Колір лекцій"),
+                title: Text(AppLocale.lectionColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
                   return showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Виберіть колір лекцій'),
+                        title: Text(AppLocale.selectLectionColor.getString(context)),
                         content: SingleChildScrollView(
                           child: ColorPicker(
                             pickerColor: Color(int.parse(settings.themeColors.lecture)),
@@ -85,16 +87,16 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("Закрити")
+                            child: Text(AppLocale.close.getString(context))
                           ),
                           TextButton(
-                            child: const Text("Застосувати"),
+                            child: Text(AppLocale.apply.getString(context)),
                             onPressed: () async {
                               settings.themeColors.lecture = pickerColor.value.toString();
                               Navigator.of(context).pop();
                               
                               await saveSettings(settings);
-                              setState(() => settings.themeColors.lecture = pickerColor.value.toString());
+                              setState(() => {});
                             },
                           ),
                         ],
@@ -104,14 +106,14 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                 },
               ),
               SettingsTile.navigation(
-                title: const Text("Колір практичних занять"),
+                title: Text(AppLocale.practiceColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
                   return showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Виберіть колір ПЗ'),
+                        title: Text(AppLocale.selectPracticeColor.getString(context)),
                         content: SingleChildScrollView(
                           child: ColorPicker(
                             pickerColor: Color(int.parse(settings.themeColors.practice)),
@@ -122,16 +124,16 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("Закрити")
+                            child: Text(AppLocale.close.getString(context))
                           ),
                           TextButton(
-                            child: const Text('Застосувати'),
+                            child: Text(AppLocale.apply.getString(context)),
                             onPressed: () async {
                               settings.themeColors.practice = pickerColor.value.toString();
                               Navigator.of(context).pop();
                               
                               await saveSettings(settings);
-                              setState(() => settings.themeColors.practice = pickerColor.value.toString());
+                              setState(() => {});
                             },
                           ),
                         ],
@@ -141,14 +143,14 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                 },
               ),
               SettingsTile.navigation(
-                title: const Text("Колір лабораторних робіт"),
+                title: Text(AppLocale.labColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
                   return showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Виберіть колір ЛБ'),
+                        title: Text(AppLocale.selectLabColor.getString(context)),
                         content: SingleChildScrollView(
                           child: ColorPicker(
                             pickerColor: Color(int.parse(settings.themeColors.laboratory)),
@@ -159,16 +161,16 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("Закрити")
+                            child: Text(AppLocale.close.getString(context))
                           ),
                           TextButton(
-                            child: const Text('Застосувати'),
+                            child: Text(AppLocale.apply.getString(context)),
                             onPressed: () async {
                               settings.themeColors.laboratory = pickerColor.value.toString();
                               Navigator.of(context).pop();
                               
                               await saveSettings(settings);
-                              setState(() => settings.themeColors.laboratory = pickerColor.value.toString());
+                              setState(() => {});
                             },
                           ),
                         ],
@@ -178,14 +180,14 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                 },
               ),
               SettingsTile.navigation(
-                title: const Text("Колір консультацій"),
+                title: Text(AppLocale.consultationColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
                   return showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Виберіть колір консультацій'),
+                        title: Text(AppLocale.selectConsultationColor.getString(context)),
                         content: SingleChildScrollView(
                           child: ColorPicker(
                             pickerColor: Color(int.parse(settings.themeColors.consultation)),
@@ -196,16 +198,16 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("Закрити")
+                            child: Text(AppLocale.close.getString(context))
                           ),
                           TextButton(
-                            child: const Text('Застосувати'),
+                            child: Text(AppLocale.apply.getString(context)),
                             onPressed: () async {
                               settings.themeColors.consultation = pickerColor.value.toString();
                               Navigator.of(context).pop();
                               
                               await saveSettings(settings);
-                              setState(() => settings.themeColors.consultation = pickerColor.value.toString());
+                              setState(() => {});
                             },
                           ),
                         ],
@@ -215,14 +217,14 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                 },
               ),
               SettingsTile.navigation(
-                title: const Text("Колір екзаменів"),
+                title: Text(AppLocale.examColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
                   return showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Виберіть колір екзаменів'),
+                        title: Text(AppLocale.selectExamColor.getString(context)),
                         content: SingleChildScrollView(
                           child: ColorPicker(
                             pickerColor: Color(int.parse(settings.themeColors.exam)),
@@ -233,16 +235,16 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("Закрити")
+                            child: Text(AppLocale.close.getString(context))
                           ),
                           TextButton(
-                            child: const Text('Застосувати'),
+                            child: Text(AppLocale.apply.getString(context)),
                             onPressed: () async {
                               settings.themeColors.exam = pickerColor.value.toString();
                               Navigator.of(context).pop();
                               
                               await saveSettings(settings);
-                              setState(() => settings.themeColors.exam = pickerColor.value.toString());
+                              setState(() => {});
                             },
                           ),
                         ],
@@ -252,14 +254,14 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                 },
               ),
               SettingsTile.navigation(
-                title: const Text("Колір інших занять"),
+                title: Text(AppLocale.othersColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
                   return showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Виберіть колір інших занять'),
+                        title: Text(AppLocale.selectOthersColor.getString(context)),
                         content: SingleChildScrollView(
                           child: ColorPicker(
                             pickerColor: Color(int.parse(settings.themeColors.other)),
@@ -270,16 +272,16 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                         actions: <Widget>[
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("Закрити")
+                            child: Text(AppLocale.close.getString(context))
                           ),
                           TextButton(
-                            child: const Text('Застосувати'),
+                            child: Text(AppLocale.apply.getString(context)),
                             onPressed: () async {
                               settings.themeColors.other = pickerColor.value.toString();
                               Navigator.of(context).pop();
                               
                               await saveSettings(settings);
-                              setState(() => settings.themeColors.other = pickerColor.value.toString());
+                              setState(() => {});
                             },
                           ),
                         ],
@@ -291,17 +293,17 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
             ],
           ),
           SettingsSection(
-            title: const Text("Інше"),
+            title: Text(AppLocale.other.getString(context)),
             tiles: [
               SettingsTile.navigation(
-                title: const Text("Скинути налаштування кольорів"),
+                title: Text(AppLocale.resetColorSettings.getString(context)),
                 leading: const Icon(Icons.restore_outlined),
                 onPressed: (context) async {
                   showDialog(
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text("Ви дійсно хочете скинути ці налаштування?"),
+                        title: Text(AppLocale.doYouReallyWantToResetThisSettings.getString(context)),
                         actions: [
                           TextButton(
                             onPressed: () async {
@@ -311,11 +313,11 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                               await saveSettings(settings);
                               setState(() => settings);
                             },
-                            child: const Text("Так"),
+                            child: Text(AppLocale.yes.getString(context)),
                           ),
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("Ні"),
+                            child: Text(AppLocale.no.getString(context)),
                           ),
                         ],
                       );
