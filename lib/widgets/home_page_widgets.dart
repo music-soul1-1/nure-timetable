@@ -19,13 +19,16 @@ import 'dart:io';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
+import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/lesson.dart';
 import 'package:nure_timetable/models/lesson_appointment.dart';
 import 'package:nure_timetable/models/theme_colors.dart';
 
 
 var isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
+final FlutterLocalization localization = FlutterLocalization.instance;
 
 
 Widget customEventTileBuilder(date, events, boundary, start, end, ThemeColors themeColors) {
@@ -80,7 +83,7 @@ Widget customEventTileBuilder(date, events, boundary, start, end, ThemeColors th
 }
 
 
-Widget customCalendarHeaderBuilder(startDate, endDate, EventController controller, GlobalKey<WeekViewState> weekViewKey) {
+Widget customCalendarHeaderBuilder(startDate, endDate, EventController controller, GlobalKey<WeekViewState> weekViewKey, BuildContext context) {
   final nextLesson = controller.events
       .map((event) => event as LessonAppointment)
       .where((event) => event.startTime!.isAfter(DateTime.now()) && event.startTime!.isBefore(DateTime.now().add(const Duration(hours: 8))))
@@ -99,9 +102,9 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
             padding: const EdgeInsets.only(top: 5),
             child: Text(
               nextLesson != null
-                  ? "Наступна пара: ${nextLesson.lesson.subject.brief}; " 
-                  "${nextLesson.lesson.startTimeToString()}, ${DateFormat.Md("uk_UA").format(nextLesson.startTime!)}"
-                  : "Найближчим часом пар немає 😎",
+                  ? "${AppLocale.nextLesson.getString(context)}: ${nextLesson.lesson.subject.brief}; " 
+                  "${nextLesson.lesson.startTimeToString()}, ${DateFormat.Md(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(nextLesson.startTime!)}"
+                  : "${AppLocale.noLessonsInNearFuture.getString(context)} 😎",
               textScaleFactor: 1.2,
             ),
           ) : 
@@ -119,12 +122,12 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
                       weekViewKey.currentState?.previousPage();
                     },
                     icon: const Icon(Icons.arrow_back_rounded),
-                    tooltip: "Попередній тиждень",
+                    tooltip: AppLocale.previousWeek.getString(context),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: Text(
-                      DateFormat.yMMMM("uk_UA").format(startDate),
+                      DateFormat.yMMMM(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(startDate),
                       textScaleFactor: 1.2,
                     ),
                   )
@@ -137,9 +140,9 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
               ) :
               Text(
                 nextLesson != null
-                    ? "Наступна пара: ${nextLesson.lesson.subject.brief}; " 
-                    "${nextLesson.lesson.startTimeToString()}, ${DateFormat.Md("uk_UA").format(nextLesson.startTime!)}"
-                    : "Найближчим часом пар немає 😎",
+                    ? "${AppLocale.nextLesson.getString(context)}: ${nextLesson.lesson.subject.brief}; " 
+                    "${nextLesson.lesson.startTimeToString()}, ${DateFormat.Md(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(nextLesson.startTime!)}"
+                    : "${AppLocale.noLessonsInNearFuture.getString(context)} 😎",
                 textScaleFactor: 1.2,
               ),
               Row(
@@ -152,7 +155,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
                       );
                     },
                     icon: const Icon(Icons.calendar_today_outlined),
-                    tooltip: "Поточний тиждень",
+                    tooltip: AppLocale.currentWeek.getString(context),
                   ),
                   IconButton(
                     alignment: Alignment.centerRight,
@@ -160,7 +163,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
                       weekViewKey.currentState?.nextPage();
                     },
                     icon: const Icon(Icons.arrow_forward_rounded),
-                    tooltip: "Наступний тиждень",
+                    tooltip: AppLocale.nextWeek.getString(context),
                   ),
                 ],
               ),
@@ -185,22 +188,22 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '📚Тип: ${lesson.type}',
+                '📚${AppLocale.type.getString(context)}: ${lesson.type}',
                 style: const TextStyle(
                   fontSize: 16,
                 ),
               ),
               Text(
-                '👨🏼‍🏫Викладачі: ${lesson.teachers.map((teacher) => teacher.fullName).join(", ")}',
+                '👨🏼‍🏫${AppLocale.teachers.getString(context)}: ${lesson.teachers.map((teacher) => teacher.fullName).join(", ")}',
                 style: const TextStyle(
                   fontSize: 16,
                 ),  
               ),
               Text(
-                '📆Час: ${
+                '📆${AppLocale.time.getString(context)}: ${
                   lesson.startTimeToString()} - ${
                   lesson.endTimeToString()}; ${
-                    DateFormat.yMMMMd("uk_UA").format(
+                    DateFormat.yMMMMd(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(
                       DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000)
                 )}',
                 style: const TextStyle(
@@ -208,13 +211,13 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
                 ),
               ),
               Text(
-                '🧑‍🤝‍🧑Групи: ${lesson.groups.map((group) => group.name).join(", ")}',
+                '🧑‍🤝‍🧑${AppLocale.groups.getString(context)}: ${lesson.groups.map((group) => group.name).join(", ")}',
                 style: const TextStyle(
                   fontSize: 16,
                 ),
               ),
               Text(
-                '🏫Аудиторія: ${lesson.auditory}',
+                '🏫${AppLocale.auditory.getString(context)}: ${lesson.auditory}',
                 style: const TextStyle(
                   fontSize: 16,
                 ),
@@ -227,7 +230,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text('Закрити'),
+            child: Text(AppLocale.close.getString(context)),
           ),
         ],
       );

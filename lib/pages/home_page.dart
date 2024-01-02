@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_localization/flutter_localization.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:nure_timetable/api/timetable.dart';
 import 'package:flutter/material.dart';
+import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/lesson.dart';
 import 'package:nure_timetable/models/settings.dart';
 import 'package:calendar_view/calendar_view.dart';
@@ -60,7 +62,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _refresh() async {
     ScaffoldMessenger.of(context)
-        .showSnackBar(snackbar("Оновлення розкладу...", duration: 2));
+        .showSnackBar(snackbar(AppLocale.updatingSchedule.getString(context), duration: 4));
 
     // Updates lessons data
     await _loadLessons(updateFromAPI: true);
@@ -78,7 +80,7 @@ class _HomePageState extends State<HomePage> {
 
           ScaffoldMessenger.of(context).removeCurrentSnackBar();
           ScaffoldMessenger.of(context)
-              .showSnackBar(snackbar("Розклад оновлено!"));
+              .showSnackBar(snackbar(AppLocale.scheduleUpdated.getString(context)));
         }));
   }
 
@@ -93,7 +95,8 @@ class _HomePageState extends State<HomePage> {
 
       if (settings.group.id != 0 && settings.type == 'group') {
         final lessons = timetable.getLessons(
-            settings.group.id, settings.startTime, settings.endTime);
+          settings.group.id, settings.startTime, settings.endTime
+        );
         settings.type = 'group';
         settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
         await saveSettings(settings);
@@ -101,9 +104,11 @@ class _HomePageState extends State<HomePage> {
         lessons.then((lessons) => saveSchedule(lessons));
 
         return lessons;
-      } else if (settings.teacher.id != 0 && settings.type == 'teacher') {
+      }
+      else if (settings.teacher.id != 0 && settings.type == 'teacher') {
         final lessons = timetable.getLessons(
-            settings.teacher.id, settings.startTime, settings.endTime, true);
+          settings.teacher.id, settings.startTime, settings.endTime, true
+        );
         settings.type = 'teacher';
         settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
         await saveSettings(settings);
@@ -111,7 +116,8 @@ class _HomePageState extends State<HomePage> {
         lessons.then((lessons) => saveSchedule(lessons));
 
         return lessons;
-      } else {
+      }
+      else {
         return [];
       }
     } catch (error) {
@@ -144,18 +150,20 @@ class _HomePageState extends State<HomePage> {
                       padding: EdgeInsets.all(80),
                       child: Center(child: CircularProgressIndicator()),
                     );
-                  } else if (snapshot.hasError) {
+                  }
+                  else if (snapshot.hasError) {
                     // Handle error state
                     return Column(
                       children: [
-                        Text('Error: ${snapshot.error}'),
-                        const Text("Спробуйте скинути налаштування:"),
+                        Text('${AppLocale.error.getString(context)}: ${snapshot.error}'),
+                        Text("${AppLocale.tryToResetSettings.getString(context)}:"),
                         TextButton(
                             onPressed: () => showRemoveSettingsDialog(context),
-                            child: const Text("Скинути налаштування"))
+                            child: Text(AppLocale.resetSettings.getString(context))),
                       ],
                     );
-                  } else if (snapshot.hasData) {
+                  }
+                  else if (snapshot.hasData) {
                     final lessons = snapshot.data!;
 
                     final events = lessons.map((lesson) {
@@ -229,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         weekPageHeaderBuilder: (startTime, endTime) {
                           return customCalendarHeaderBuilder(
-                              startTime, endTime, controller, weekViewKey);
+                              startTime, endTime, controller, weekViewKey, context);
                         },
                         showLiveTimeLineInAllDays: false,
                         minDay: DateTime.fromMillisecondsSinceEpoch(
@@ -255,8 +263,9 @@ class _HomePageState extends State<HomePage> {
                         startDay: WeekDays.monday,
                       ),
                     );
-                  } else {
-                    return const Text('No data');
+                  }
+                  else {
+                    return Text(AppLocale.noData.getString(context));
                   }
                 },
               ),
@@ -266,7 +275,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _refresh,
-        tooltip: 'Оновити розклад',
+        tooltip: AppLocale.updateSchedule.getString(context),
         child: const Icon(Icons.refresh),
       ),
     );
@@ -276,8 +285,8 @@ class _HomePageState extends State<HomePage> {
     var snackbar = SnackBar(
       // TODO: music-soul1-1: Change that to proper Internet connection check.
       content: error.toString().contains('No such host is known')
-          ? const Text("Немає підключення до Інтернету.")
-          : Text('Помилка: ${error.toString()}'),
+          ? Text(AppLocale.noConnectionToInternet.getString(context))
+          : Text('${AppLocale.error}: ${error.toString()}'),
       duration: const Duration(seconds: 3),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
@@ -288,7 +297,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           Text(
-            DateFormat.E('uk_UA').format(date),
+            DateFormat.E(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(date),
             style: const TextStyle(
               fontSize: 16,
             ),

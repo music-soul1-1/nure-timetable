@@ -17,23 +17,23 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/api/timetable.dart';
+import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/group.dart';
 import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/models/search_item.dart';
 import 'package:nure_timetable/models/teacher.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 var systemBrightness = Brightness.dark;
 
 
 class GroupsPage extends StatefulWidget {
-  const GroupsPage({super.key, required this.title, required this.themeManager});
+  const GroupsPage({super.key, required this.themeManager});
 
-  final String title;
   final ThemeManager themeManager;
 
   @override
@@ -48,23 +48,6 @@ class _GroupsPageState extends State<GroupsPage> {
   List<SearchItem> searchResult = [];
   List<SearchItem> allItems = [];
 
-
-  Future<AppSettings> loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('appSettings');
-
-    if (jsonString == null) {
-      return AppSettings.getDefaultSettings();
-    }
-
-    return settingsFromJson(jsonString);
-  }
-
-  void removeSettings() {
-    final prefs = SharedPreferences.getInstance();
-    prefs.then((value) => value.remove('appSettings'));
-  }
-
   @override
   void initState() {
     super.initState();
@@ -73,21 +56,6 @@ class _GroupsPageState extends State<GroupsPage> {
       settings = value;
     }));
     loadItems();
-  }
-
-  void loadGroups() async {
-    try {
-      groups = await timetable.getGroups();
-      setState(() {
-        groups;
-      });
-    }
-    catch(error) {
-      if (kDebugMode) {
-        print(error);
-      }
-      showErrorSnackbar(error);
-    }
   }
 
   void loadItems() async {
@@ -102,7 +70,7 @@ class _GroupsPageState extends State<GroupsPage> {
     }
   }
 
-  void showErrorSnackbar(Object error) {
+  void showErrorSnackbar(Object error, [BuildContext? ctx]) {
     var snackbar = SnackBar(
       // TODO: music-soul1-1: Change that to proper Internet connection check.
       content: error.toString().contains('No such host is known')
@@ -110,7 +78,7 @@ class _GroupsPageState extends State<GroupsPage> {
           : Text('Помилка: ${error.toString()}'),
       duration: const Duration(seconds: 3),
     );
-    ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    ScaffoldMessenger.of(ctx ?? context).showSnackBar(snackbar);
   }
 
   @override
@@ -118,16 +86,16 @@ class _GroupsPageState extends State<GroupsPage> {
     systemBrightness = MediaQuery.of(context).platformBrightness;
 
     return Scaffold(
-      appBar: Header("Групи", Icons.people_alt),
+      appBar: Header(AppLocale.groups.getString(context), Icons.people_alt),
       body: Center(
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 40, right: 40, top: 15, bottom: 10),
               child: TextField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Введіть назву групи або ім'я викладача",
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  labelText: AppLocale.enterNameOfGroupOrTeacher.getString(context),
                 ),
                 onChanged: (value) async => {
                   setState(() {
@@ -155,7 +123,10 @@ class _GroupsPageState extends State<GroupsPage> {
                       saveSettings(settings);
 
                       var snackbar = SnackBar(
-                        content: Text(settings.type == "group" ? 'Групу змінено' : 'Викладача змінено'),
+                        content: Text(settings.type == "group"
+                                    ? AppLocale.groupChanged.getString(context)
+                                    : AppLocale.teacherChanged
+                                        .getString(context)),
                         duration: const Duration(seconds: 1),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackbar);

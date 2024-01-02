@@ -13,12 +13,12 @@ Uses [nure-api](https://github.com/mindenit/nure-api).
 - dark and light themes.
 - offline support.
 - customize calendar theme colors.
+- ukranian and english languages.
 
 
 ## Plans
 - automate schedule date picker (so that the app shows schedule for current semester automatically)
 - change app icons for every platform (currently Windows and Android)
-- add English locale
 - host web version
 - refactor and optimize code
 - update some dependencies
@@ -42,20 +42,21 @@ flutter pub run build_runner build
 
 
 ## Dependencies
-- json_annotation: ^4.8.1
-- http: ^1.1.0
-- intl: ^0.18.1
-- shared_preferences: ^2.2.2
-- calendar_view: ^1.0.4
-- settings_ui: ^2.0.2
-- package_info_plus: ^4.2.0
-- url_launcher: ^6.2.1
-- build_runner: ^2.1.5
-- json_serializable: ^6.1.4
+-  json_annotation: ^4.8.1
+-  http: ^1.1.0
+-  intl: ^0.18.1
+-  shared_preferences: ^2.2.2
+-  calendar_view: ^1.0.4
+-  settings_ui: ^2.0.2
+-  package_info_plus: ^4.2.0
+-  url_launcher: ^6.2.1
+-  g_json: ^4.1.0
+-  flutter_colorpicker: ^1.0.3
+-  flutter_localization: ^0.2.0
 
 
 ## License
 
 This app is licensed under [GNU General Public License](https://github.com/music-soul1-1/nure-timetable/blob/main/LICENSE).
 
-Copyright (C) 2023  music-soul1-1
+Copyright (C) 2023-2024  music-soul1-1
