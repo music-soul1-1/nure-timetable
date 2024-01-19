@@ -97,6 +97,8 @@ mixin AppLocale {
   static const selectOthersColor = "selectOthersColor";
   static const resetColorSettings = "resetColorSettings";
   static const doYouReallyWantToResetThisSettings = "doYouReallyWantToResetThisSettings";
+  static const copyDetails = "copyDetails";
+  static const pairNumber = "numberPair";
 
 
   static const Map<String, dynamic> EN = {
@@ -174,6 +176,8 @@ mixin AppLocale {
     selectOthersColor: "Select others color",
     resetColorSettings: "Reset color settings",
     doYouReallyWantToResetThisSettings: "Do you really want to reset this settings?",
+    copyDetails: "Copy details",
+    pairNumber: "Pair number",
   };
 
   static const Map<String, dynamic> UA = {
@@ -251,6 +255,8 @@ mixin AppLocale {
     selectOthersColor: "Оберіть колір інших занять",
     resetColorSettings: "Скинути налаштування кольорів",
     doYouReallyWantToResetThisSettings: "Ви дійсно хочете скинути ці налаштування?",
+    copyDetails: "Скопіювати деталі",
+    pairNumber: "Номер пари",
   };
 
   static String getSchedule(FlutterLocalization localization) {
