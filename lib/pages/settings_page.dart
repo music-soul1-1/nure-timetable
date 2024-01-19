@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/locales/locales.dart';
@@ -373,6 +374,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     SettingsTile.navigation(
                       title: Text(AppLocale.checkUpdates.getString(context)),
+                      enabled: !kIsWeb,
                       leading: const Icon(Icons.update),
                       onPressed: (context) => checkForUpdates(),
                     ),

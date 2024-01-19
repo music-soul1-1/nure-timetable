@@ -21,6 +21,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
+import 'package:nure_timetable/helpers.dart';
 import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/lesson.dart';
 import 'package:nure_timetable/models/lesson_appointment.dart';
@@ -211,6 +212,12 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
                 ),
               ),
               Text(
+                "🔢${AppLocale.pairNumber.getString(context)}: ${lesson.numberPair}",
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              Text(
                 '🧑‍🤝‍🧑${AppLocale.groups.getString(context)}: ${lesson.groups.map((group) => group.name).join(", ")}',
                 style: const TextStyle(
                   fontSize: 16,
@@ -228,9 +235,18 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
         actions: <Widget>[
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              copyLessonDetails(context, lesson);
             },
-            child: Text(AppLocale.close.getString(context)),
+            child: Text(AppLocale.copyDetails.getString(context)),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocale.close.getString(context)),
+            ),
           ),
         ],
       );
