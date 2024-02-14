@@ -69,14 +69,14 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
             title: Text(AppLocale.colorTheme.getString(context)),
             tiles:  <SettingsTile>[
               SettingsTile.navigation(
-                title: Text(AppLocale.lectionColor.getString(context)),
+                title: Text(AppLocale.lectureColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
                   return showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text(AppLocale.selectLectionColor.getString(context)),
+                        title: Text(AppLocale.selectLectureColor.getString(context)),
                         content: SingleChildScrollView(
                           child: ColorPicker(
                             pickerColor: Color(int.parse(settings.themeColors.lecture)),

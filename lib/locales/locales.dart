@@ -82,8 +82,8 @@ mixin AppLocale {
   static const teacher = "teacher";
   static const selectThemeColors = "selectThemeColors";
   static const colorTheme = "colorTheme";
-  static const lectionColor = "lectionColor";
-  static const selectLectionColor = "selectLectionColor";
+  static const lectureColor = "lectureColor";
+  static const selectLectureColor = "selectLectureColor";
   static const apply = "apply";
   static const practiceColor = "practiceColor";
   static const selectPracticeColor = "selectPracticeColor";
@@ -161,8 +161,8 @@ mixin AppLocale {
     teacher: "Teacher",
     selectThemeColors: "Select theme colors",
     colorTheme: "Color theme",
-    lectionColor: "Lection color",
-    selectLectionColor: "Select lection color",
+    lectureColor: "Lecture color",
+    selectLectureColor: "Select lecture color",
     apply: "Apply",
     practiceColor: "Practice color",
     selectPracticeColor: "Select practice color",
@@ -240,8 +240,8 @@ mixin AppLocale {
     teacher: "Викладач",
     selectThemeColors: "Оберіть кольори теми",
     colorTheme: "Корірна тема",
-    lectionColor: "Колір лекцій",
-    selectLectionColor: "Оберіть колір лекцій",
+    lectureColor: "Колір лекцій",
+    selectLectureColor: "Оберіть колір лекцій",
     apply: "Застосувати",
     practiceColor: "Колір практичних занять",
     selectPracticeColor: "Оберіть колір ПЗ",
