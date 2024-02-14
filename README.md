@@ -7,7 +7,7 @@ Uses [nure-api](https://github.com/mindenit/nure-api).
 ## Features
 - view schedule for group or teacher.
 - fast app start.
-- cross-platform.
+- cross-platform (web version [available](https://www.nure-time.pp.ua/)).
 - uses [nure-api](https://github.com/mindenit/nure-api).
 - Material design.
 - dark and light themes.
@@ -18,8 +18,7 @@ Uses [nure-api](https://github.com/mindenit/nure-api).
 
 ## Plans
 - automate schedule date picker (so that the app shows schedule for current semester automatically)
-- change app icons for every platform (currently Windows and Android)
-- host web version
+- change app icons for every platform (currently Windows, Android and Web)
 - refactor and optimize code
 - update some dependencies
 
