@@ -72,10 +72,9 @@ class _GroupsPageState extends State<GroupsPage> {
 
   void showErrorSnackbar(Object error, [BuildContext? ctx]) {
     var snackbar = SnackBar(
-      // TODO: music-soul1-1: Change that to proper Internet connection check.
       content: error.toString().contains('No such host is known')
-          ? const Text("Немає підключення до Інтернету.")
-          : Text('Помилка: ${error.toString()}'),
+            ? Text(AppLocale.noConnectionToInternet.getString(context))
+          : Text('${AppLocale.error.getString(context)}: ${error.toString()}'),
       duration: const Duration(seconds: 3),
     );
     ScaffoldMessenger.of(ctx ?? context).showSnackBar(snackbar);

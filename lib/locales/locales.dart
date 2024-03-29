@@ -101,6 +101,7 @@ mixin AppLocale {
   static const pairNumber = "numberPair";
 
 
+  // ignore: constant_identifier_names
   static const Map<String, dynamic> EN = {
     title: 'Localization',
     appLanguage: 'App language',
@@ -180,6 +181,7 @@ mixin AppLocale {
     pairNumber: "Pair number",
   };
 
+  // ignore: constant_identifier_names
   static const Map<String, dynamic> UA = {
     title: 'Локалізація',
     appLanguage: 'Мова застосунку',

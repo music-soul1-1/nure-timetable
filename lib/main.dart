@@ -38,8 +38,6 @@ import 'theme/theme_manager.dart';
 var _themeManager = ThemeManager();
 final FlutterLocalization localization = FlutterLocalization.instance;
 
-// TODO: music-soul1-1: change app icons for every platform (currently windows and android)
-// TODO: music-soul1-1: add app locales
 void main() {
   runApp(const MyApp());
   initializeDateFormatting(localization.currentLocale?.languageCode == "uk" ? 'uk_UA' : 'en_UK');

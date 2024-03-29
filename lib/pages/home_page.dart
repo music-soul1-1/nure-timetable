@@ -283,10 +283,9 @@ class _HomePageState extends State<HomePage> {
 
   void showErrorSnackbar(Object error) {
     var snackbar = SnackBar(
-      // TODO: music-soul1-1: Change that to proper Internet connection check.
       content: error.toString().contains('No such host is known')
           ? Text(AppLocale.noConnectionToInternet.getString(context))
-          : Text('${AppLocale.error}: ${error.toString()}'),
+          : Text('${AppLocale.error.getString(context)}: ${error.toString()}'),
       duration: const Duration(seconds: 3),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
