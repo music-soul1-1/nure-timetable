@@ -38,7 +38,7 @@ dependencies:
 
   json_annotation: ^4.8.1
   http: ^1.1.0
-  intl: ^0.18.1
+  intl: '0.18.1'
   shared_preferences: ^2.2.2
   calendar_view: ^1.0.4
   settings_ui: ^2.0.2
