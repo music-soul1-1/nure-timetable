@@ -31,22 +31,23 @@ dependencies:
   flutter:
     sdk: flutter
 
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-
   json_annotation: ^4.8.1
   http: ^1.1.0
-  intl: '0.18.1'
+  intl: ^0.18.1
   shared_preferences: ^2.2.2
-  calendar_view: ^1.0.4
   settings_ui: ^2.0.2
   package_info_plus: ^4.2.0
   url_launcher: ^6.2.1
   g_json: ^4.1.0
   flutter_colorpicker: ^1.0.3
   flutter_localization: ^0.2.0
+  calendar_view: ^1.1.0
+
+# The following overrides are required to avoid version conflicts.
+dependency_overrides:
+  intl: 0.18.1
+  flutter_localization: 0.2.0
+  calendar_view: 1.0.4 # 1.1.0 has some bugs
 
 dev_dependencies:
   flutter_test:
