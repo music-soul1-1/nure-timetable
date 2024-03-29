@@ -97,7 +97,7 @@ class AboutAppDialog extends StatelessWidget {
                     onPressed: () {
                       _launchUrl('https://github.com/music-soul1-1/nure-timetable/blob/main/LICENSE');
                     },
-                    child: const Text("MIT")
+                    child: const Text("GPL-3.0")
                   ),
                 ],
               ),
