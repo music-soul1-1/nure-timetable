@@ -16,7 +16,6 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/settings.dart';
@@ -78,11 +77,6 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                       return AlertDialog(
                         title: Text(AppLocale.selectLectureColor.getString(context)),
                         content: SingleChildScrollView(
-                          child: ColorPicker(
-                            pickerColor: Color(int.parse(settings.themeColors.lecture)),
-                            onColorChanged: changeColor,
-                            pickerAreaHeightPercent: 0.8,
-                          ),
                         ),
                         actions: <Widget>[
                           TextButton(
@@ -115,11 +109,6 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                       return AlertDialog(
                         title: Text(AppLocale.selectPracticeColor.getString(context)),
                         content: SingleChildScrollView(
-                          child: ColorPicker(
-                            pickerColor: Color(int.parse(settings.themeColors.practice)),
-                            onColorChanged: changeColor,
-                            pickerAreaHeightPercent: 0.8,
-                          ),
                         ),
                         actions: <Widget>[
                           TextButton(
@@ -152,11 +141,6 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                       return AlertDialog(
                         title: Text(AppLocale.selectLabColor.getString(context)),
                         content: SingleChildScrollView(
-                          child: ColorPicker(
-                            pickerColor: Color(int.parse(settings.themeColors.laboratory)),
-                            onColorChanged: changeColor,
-                            pickerAreaHeightPercent: 0.8,
-                          ),
                         ),
                         actions: <Widget>[
                           TextButton(
@@ -189,11 +173,6 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                       return AlertDialog(
                         title: Text(AppLocale.selectConsultationColor.getString(context)),
                         content: SingleChildScrollView(
-                          child: ColorPicker(
-                            pickerColor: Color(int.parse(settings.themeColors.consultation)),
-                            onColorChanged: changeColor,
-                            pickerAreaHeightPercent: 0.8,
-                          ),
                         ),
                         actions: <Widget>[
                           TextButton(
@@ -226,11 +205,6 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                       return AlertDialog(
                         title: Text(AppLocale.selectExamColor.getString(context)),
                         content: SingleChildScrollView(
-                          child: ColorPicker(
-                            pickerColor: Color(int.parse(settings.themeColors.exam)),
-                            onColorChanged: changeColor,
-                            pickerAreaHeightPercent: 0.8,
-                          ),
                         ),
                         actions: <Widget>[
                           TextButton(
@@ -263,11 +237,6 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                       return AlertDialog(
                         title: Text(AppLocale.selectOthersColor.getString(context)),
                         content: SingleChildScrollView(
-                          child: ColorPicker(
-                            pickerColor: Color(int.parse(settings.themeColors.other)),
-                            onColorChanged: changeColor,
-                            pickerAreaHeightPercent: 0.8,
-                          ),
                         ),
                         actions: <Widget>[
                           TextButton(
