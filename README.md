@@ -13,7 +13,7 @@ Uses [nure-api](https://github.com/mindenit/nure-api).
 - dark and light themes.
 - offline support.
 - customize calendar theme colors.
-- ukranian and english languages.
+- Ukrainian and English languages.
 
 
 ## Plans
@@ -41,17 +41,17 @@ flutter pub run build_runner build
 
 
 ## Dependencies
--  json_annotation: ^4.8.1
--  http: ^1.1.0
--  intl: ^0.18.1
--  shared_preferences: ^2.2.2
--  calendar_view: ^1.0.4
--  settings_ui: ^2.0.2
--  package_info_plus: ^4.2.0
--  url_launcher: ^6.2.1
--  g_json: ^4.1.0
--  flutter_colorpicker: ^1.0.3
--  flutter_localization: ^0.2.0
+-  [json_annotation](https://pub.dev/packages/json_annotation)
+-  [http](https://pub.dev/packages/http)
+-  [intl](https://pub.dev/packages/intl)
+-  [shared_preferences](https://pub.dev/packages/shared_preferences)
+-  [calendar_view](https://pub.dev/packages/calendar_view)
+-  [settings_ui](https://pub.dev/packages/settings_ui)
+-  [package_info_plus](https://pub.dev/packages/package_info_plus)
+-  [url_launcher](https://pub.dev/packages/url_launcher)
+-  [g_json](https://pub.dev/packages/g_json)
+-  [flex_color_picker](https://pub.dev/packages/flex_color_picker)
+-  [flutter_localization](https://pub.dev/packages/flutter_localization)
 
 
 ## License
