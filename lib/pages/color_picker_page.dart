@@ -22,6 +22,9 @@ import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:nure_timetable/theme/themes.dart';
+import '../types/lesson_type.dart';
 
 
 class ColorPickerPage extends StatefulWidget {
@@ -71,192 +74,42 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                 title: Text(AppLocale.lectureColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
-                  return showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(AppLocale.selectLectureColor.getString(context)),
-                        content: SingleChildScrollView(
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text(AppLocale.close.getString(context))
-                          ),
-                          TextButton(
-                            child: Text(AppLocale.apply.getString(context)),
-                            onPressed: () async {
-                              settings.themeColors.lecture = pickerColor.value.toString();
-                              Navigator.of(context).pop();
-                              
-                              await saveSettings(settings);
-                              setState(() => {});
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  return showColorPicker(context, LessonType.lecture);
                 },
               ),
               SettingsTile.navigation(
                 title: Text(AppLocale.practiceColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
-                  return showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(AppLocale.selectPracticeColor.getString(context)),
-                        content: SingleChildScrollView(
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text(AppLocale.close.getString(context))
-                          ),
-                          TextButton(
-                            child: Text(AppLocale.apply.getString(context)),
-                            onPressed: () async {
-                              settings.themeColors.practice = pickerColor.value.toString();
-                              Navigator.of(context).pop();
-                              
-                              await saveSettings(settings);
-                              setState(() => {});
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  return showColorPicker(context, LessonType.practice);
                 },
               ),
               SettingsTile.navigation(
                 title: Text(AppLocale.labColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
-                  return showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(AppLocale.selectLabColor.getString(context)),
-                        content: SingleChildScrollView(
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text(AppLocale.close.getString(context))
-                          ),
-                          TextButton(
-                            child: Text(AppLocale.apply.getString(context)),
-                            onPressed: () async {
-                              settings.themeColors.laboratory = pickerColor.value.toString();
-                              Navigator.of(context).pop();
-                              
-                              await saveSettings(settings);
-                              setState(() => {});
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  return showColorPicker(context, LessonType.laboratory);
                 },
               ),
               SettingsTile.navigation(
                 title: Text(AppLocale.consultationColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
-                  return showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(AppLocale.selectConsultationColor.getString(context)),
-                        content: SingleChildScrollView(
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text(AppLocale.close.getString(context))
-                          ),
-                          TextButton(
-                            child: Text(AppLocale.apply.getString(context)),
-                            onPressed: () async {
-                              settings.themeColors.consultation = pickerColor.value.toString();
-                              Navigator.of(context).pop();
-                              
-                              await saveSettings(settings);
-                              setState(() => {});
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  return showColorPicker(context, LessonType.consultation);
                 },
               ),
               SettingsTile.navigation(
                 title: Text(AppLocale.examColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
-                  return showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(AppLocale.selectExamColor.getString(context)),
-                        content: SingleChildScrollView(
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text(AppLocale.close.getString(context))
-                          ),
-                          TextButton(
-                            child: Text(AppLocale.apply.getString(context)),
-                            onPressed: () async {
-                              settings.themeColors.exam = pickerColor.value.toString();
-                              Navigator.of(context).pop();
-                              
-                              await saveSettings(settings);
-                              setState(() => {});
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  return showColorPicker(context, LessonType.exam);
                 },
               ),
               SettingsTile.navigation(
                 title: Text(AppLocale.othersColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
-                  return showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(AppLocale.selectOthersColor.getString(context)),
-                        content: SingleChildScrollView(
-                        ),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text(AppLocale.close.getString(context))
-                          ),
-                          TextButton(
-                            child: Text(AppLocale.apply.getString(context)),
-                            onPressed: () async {
-                              settings.themeColors.other = pickerColor.value.toString();
-                              Navigator.of(context).pop();
-                              
-                              await saveSettings(settings);
-                              setState(() => {});
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  return showColorPicker(context, LessonType.other);
                 },
               ),
             ],
@@ -299,6 +152,78 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<dynamic> showColorPicker(BuildContext context, LessonType type) {
+    pickerColor = Color(int.parse(
+      switch (type) {
+        LessonType.lecture => settings.themeColors.lecture,
+        LessonType.practice => settings.themeColors.practice,
+        LessonType.laboratory => settings.themeColors.laboratory,
+        LessonType.consultation => settings.themeColors.consultation,
+        LessonType.exam => settings.themeColors.exam,
+        LessonType.other => settings.themeColors.other,
+      }
+    ));
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+                  switch (type) {
+                    LessonType.lecture => AppLocale.selectLectureColor.getString(context),
+                    LessonType.practice => AppLocale.selectPracticeColor.getString(context),
+                    LessonType.laboratory => AppLocale.selectLabColor.getString(context),
+                    LessonType.consultation => AppLocale.selectConsultationColor.getString(context),
+                    LessonType.exam => AppLocale.selectExamColor.getString(context),
+                    LessonType.other => AppLocale.selectOthersColor.getString(context),
+                  }),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              color: pickerColor,
+              onColorChanged: changeColor,
+              pickersEnabled: const <ColorPickerType, bool>{
+                ColorPickerType.wheel: true,
+                ColorPickerType.primary: true,
+                ColorPickerType.accent: false,
+              },
+              pickerTypeLabels: <ColorPickerType, String>{
+                ColorPickerType.wheel: AppLocale.wheel.getString(context),
+                ColorPickerType.primary: AppLocale.primary.getString(context),
+              },
+              subheading: Text(AppLocale.selectShade.getString(context)),
+              wheelDiameter: 240,
+              selectedPickerTypeColor: darkTheme.colorScheme.primary,
+              wheelSquarePadding: 4,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(AppLocale.close.getString(context))
+            ),
+            TextButton(
+              child: Text(AppLocale.apply.getString(context)),
+              onPressed: () async {
+                switch (type) {
+                  case LessonType.lecture: settings.themeColors.lecture = pickerColor.value.toString();
+                  case LessonType.practice: settings.themeColors.practice = pickerColor.value.toString();
+                  case LessonType.laboratory: settings.themeColors.laboratory = pickerColor.value.toString();
+                  case LessonType.consultation: settings.themeColors.consultation = pickerColor.value.toString();
+                  case LessonType.exam: settings.themeColors.exam = pickerColor.value.toString();
+                  case LessonType.other: settings.themeColors.other = pickerColor.value.toString();
+                }
+                Navigator.of(context).pop();
+                
+                await saveSettings(settings);
+                setState(() => {});
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

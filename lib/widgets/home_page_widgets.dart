@@ -43,6 +43,14 @@ Widget customEventTileBuilder(date, events, boundary, start, end, ThemeColors th
           isMobile
               ? BorderRadius.circular(6)
               : BorderRadius.circular(12),
+      boxShadow: List<BoxShadow>.generate(
+        2,
+        (index) => BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          blurRadius: 2,
+          offset: const Offset(-1, 1),
+        ),
+      ),
     ),
     child: Center(
       child: Column(
@@ -106,7 +114,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
                   ? "${AppLocale.nextLesson.getString(context)}: ${nextLesson.lesson.subject.brief}; " 
                   "${nextLesson.lesson.startTimeToString()}, ${DateFormat.Md(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(nextLesson.startTime!)}"
                   : "${AppLocale.noLessonsInNearFuture.getString(context)} 😎",
-              textScaleFactor: 1.2,
+              textScaler: const TextScaler.linear(1.2),
             ),
           ) : 
           const SizedBox(
@@ -129,7 +137,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
                     padding: const EdgeInsets.only(left: 10),
                     child: Text(
                       DateFormat.yMMMM(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(startDate),
-                      textScaleFactor: 1.2,
+                      textScaler: const TextScaler.linear(1.2),
                     ),
                   )
                 ],
@@ -144,7 +152,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
                     ? "${AppLocale.nextLesson.getString(context)}: ${nextLesson.lesson.subject.brief}; " 
                     "${nextLesson.lesson.startTimeToString()}, ${DateFormat.Md(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(nextLesson.startTime!)}"
                     : "${AppLocale.noLessonsInNearFuture.getString(context)} 😎",
-                textScaleFactor: 1.2,
+                textScaler: const TextScaler.linear(1.2),
               ),
               Row(
                 children: [

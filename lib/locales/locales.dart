@@ -99,6 +99,10 @@ mixin AppLocale {
   static const doYouReallyWantToResetThisSettings = "doYouReallyWantToResetThisSettings";
   static const copyDetails = "copyDetails";
   static const pairNumber = "numberPair";
+  static const wheel = "wheel";
+  static const primary = "primary";
+  static const shade = "shade";
+  static const selectShade = "selectShade";
 
 
   // ignore: constant_identifier_names
@@ -179,6 +183,10 @@ mixin AppLocale {
     doYouReallyWantToResetThisSettings: "Do you really want to reset this settings?",
     copyDetails: "Copy details",
     pairNumber: "Pair number",
+    wheel: "Wheel",
+    primary: "Primary",
+    shade: "Shade",
+    selectShade: "Select shade",
   };
 
   // ignore: constant_identifier_names
@@ -241,7 +249,7 @@ mixin AppLocale {
     group: "Група",
     teacher: "Викладач",
     selectThemeColors: "Оберіть кольори теми",
-    colorTheme: "Корірна тема",
+    colorTheme: "Колірна тема",
     lectureColor: "Колір лекцій",
     selectLectureColor: "Оберіть колір лекцій",
     apply: "Застосувати",
@@ -259,6 +267,10 @@ mixin AppLocale {
     doYouReallyWantToResetThisSettings: "Ви дійсно хочете скинути ці налаштування?",
     copyDetails: "Скопіювати деталі",
     pairNumber: "Номер пари",
+    wheel: "Колесо",
+    primary: "Основний",
+    shade: "Відтінок",
+    selectShade: "Оберіть відтінок",
   };
 
   static String getSchedule(FlutterLocalization localization) {
