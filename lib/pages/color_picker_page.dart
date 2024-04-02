@@ -21,7 +21,7 @@ import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
-import 'package:settings_ui/settings_ui.dart';
+import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:nure_timetable/theme/themes.dart';
 import '../types/lesson_type.dart';

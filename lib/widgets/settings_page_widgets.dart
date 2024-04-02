@@ -24,7 +24,7 @@ import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/models/update_info.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:settings_ui/settings_ui.dart';
+import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 

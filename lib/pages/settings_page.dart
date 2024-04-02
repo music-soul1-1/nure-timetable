@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
-import 'package:settings_ui/settings_ui.dart';
+import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/models/update_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -216,7 +216,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             return AlertDialog(
                               title: Text(AppLocale.selectLanguage.getString(context)),
                               content: SizedBox(
-                                width: double.minPositive,
+                                width: 350,
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   itemCount: 2,
