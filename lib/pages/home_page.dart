@@ -67,10 +67,9 @@ class _HomePageState extends State<HomePage> {
     // Updates lessons data
     await _loadLessons(updateFromAPI: true);
 
-    // .map method doesn't work here
-    for (var event in controller.events) {
-      controller.remove(event);
-    }
+    List<CalendarEventData<Object?>> eventsToRemove = List.from(controller.allEvents);
+
+    eventsToRemove.map((event) => controller.remove(event));
 
     loadSettings().then((value) => setState(() {
           widget.themeManager.toggleTheme(value.useSystemTheme
@@ -231,8 +230,8 @@ class _HomePageState extends State<HomePage> {
                             ),
                           );
                         },
-                        scrollOffset: 450,
-                        liveTimeIndicatorSettings: const HourIndicatorSettings(
+                        startHour: 7,
+                        liveTimeIndicatorSettings: const LiveTimeIndicatorSettings(
                           color: Color(0xFF06DDF6),
                         ),
                         weekPageHeaderBuilder: (startTime, endTime) {

@@ -18,7 +18,7 @@ Uses [nure-api](https://github.com/mindenit/nure-api).
 
 ## Plans
 - automate schedule date picker (so that the app shows schedule for current semester automatically)
-- change app icons for every platform (currently Windows, Android and Web)
+- change app icons for Linux
 - refactor and optimize code
 - update some dependencies
 
@@ -46,7 +46,7 @@ flutter pub run build_runner build
 -  [intl](https://pub.dev/packages/intl)
 -  [shared_preferences](https://pub.dev/packages/shared_preferences)
 -  [calendar_view](https://pub.dev/packages/calendar_view)
--  [settings_ui](https://pub.dev/packages/settings_ui)
+-  [flutter_settings_ui](https://pub.dev/packages/flutter_settings_ui)
 -  [package_info_plus](https://pub.dev/packages/package_info_plus)
 -  [url_launcher](https://pub.dev/packages/url_launcher)
 -  [g_json](https://pub.dev/packages/g_json)
