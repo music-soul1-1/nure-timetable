@@ -48,11 +48,23 @@ class SettingsManager with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString('appSettings');
 
-    if (jsonString == null) {
-      return app_settings.AppSettings.getDefaultSettings();
+    try {
+      if (jsonString == null) {
+        throw Exception('Settings not found in SharedPreferences.');
+      }
+
+      _settings = _settingsFromJson(jsonString);
+    }
+    catch (e) {
+      if (kDebugMode) {
+        print('Error while loading settings: $e');
+      }
+      
+      _settings = app_settings.AppSettings.getDefaultSettings();
+
+      saveSettings(_settings);
     }
 
-    _settings = _settingsFromJson(jsonString);
     notifyListeners();
 
     return _settings;
@@ -63,13 +75,26 @@ class SettingsManager with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final scheduleJsonList = prefs.getStringList('schedule');
 
-    if (scheduleJsonList == null) {
-      return [];
-    }
+    try {
+      if (scheduleJsonList == null) {
+        _schedule = [];
 
-    _schedule = scheduleJsonList
-        .map((jsonString) => Lesson.fromJson(jsonDecode(jsonString)))
-        .toList();
+        return [];
+      }
+
+      _schedule = scheduleJsonList
+          .map((jsonString) => Lesson.fromJson(jsonDecode(jsonString)))
+          .toList();      
+    }
+    catch (e) {
+      if (kDebugMode) {
+        print('Error while loading schedule: $e');
+      }
+
+      _schedule = [];
+
+      saveSchedule(_schedule);
+    }
 
     notifyListeners();
 
