@@ -59,10 +59,12 @@ class SettingsManager with ChangeNotifier {
       if (kDebugMode) {
         print('Error while loading settings: $e');
       }
+
+      await prefs.clear();
       
       _settings = app_settings.AppSettings.getDefaultSettings();
 
-      saveSettings(_settings);
+      await saveSettings(_settings);
     }
 
     notifyListeners();
@@ -91,9 +93,11 @@ class SettingsManager with ChangeNotifier {
         print('Error while loading schedule: $e');
       }
 
+      await prefs.clear();
+
       _schedule = [];
 
-      saveSchedule(_schedule);
+      await saveSchedule(_schedule);
     }
 
     notifyListeners();

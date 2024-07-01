@@ -68,14 +68,14 @@ Widget customEventTileBuilder(date, events, boundary, start, end, ThemeColors th
             event.lesson.type.shortName,
             style: TextStyle(
               color: Colors.white,
-              fontSize: isMobile ? 12 : 13,
+              fontSize: isMobile ? 11 : 13,
             ),
           ),
           Text(
             event.lesson.auditory.name,
             style: TextStyle(
               color: Colors.white,
-              fontSize: isMobile ? 10 : 12,
+              fontSize: isMobile ? 9 : 12,
             ),
           ),
           Text(

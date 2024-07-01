@@ -40,6 +40,8 @@ var _settingsManager = SettingsManager();
 final FlutterLocalization localization = FlutterLocalization.instance;
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
   await _settingsManager.loadSettings();
   
   runApp(const MyApp());
