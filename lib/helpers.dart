@@ -29,8 +29,8 @@ final FlutterLocalization localization = FlutterLocalization.instance;
 void copyLessonDetails(BuildContext context, Lesson lesson) {
   Clipboard.setData(
     ClipboardData(
-      text: "${lesson.subject.title}" "\n\n"
-      "${AppLocale.type.getString(context)}: ${lesson.type}" "\n"
+      text: "${lesson.title}" "\n\n"
+      "${AppLocale.type.getString(context)}: ${lesson.type.fullName}" "\n"
       "${AppLocale.teachers.getString(context)}: ${lesson.teachers.map((teacher) => teacher.fullName).join(", ")}" "\n"
       "${AppLocale.time.getString(context)}: ${
         lesson.startTimeToString()} - ${
@@ -40,7 +40,7 @@ void copyLessonDetails(BuildContext context, Lesson lesson) {
       )}" "\n"
       "${AppLocale.pairNumber.getString(context)}: ${lesson.numberPair}" "\n"
       "${AppLocale.groups.getString(context)}: ${lesson.groups.map((group) => group.name).join(", ")}" "\n"
-      "${AppLocale.auditory.getString(context)}: ${lesson.auditory}"
+      "${AppLocale.auditory.getString(context)}: ${lesson.auditory.name}"
     ),
   );
 }

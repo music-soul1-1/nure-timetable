@@ -17,6 +17,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:nure_timetable/models/settings.dart';
+import 'package:nure_timetable/types/entity_type.dart';
 
 
 SnackBar snackbar(String text, {int duration = 1}) {
@@ -44,7 +45,7 @@ AppBar HomeHeader(AppSettings settings, IconData iconData) {
           ),
         ),
         Text(
-          settings.type == 'group' ? settings.group.name : settings.teacher.shortName,
+          settings.type == EntityType.group ? settings.group.name : settings.teacher.shortName,
           style: const TextStyle(
             color: Color(0xFF06DDF6),
             fontSize: 20,

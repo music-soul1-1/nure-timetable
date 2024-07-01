@@ -27,7 +27,9 @@ class ThemeColors {
     required this.practice,
     required this.laboratory,
     required this.consultation,
+    required this.test,
     required this.exam,
+    required this.courseWork,
     required this.other,
   });
 
@@ -47,20 +49,28 @@ class ThemeColors {
   @JsonKey(name: 'consultation')
   late String consultation;
 
+  @JsonKey(name: 'test')
+  late String test;
+
   @JsonKey(name: 'exam')
   late String exam;
 
+  @JsonKey(name: 'courseWork')
+  late String courseWork;
+
   @JsonKey(name: 'other')
   late String other;
-}
 
-ThemeColors getDefaultSettings() {
-  return ThemeColors(
-    lecture: "0xFFAD8827",
-    practice: "0xFF1C8834",
-    laboratory: "0xFF5A2194",
-    consultation: "0xFF1E7F85",
-    exam: "0xFF8E1D1D",
-    other: "0xFF9A1A95",
-  );
+  static ThemeColors getDefaultSettings() {
+    return ThemeColors(
+      lecture: "0xFFAD8827",
+      practice: "0xFF1C8834",
+      laboratory: "0xFF5A2194",
+      consultation: "0xFF1E7F85",
+      test: "0xFF9A1A95",
+      exam: "0xFF8E1D1D",
+      courseWork: "0xFF50B02E",
+      other: "0xFFAD12E6",
+    );
+  }
 }

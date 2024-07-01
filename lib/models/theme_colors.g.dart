@@ -11,7 +11,9 @@ ThemeColors _$ThemeColorsFromJson(Map<String, dynamic> json) => ThemeColors(
       practice: json['practice'] as String,
       laboratory: json['laboratory'] as String,
       consultation: json['consultation'] as String,
+      test: json['test'] as String,
       exam: json['exam'] as String,
+      courseWork: json['courseWork'] as String,
       other: json['other'] as String,
     );
 
@@ -21,6 +23,8 @@ Map<String, dynamic> _$ThemeColorsToJson(ThemeColors instance) =>
       'practice': instance.practice,
       'laboratory': instance.laboratory,
       'consultation': instance.consultation,
+      'test': instance.test,
       'exam': instance.exam,
+      'courseWork': instance.courseWork,
       'other': instance.other,
     };

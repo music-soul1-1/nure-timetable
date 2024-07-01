@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/settings.dart';
+import 'package:nure_timetable/settings/settings_manager.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
@@ -29,23 +30,21 @@ import '../types/lesson_type.dart';
 
 class ColorPickerPage extends StatefulWidget {
   final ThemeManager themeManager;
-  final AppSettings outerSettings;
+  final SettingsManager settingsManager;
 
-  const ColorPickerPage({super.key, required this.themeManager, required this.outerSettings});
+  const ColorPickerPage({super.key, required this.settingsManager, required this.themeManager});
 
   @override
    State<ColorPickerPage> createState() => _ColorPickerPageState();
 }
 
 class _ColorPickerPageState extends State<ColorPickerPage> {
-  late AppSettings settings;
   Color pickerColor = const Color(0xff443a49);
 
 
   @override
   void initState() {
     super.initState();
-    settings = widget.outerSettings;
   }
 
   void changeColor(Color color) {
@@ -99,10 +98,24 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                 },
               ),
               SettingsTile.navigation(
+                title: Text(AppLocale.testColor.getString(context)),
+                leading: const Icon(Icons.color_lens_outlined),
+                onPressed: (context) {
+                  return showColorPicker(context, LessonType.test);
+                },
+              ),
+              SettingsTile.navigation(
                 title: Text(AppLocale.examColor.getString(context)),
                 leading: const Icon(Icons.color_lens_outlined),
                 onPressed: (context) {
                   return showColorPicker(context, LessonType.exam);
+                },
+              ),
+              SettingsTile.navigation(
+                title: Text(AppLocale.courseWorkColor.getString(context)),
+                leading: const Icon(Icons.color_lens_outlined),
+                onPressed: (context) {
+                  return showColorPicker(context, LessonType.courseWork);
                 },
               ),
               SettingsTile.navigation(
@@ -129,11 +142,11 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                         actions: [
                           TextButton(
                             onPressed: () async {
-                              settings.themeColors = AppSettings.getDefaultSettings().themeColors;
+                              widget.settingsManager.settings.themeColors = AppSettings.getDefaultSettings().themeColors;
                               Navigator.of(context).pop();
 
-                              await saveSettings(settings);
-                              setState(() => settings);
+                              await widget.settingsManager.saveSettings(widget.settingsManager.settings);
+                              setState(() => widget.settingsManager.settings);
                             },
                             child: Text(AppLocale.yes.getString(context)),
                           ),
@@ -158,12 +171,14 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
   Future<dynamic> showColorPicker(BuildContext context, LessonType type) {
     pickerColor = Color(int.parse(
       switch (type) {
-        LessonType.lecture => settings.themeColors.lecture,
-        LessonType.practice => settings.themeColors.practice,
-        LessonType.laboratory => settings.themeColors.laboratory,
-        LessonType.consultation => settings.themeColors.consultation,
-        LessonType.exam => settings.themeColors.exam,
-        LessonType.other => settings.themeColors.other,
+        LessonType.lecture => widget.settingsManager.settings.themeColors.lecture,
+        LessonType.practice => widget.settingsManager.settings.themeColors.practice,
+        LessonType.laboratory => widget.settingsManager.settings.themeColors.laboratory,
+        LessonType.consultation => widget.settingsManager.settings.themeColors.consultation,
+        LessonType.test => widget.settingsManager.settings.themeColors.test,
+        LessonType.exam => widget.settingsManager.settings.themeColors.exam,
+        LessonType.courseWork => widget.settingsManager.settings.themeColors.courseWork,
+        LessonType.other => widget.settingsManager.settings.themeColors.other,
       }
     ));
 
@@ -177,7 +192,9 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
                     LessonType.practice => AppLocale.selectPracticeColor.getString(context),
                     LessonType.laboratory => AppLocale.selectLabColor.getString(context),
                     LessonType.consultation => AppLocale.selectConsultationColor.getString(context),
+                    LessonType.test => AppLocale.selectTestColor.getString(context),
                     LessonType.exam => AppLocale.selectExamColor.getString(context),
+                    LessonType.courseWork => AppLocale.selectCourseWorkColor.getString(context),
                     LessonType.other => AppLocale.selectOthersColor.getString(context),
                   }),
           content: SingleChildScrollView(
@@ -208,16 +225,18 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
               child: Text(AppLocale.apply.getString(context)),
               onPressed: () async {
                 switch (type) {
-                  case LessonType.lecture: settings.themeColors.lecture = pickerColor.value.toString();
-                  case LessonType.practice: settings.themeColors.practice = pickerColor.value.toString();
-                  case LessonType.laboratory: settings.themeColors.laboratory = pickerColor.value.toString();
-                  case LessonType.consultation: settings.themeColors.consultation = pickerColor.value.toString();
-                  case LessonType.exam: settings.themeColors.exam = pickerColor.value.toString();
-                  case LessonType.other: settings.themeColors.other = pickerColor.value.toString();
+                  case LessonType.lecture: widget.settingsManager.settings.themeColors.lecture = pickerColor.value.toString();
+                  case LessonType.practice: widget.settingsManager.settings.themeColors.practice = pickerColor.value.toString();
+                  case LessonType.laboratory: widget.settingsManager.settings.themeColors.laboratory = pickerColor.value.toString();
+                  case LessonType.consultation: widget.settingsManager.settings.themeColors.consultation = pickerColor.value.toString();
+                  case LessonType.test: widget.settingsManager.settings.themeColors.test = pickerColor.value.toString();
+                  case LessonType.exam: widget.settingsManager.settings.themeColors.exam = pickerColor.value.toString();
+                  case LessonType.courseWork: widget.settingsManager.settings.themeColors.courseWork = pickerColor.value.toString();
+                  case LessonType.other: widget.settingsManager.settings.themeColors.other = pickerColor.value.toString();
                 }
                 Navigator.of(context).pop();
                 
-                await saveSettings(settings);
+                await widget.settingsManager.saveSettings(widget.settingsManager.settings);
                 setState(() => {});
               },
             ),
