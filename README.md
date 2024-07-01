@@ -1,14 +1,14 @@
 # NureTimetable
 
 Schedule app for Kharkiv National University of Radio Electronics. Written in Flutter.
-Uses [nure-api](https://github.com/mindenit/nure-api).
+Uses [NureTimetableAPI](https://github.com/music-soul1-1/NureTimetableAPI).
 
 
 ## Features
 - view schedule for group or teacher.
 - fast app start.
 - cross-platform (web version [available](https://www.nure-time.pp.ua/)).
-- uses [nure-api](https://github.com/mindenit/nure-api).
+- uses [NureTimetableAPI](https://github.com/music-soul1-1/NureTimetableAPI).
 - Material design.
 - dark and light themes.
 - offline support.
@@ -17,7 +17,7 @@ Uses [nure-api](https://github.com/mindenit/nure-api).
 
 
 ## Plans
-- automate schedule date picker (so that the app shows schedule for current semester automatically)
+- automate or remove schedule date picker (so that the app shows schedule for current semester automatically)
 - change app icons for Linux
 - refactor and optimize code
 - update some dependencies
