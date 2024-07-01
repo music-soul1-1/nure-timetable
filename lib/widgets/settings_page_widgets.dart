@@ -22,6 +22,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/models/update_info.dart';
+import 'package:nure_timetable/settings/settings_manager.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
@@ -110,12 +111,12 @@ class AboutAppDialog extends StatelessWidget {
                     ),
                   ),
                   TextButton(
-                    child: const Text("Mindenit team"),
-                    onPressed: () => _launchUrl('https://github.com/mindenit'),
+                    child: const Text("Documentation"),
+                    onPressed: () => _launchUrl("https://music-soul1-1.github.io/NureTimetableAPI.Docs/"),
                   ),
                   TextButton(
                     child: const Text("GitHub"),
-                    onPressed: () => _launchUrl('https://github.com/mindenit/nure-api'),
+                    onPressed: () => _launchUrl("https://github.com/music-soul1-1/NureTimetableAPI"),
                   ),
                 ],
               )
@@ -128,7 +129,7 @@ class AboutAppDialog extends StatelessWidget {
 }
 
 
-Future<dynamic> showRemoveSettingsDialog(BuildContext context) {
+Future<dynamic> showRemoveSettingsDialog(BuildContext context, SettingsManager settingsManager) {
   return showDialog(
     context: context, 
     builder: (BuildContext context) {
@@ -137,7 +138,7 @@ Future<dynamic> showRemoveSettingsDialog(BuildContext context) {
         actions: [
           TextButton(
             onPressed: () {
-              removeSettings(removeSchedule: true);
+              settingsManager.removeSettings(removeSchedule: true);
               Navigator.of(context).pop();
             },
             child: Text(AppLocale.yes.getString(context)),

@@ -21,10 +21,11 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/api/timetable.dart';
 import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/group.dart';
-import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/models/search_item.dart';
 import 'package:nure_timetable/models/teacher.dart';
+import 'package:nure_timetable/settings/settings_manager.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
+import 'package:nure_timetable/types/entity_type.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
 
 
@@ -32,9 +33,10 @@ var systemBrightness = Brightness.dark;
 
 
 class GroupsPage extends StatefulWidget {
-  const GroupsPage({super.key, required this.themeManager});
+  const GroupsPage({super.key, required this.settingsManager, required this.themeManager});
 
   final ThemeManager themeManager;
+  final SettingsManager settingsManager;
 
   @override
   State<GroupsPage> createState() => _GroupsPageState();
@@ -42,7 +44,6 @@ class GroupsPage extends StatefulWidget {
 
 class _GroupsPageState extends State<GroupsPage> {
   var timetable = Timetable();
-  var settings = AppSettings.getDefaultSettings();
   List<Group> groups = [];
   List<Teacher> teachers = [];
   List<SearchItem> searchResult = [];
@@ -51,14 +52,19 @@ class _GroupsPageState extends State<GroupsPage> {
   @override
   void initState() {
     super.initState();
-    loadSettings().then((value) => setState(() {
-      widget.themeManager.toggleTheme(value.useSystemTheme ? (systemBrightness == Brightness.dark) : value.darkThemeEnabled);
-      settings = value;
-    }));
-    loadItems();
+    loadItems().then((_) {
+      if (mounted) {
+        setState(() {
+          widget.themeManager.toggleTheme(widget.settingsManager.settings.useSystemTheme ? 
+            (systemBrightness == Brightness.dark) : 
+            widget.settingsManager.settings.darkThemeEnabled
+          );
+        });
+      }
+    });
   }
 
-  void loadItems() async {
+  Future<void> loadItems() async {
     try {
       allItems = await getItems();
     }
@@ -110,22 +116,35 @@ class _GroupsPageState extends State<GroupsPage> {
                   title: Text(item.name),
                   onTap: () async {
                     try {
-                      if (item.type == 'group') {
-                        settings.group = item.group!;
-                        settings.type = "group";
-                      }
-                      else {
-                        settings.teacher = item.teacher!;
-                        settings.type = "teacher";
+                      switch (item.type) {
+                        case EntityType.group:
+                          widget.settingsManager.settings.group = item.group!;
+                          widget.settingsManager.settings.type = EntityType.group;
+
+                          break;
+                        case EntityType.teacher:
+                          widget.settingsManager.settings.teacher = item.teacher!;
+                          widget.settingsManager.settings.type = EntityType.teacher;
+
+                          break;
+                        case EntityType.auditory:
+                          widget.settingsManager.settings.auditory = item.auditory!;
+                          widget.settingsManager.settings.type = EntityType.auditory;
+
+                          break;
                       }
                       
-                      saveSettings(settings);
+                      widget.settingsManager.saveSettings(widget.settingsManager.settings);
 
                       var snackbar = SnackBar(
-                        content: Text(settings.type == "group"
-                                    ? AppLocale.groupChanged.getString(context)
-                                    : AppLocale.teacherChanged
-                                        .getString(context)),
+                        content: 
+                          Text(
+                            switch (widget.settingsManager.settings.type) {
+                              (EntityType.group) => AppLocale.groupChanged.getString(context),
+                              (EntityType.teacher) => AppLocale.teacherChanged.getString(context),
+                              (EntityType.auditory) => AppLocale.auditoryChanged.getString(context),
+                            },
+                          ),
                         duration: const Duration(seconds: 1),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(snackbar);

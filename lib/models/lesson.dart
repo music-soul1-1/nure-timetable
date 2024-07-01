@@ -17,9 +17,10 @@
 
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:nure_timetable/models/auditory.dart';
 import 'package:nure_timetable/models/group.dart';
-import 'package:nure_timetable/models/subject.dart';
 import 'package:nure_timetable/models/teacher.dart';
+import 'package:nure_timetable/models/lesson_type.dart';
 
 
 part 'lesson.g.dart';
@@ -28,37 +29,43 @@ part 'lesson.g.dart';
 @JsonSerializable()
 class Lesson {
   Lesson({
+    required this.id,
+    required this.brief,
+    required this.title,
     required this.startTime,
     required this.endTime,
-    required this.auditory,
     required this.type,
-    required this.groups,
     required this.numberPair,
     required this.teachers,
-    required this.subject});
+    required this.auditory,
+    required this.groups,
+  });
 
   factory Lesson.fromJson(Map<String, dynamic> json) =>
       _$LessonFromJson(json);
 
   Map<String, dynamic> toJson() => _$LessonToJson(this);
 
+  @JsonKey(name: 'id')
+  final int id;
+  @JsonKey(name: 'brief')
+  final String brief;
+  @JsonKey(name: 'title')
+  final String title;
   @JsonKey(name: 'startTime')
   final int startTime;
   @JsonKey(name: 'endTime')
   final int endTime;
-  @JsonKey(name: 'auditory')
-  final String auditory;
   @JsonKey(name: 'type')
-  final String type;
-  @JsonKey(name: 'groups')
-  final List<Group> groups;
+  final LessonType type;
   @JsonKey(name: 'numberPair')
   final int numberPair;
   @JsonKey(name: 'teachers')
   final List<Teacher> teachers;
-  @JsonKey(name: 'subject')
-  final Subject subject;
-
+  @JsonKey(name: 'auditory')
+  final Auditory auditory;
+  @JsonKey(name: 'groups')
+  final List<Group> groups;
 
   /// Converts the start time to a string.
   /// 
@@ -78,4 +85,3 @@ class Lesson {
 List<Map<String, dynamic>> scheduleToJsonList(List<Lesson> schedule) {
   return schedule.map((lesson) => lesson.toJson()).toList();
 }
-

@@ -15,37 +15,43 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import 'dart:convert';
+import 'package:nure_timetable/models/auditory.dart';
+import 'package:nure_timetable/models/auditory_type.dart';
+import 'package:nure_timetable/models/building.dart';
+import 'package:nure_timetable/models/entity.dart';
 import 'package:nure_timetable/models/group.dart';
-import 'package:nure_timetable/models/lesson.dart';
 import 'package:nure_timetable/models/teacher.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nure_timetable/types/entity_type.dart';
 import 'package:nure_timetable/models/theme_colors.dart';
 
 /// Class for storing app settings.
 class AppSettings {
   Group group;
+  Teacher teacher;
+  Auditory auditory;
   int startTime;
   int endTime;
   String language;
   bool useSystemTheme;
   bool darkThemeEnabled;
   ThemeColors themeColors;
-  Teacher teacher;
+
   /// Type of schedule: group or teacher.
-  String type = "group";
+  EntityType type = EntityType.group;
+
   /// Last time schedule was updated (UNIX timestamp).
   int lastUpdated;
 
   AppSettings({
     required this.group,
+    required this.teacher,
+    required this.auditory,
     required this.startTime,
     required this.endTime,
     required this.language,
     required this.useSystemTheme,
     required this.darkThemeEnabled,
     required this.themeColors,
-    required this.teacher,
     required this.type,
     this.lastUpdated = 0,
   });
@@ -60,7 +66,8 @@ class AppSettings {
       'darkThemeEnabled': darkThemeEnabled,
       'themeColors': themeColors.toJson(),
       'teacher': teacher.toJson(),
-      'type': type,
+      'auditory': auditory.toJson(),
+      'type': type.index,
       'lastUpdated': lastUpdated,
     };
   }
@@ -68,61 +75,65 @@ class AppSettings {
   factory AppSettings.fromJson(Map<String, dynamic> json) {
     return AppSettings(
       group: Group.fromJson(json['group']), // Convert Map to Group object
+      teacher: Teacher.fromJson(json['teacher']),
+      auditory: Auditory.fromJson(json['auditory']),
       startTime: json['startTime'],
       endTime: json['endTime'],
       language: json['language'],
       useSystemTheme: json['useSystemTheme'],
       darkThemeEnabled: json['darkThemeEnabled'],
       themeColors: ThemeColors.fromJson(json['themeColors']),
-      teacher: Teacher.fromJson(json['teacher']),
-      type: json['type'],
+      type: switch (json['type']) {
+        (0) => EntityType.group,
+        (1) => EntityType.teacher,
+        (2) => EntityType.auditory,
+        null => EntityType.group,
+        dynamic => EntityType.group, // default value
+        Object() => EntityType.group,
+      },
       lastUpdated: json['lastUpdated'],
     );
   }
 
   static AppSettings getDefaultSettings() {
     return AppSettings(
-      group: Group(id: 0, name: ""),
+      group: Group(id: 0, name: "", direction: Entity(id: 0, shortName: "", fullName: ""), faculty: Entity(id: 0, shortName: "", fullName: "")),
+      teacher: Teacher(id: 0, shortName: "", fullName: "", department: Entity(id: 0, shortName: "", fullName: ""), faculty: Entity(id: 0, shortName: "", fullName: "")),
+      auditory: Auditory(id: 0, name: "", floor: 0, hasPower: false, auditoryTypes: List<AuditoryType>.empty(), building: Building(id: "", shortName: "", fullName: "")),
       startTime: DateTime.now().subtract(const Duration(days: 180)).millisecondsSinceEpoch ~/ 1000, // TODO: automatically set start time as the beginning of the current semester
       endTime: DateTime.now().add(const Duration(days: 365)).millisecondsSinceEpoch ~/ 1000,
       language: "uk",
       useSystemTheme: true,
       darkThemeEnabled: false,
-      themeColors: ThemeColors(
-        lecture: "0xFFAD8827",
-        practice: "0xFF1C8834",
-        laboratory: "0xFF5A2194",
-        consultation: "0xFF1E7F85",
-        exam: "0xFF8E1D1D",
-        other: "0xFF9A1A95",
-      ),
-      teacher: Teacher(id: 0, shortName: "", fullName: ""),
-      type: "group",
+      themeColors: ThemeColors.getDefaultSettings(),
+      type: EntityType.group,
       lastUpdated: 0,
     );
   }
 
   AppSettings copyWith({
     Group? group,
+    Teacher? teacher,
+    Auditory? auditory,
     int? startTime,
     int? endTime,
     String? language,
     bool? useSystemTheme,
     bool? darkThemeEnabled,
     ThemeColors? themeColors,
-    Teacher? teacher,
-    String? type,
+    EntityType? type,
     int? lastUpdated,
   }) {
     return AppSettings(
       group: group ?? this.group,
+      teacher: teacher ?? this.teacher,
+      auditory: auditory ?? this.auditory,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       language: language ?? this.language,
       useSystemTheme: useSystemTheme ?? this.useSystemTheme,
       darkThemeEnabled: darkThemeEnabled ?? this.darkThemeEnabled,
       themeColors: themeColors ?? this.themeColors,
-      teacher: teacher ?? this.teacher,
       type: type ?? this.type,
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
@@ -134,72 +145,15 @@ class AppSettings {
   bool checkFields() {
     return group.id.toString().isNotEmpty &&
         group.name.isNotEmpty &&
+        teacher.shortName.isNotEmpty &&
+        auditory.name.isNotEmpty &&
         startTime.toString().isNotEmpty &&
         endTime.toString().isNotEmpty &&
         language.isNotEmpty &&
         useSystemTheme.toString().isNotEmpty &&
         darkThemeEnabled.toString().isNotEmpty &&
         themeColors.lecture.toString().isNotEmpty &&
-        teacher.shortName.isNotEmpty &&
-        type.isNotEmpty &&
+        type.toString().isNotEmpty &&
         lastUpdated.toString().isNotEmpty;
   }
-}
-
-
-String settingsToJson(AppSettings settings) {
-  return jsonEncode(settings.toJson());
-}
-
-AppSettings settingsFromJson(String jsonString) {
-  final Map<String, dynamic> data = jsonDecode(jsonString);
-  return AppSettings.fromJson(data);
-}
-
-void removeSettings({bool removeSchedule = false}) {
-  SharedPreferences.getInstance()
-      .then((value) {
-        value.remove('appSettings');
-        removeSchedule ? value.remove('schedule') : null;
-      });
-}
-
-
-Future<AppSettings> loadSettings() async {
-  final prefs = await SharedPreferences.getInstance();
-  final jsonString = prefs.getString('appSettings');
-
-  if (jsonString == null) {
-    return AppSettings.getDefaultSettings();
-  }
-
-  return settingsFromJson(jsonString);
-}
-
-Future<List<Lesson>> loadSchedule() async {
-  final prefs = await SharedPreferences.getInstance();
-  final scheduleJsonList = prefs.getStringList('schedule');
-
-  if (scheduleJsonList == null) {
-    return [];
-  }
-
-  return scheduleJsonList
-      .map((jsonString) => Lesson.fromJson(jsonDecode(jsonString)))
-      .toList();
-}
-
-Future<void> saveSchedule(List<Lesson> lessons) async {
-  final prefs = await SharedPreferences.getInstance();
-  final scheduleJsonList = lessons.map((lesson) => jsonEncode(lesson.toJson())).toList();
-  prefs.setStringList('schedule', scheduleJsonList);
-}
-
-/// Saves settings in 'appSettings' key in SharedPreferences.
-Future<AppSettings> saveSettings(AppSettings settings) async {
-  final prefs = await SharedPreferences.getInstance();
-  final jsonString = settingsToJson(settings);
-  prefs.setString('appSettings', jsonString);
-
-  return settings;
 }

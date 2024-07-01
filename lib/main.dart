@@ -18,6 +18,7 @@
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:nure_timetable/settings/settings_manager.dart';
 
 // Pages
 import 'pages/home_page.dart';
@@ -28,7 +29,6 @@ import 'pages/settings_page.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/theme/themes.dart';
-import 'package:nure_timetable/models/settings.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 
 // Theme
@@ -36,9 +36,12 @@ import 'theme/theme_manager.dart';
 
 
 var _themeManager = ThemeManager();
+var _settingsManager = SettingsManager();
 final FlutterLocalization localization = FlutterLocalization.instance;
 
-void main() {
+void main() async {
+  await _settingsManager.loadSettings();
+  
   runApp(const MyApp());
   initializeDateFormatting(localization.currentLocale?.languageCode == "uk" ? 'uk_UA' : 'en_UK');
 }
@@ -52,18 +55,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var settings = AppSettings.getDefaultSettings();
-
   @override
   void dispose() {
     _themeManager.removeListener(themeListener);
+    _settingsManager.removeListener(settingsListener);
     super.dispose();
   }
 
   @override
   void initState() {
     _themeManager.addListener(themeListener);
-    loadSettings().then((value) => settings = value);
+    _settingsManager.addListener(settingsListener);
 
     localization.init(
       mapLocales: [
@@ -81,13 +83,22 @@ class _MyAppState extends State<MyApp> {
     setState(() {});
   }
 
-  themeListener(){
-    if(mounted){
-      setState(() {
-
+  themeListener() {
+    if (mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {});
       });
     }
   }
+
+  settingsListener() {
+    if (mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        //setState(() {});
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -105,9 +116,9 @@ class _MyAppState extends State<MyApp> {
           child: Scaffold(
             body: TabBarView(
               children: [
-                HomePage(themeManager: _themeManager),
-                GroupsPage(themeManager: _themeManager),
-                SettingsPage(themeManager: _themeManager, localization: localization),
+                HomePage(settingsManager: _settingsManager, themeManager: _themeManager),
+                GroupsPage(settingsManager: _settingsManager, themeManager: _themeManager),
+                SettingsPage(settingsManager: _settingsManager, themeManager: _themeManager, localization: localization),
               ],
             ),
             bottomNavigationBar: Container(

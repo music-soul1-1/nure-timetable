@@ -58,21 +58,21 @@ Widget customEventTileBuilder(date, events, boundary, start, end, ThemeColors th
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            event.lesson.subject.brief,
+            event.lesson.brief,
             style: TextStyle(
               color: Colors.white,
               fontSize: isMobile ? 12 : 14,
             ),
           ),
           Text(
-            event.lesson.type,
+            event.lesson.type.shortName,
             style: TextStyle(
               color: Colors.white,
               fontSize: isMobile ? 12 : 13,
             ),
           ),
           Text(
-            event.lesson.auditory,
+            event.lesson.auditory.name,
             style: TextStyle(
               color: Colors.white,
               fontSize: isMobile ? 10 : 12,
@@ -111,7 +111,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
             padding: const EdgeInsets.only(top: 5),
             child: Text(
               nextLesson != null
-                  ? "${AppLocale.nextLesson.getString(context)}: ${nextLesson.lesson.subject.brief}; " 
+                  ? "${AppLocale.nextLesson.getString(context)}: ${nextLesson.lesson.brief}; " 
                   "${nextLesson.lesson.startTimeToString()}, ${DateFormat.Md(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(nextLesson.startTime!)}"
                   : "${AppLocale.noLessonsInNearFuture.getString(context)} 😎",
               textScaler: const TextScaler.linear(1.2),
@@ -149,7 +149,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
               ) :
               Text(
                 nextLesson != null
-                    ? "${AppLocale.nextLesson.getString(context)}: ${nextLesson.lesson.subject.brief}; " 
+                    ? "${AppLocale.nextLesson.getString(context)}: ${nextLesson.lesson.brief}; " 
                     "${nextLesson.lesson.startTimeToString()}, ${DateFormat.Md(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(nextLesson.startTime!)}"
                     : "${AppLocale.noLessonsInNearFuture.getString(context)} 😎",
                 textScaler: const TextScaler.linear(1.2),
@@ -189,7 +189,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text(lesson.subject.title),
+        title: Text(lesson.title),
         content: SizedBox(
           height: 200,
           child: Column(
@@ -197,7 +197,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '📚${AppLocale.type.getString(context)}: ${lesson.type}',
+                '📚${AppLocale.type.getString(context)}: ${lesson.type.fullName}',
                 style: const TextStyle(
                   fontSize: 16,
                 ),
@@ -232,7 +232,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
                 ),
               ),
               Text(
-                '🏫${AppLocale.auditory.getString(context)}: ${lesson.auditory}',
+                '🏫${AppLocale.auditory.getString(context)}: ${lesson.auditory.name}',
                 style: const TextStyle(
                   fontSize: 16,
                 ),

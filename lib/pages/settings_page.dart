@@ -19,11 +19,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/locales/locales.dart';
+import 'package:nure_timetable/settings/settings_manager.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/models/update_info.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nure_timetable/types/entity_type.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:nure_timetable/widgets/settings_page_widgets.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
@@ -33,9 +34,10 @@ import 'package:nure_timetable/pages/color_picker_page.dart';
 var systemBrightness = Brightness.dark;
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key, required this.themeManager, required this.localization});
+  const SettingsPage({super.key, required this.settingsManager, required this.themeManager, required this.localization});
 
   final ThemeManager themeManager;
+  final SettingsManager settingsManager;
   final FlutterLocalization localization;
 
   @override
@@ -43,59 +45,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  var settings = AppSettings.getDefaultSettings();
-  late Future<AppSettings> settingsFuture;
-  SharedPreferences? prefs;
   String latestVersion = "";
-
-  @override
-  void initState() {
-    widget.themeManager.addListener(themeListener);
-    super.initState();
-    settingsFuture = getPreferences();
-  }
-
   
-  @override
-  void dispose() {
-    widget.themeManager.removeListener(themeListener);
-    super.dispose();
-  }
-
-  themeListener(){
-    if(mounted){
-      setState(() {
-
-      });
-    }
-  }
-
-  Future<AppSettings> getPreferences() async {
-    prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs?.getString('appSettings');
-
-    if (jsonString == null) {
-      final settings = AppSettings.getDefaultSettings();
-      await saveSettings(settings);
-
-      widget.themeManager.toggleTheme(settings.useSystemTheme ? (systemBrightness == Brightness.dark) : settings.darkThemeEnabled);
-
-      return settings;
-    }
-    else {
-      final settings = settingsFromJson(jsonString);
-      widget.themeManager.toggleTheme(settings.useSystemTheme ? (systemBrightness == Brightness.dark) : settings.darkThemeEnabled);
-      return settingsFromJson(jsonString);
-    }
-  }
-
-  Future<void> saveSettings(AppSettings settings) async {
-    final jsonString = settingsToJson(settings);
-    prefs?.setString('appSettings', jsonString);
-    setState(() {
-    });
-  }
-
   Future<void> checkForUpdates() async {
     final packageInfo = await PackageInfo.fromPlatform();
 
@@ -112,86 +63,18 @@ class _SettingsPageState extends State<SettingsPage> {
     systemBrightness = MediaQuery.of(context).platformBrightness;
     PackageInfo packageInfo;
 
+    if (widget.settingsManager.settings.checkFields())
+    {
+      setState(() {
+        widget.settingsManager.saveSettings(AppSettings.getDefaultSettings());
+      });
+    }
+
     return Scaffold(
       appBar: Header(
         AppLocale.settings.getString(context), Icons.settings_rounded
       ),
-      body: FutureBuilder<AppSettings>(
-        future: settingsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          }
-          else if (snapshot.hasError) {
-            return SettingsList(
-                  platform: DevicePlatform.android,
-                  darkTheme: const SettingsThemeData(
-                    settingsListBackground: Color.fromARGB(255, 0, 15, 19),
-                    settingsSectionBackground: Color.fromARGB(255, 0, 25, 32),
-                    tileHighlightColor: Color.fromARGB(255, 0, 34, 47),
-                  ),
-                  lightTheme: const SettingsThemeData(
-                    settingsListBackground: Color.fromARGB(255, 240, 240, 240),
-                  ),
-                  sections: [
-                    settingsErrorSection(snapshot, context),
-                    SettingsSection(
-                      title: Text(AppLocale.other.getString(context)),
-                      tiles: <SettingsTile>[                    
-                        SettingsTile.navigation(
-                          title: Text(AppLocale.resetSettings.getString(context)),
-                          leading: const Icon(Icons.restore),
-                          onPressed: (context) => showRemoveSettingsDialog(context),
-                        ),
-                        SettingsTile.navigation(
-                          title: Text(AppLocale.appVersion.getString(context)), 
-                          leading: const Icon(Icons.info_outline),
-                          value: FutureBuilder(
-                            future: PackageInfo.fromPlatform(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Text(AppLocale.loading.getString(context));
-                              }
-                              else if (snapshot.hasError) {
-                                return Text(AppLocale.errorLoadingVersion.getString(context));
-                              }
-                              else {
-                                packageInfo = snapshot.data as PackageInfo;
-                                return Text(packageInfo.version);
-                              }
-                            }
-                          ),
-                          onPressed: (context) {
-                            PackageInfo.fromPlatform().then((info) => {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AboutAppDialog(packageInfo: info);
-                                }
-                              )
-                            });
-                          },
-                        ),
-                        SettingsTile.navigation(
-                          title: Text(AppLocale.checkUpdates.getString(context)),
-                          leading: const Icon(Icons.update),
-                          onPressed: (context) => checkForUpdates(),
-                        ),
-                        SettingsTile.navigation(
-                          title: Text(AppLocale.sendReviewOrBugReport.getString(context)),
-                          leading: const Icon(Icons.bug_report_outlined),
-                          onPressed: (context) => showFeedbackDialog(context),
-                        ),
-                      ],
-                    ),
-                  ]
-                
-            );
-          }
-          else {
-            final settings = snapshot.data!;
-
-            return SettingsList(
+      body: SettingsList(
               platform: DevicePlatform.android,
               darkTheme: const SettingsThemeData(
                 settingsListBackground: Color.fromARGB(255, 0, 15, 19),
@@ -208,7 +91,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     SettingsTile(
                       title: Text(AppLocale.appLanguage.getString(context)),
                       leading: const Icon(Icons.language),
-                      value: Text(AppLocale.languages.firstWhere((element) => element['code'] == settings.language)['title']!),
+                      value: Text(AppLocale.languages.firstWhere((element) => element['code'] == widget.settingsManager.settings.language)['title']!),
                       onPressed: (context) {
                         showDialog(
                           context: context,
@@ -231,8 +114,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
                                         if (code != null) {
                                           widget.localization.translate(code);
-                                          settings.language = code;
-                                          saveSettings(settings);
+                                          widget.settingsManager.settings.language = code;
+                                          widget.settingsManager.saveSettings(widget.settingsManager.settings);
                                         }
                                         Navigator.of(context).pop(); // Close the dialog
                                       },
@@ -249,22 +132,22 @@ class _SettingsPageState extends State<SettingsPage> {
                     SettingsTile.switchTile(
                       title: Text(AppLocale.useSystemTheme.getString(context)),
                       onToggle: (value) {
-                        settings.useSystemTheme = value;
-                        widget.themeManager.toggleTheme(value ? (systemBrightness == Brightness.dark) : settings.darkThemeEnabled);
-                        saveSettings(settings);
+                        widget.settingsManager.settings.useSystemTheme = value;
+                        widget.themeManager.toggleTheme(value ? (systemBrightness == Brightness.dark) : widget.settingsManager.settings.darkThemeEnabled);
+                        widget.settingsManager.saveSettings(widget.settingsManager.settings);
                       },
-                      initialValue: settings.useSystemTheme,
+                      initialValue: widget.settingsManager.settings.useSystemTheme,
                       leading: const Icon(Icons.format_paint),
                     ),
                     SettingsTile.switchTile(
                       title: Text(AppLocale.darkTheme.getString(context)),
-                      enabled: !settings.useSystemTheme,
+                      enabled: !widget.settingsManager.settings.useSystemTheme,
                       onToggle: (value) {
-                        settings.darkThemeEnabled = value;
+                        widget.settingsManager.settings.darkThemeEnabled = value;
                         widget.themeManager.toggleTheme(value);
-                        saveSettings(settings); // Save the settings when the switch changes.
+                        widget.settingsManager.saveSettings(widget.settingsManager.settings); // Save the settings when the switch changes.
                       },
-                      initialValue: settings.darkThemeEnabled,
+                      initialValue: widget.settingsManager.settings.darkThemeEnabled,
                       leading: const Icon(Icons.dark_mode),
                     ),
                     SettingsTile(title: Text(AppLocale.themeColors.getString(context)),
@@ -273,7 +156,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ColorPickerPage(themeManager: widget.themeManager, outerSettings: settings),
+                            builder: (context) => ColorPickerPage(settingsManager: widget.settingsManager, themeManager: widget.themeManager),
                           ),
                         );
                       },
@@ -294,19 +177,19 @@ class _SettingsPageState extends State<SettingsPage> {
                           initialEntryMode: DatePickerEntryMode.calendar,
                           initialDateRange: DateTimeRange(
                             start: DateTime.fromMillisecondsSinceEpoch(
-                                settings.startTime * 1000),
+                                widget.settingsManager.settings.startTime * 1000),
                             end: DateTime.fromMillisecondsSinceEpoch(
-                                settings.endTime * 1000),
+                                widget.settingsManager.settings.endTime * 1000),
                           ),
                         ).then((value) {
                           setState(() {
                             if (value != null) {
-                              settings.startTime =
+                              widget.settingsManager.settings.startTime =
                                   (value.start.millisecondsSinceEpoch ~/ 1000);
-                              settings.endTime =
+                              widget.settingsManager.settings.endTime =
                                   (value.end.millisecondsSinceEpoch ~/ 1000);
 
-                              saveSettings(settings);
+                              widget.settingsManager.saveSettings(widget.settingsManager.settings);
                             }
                           });
                         });
@@ -315,18 +198,22 @@ class _SettingsPageState extends State<SettingsPage> {
                     SettingsTile.navigation(
                       title: Text(AppLocale.lastScheduleUpdate.getString(context)),
                       leading: const Icon(Icons.file_download_outlined),
-                      value: Text(DateTime.fromMillisecondsSinceEpoch(settings.lastUpdated * 1000).toLocal().toString().substring(0, 16)),
+                      value: Text(DateTime.fromMillisecondsSinceEpoch(widget.settingsManager.settings.lastUpdated * 1000).toLocal().toString().substring(0, 16)),
                     ),
                     SettingsTile.navigation(
                       title: Text("${AppLocale.typeOfSchedule.getString(context)}:"),
                       leading: const Icon(Icons.people_alt_outlined),
                       value: Text(
-                        settings.type == 'group' ? AppLocale.group.getString(context) : AppLocale.teacher.getString(context),
+                        switch (widget.settingsManager.settings.type) {
+                          (EntityType.group) => AppLocale.group.getString(context),
+                          (EntityType.teacher) => AppLocale.teacher.getString(context),
+                          (EntityType.auditory) => AppLocale.auditory.getString(context),
+                        }
                       ),
                       onPressed: (context) => {
                         ScaffoldMessenger.of(context).showSnackBar(
                           snackbar(
-                                settings.type == 'group'
+                                (widget.settingsManager.settings.type == EntityType.group || widget.settingsManager.settings.type == EntityType.auditory)
                                     ? AppLocale.happyLearning.getString(context)
                                     : AppLocale.happyTeaching
                                         .getString(context))
@@ -341,7 +228,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     SettingsTile.navigation(
                       title: Text(AppLocale.resetSettings.getString(context)),
                       leading: const Icon(Icons.restore),
-                      onPressed: (context) => showRemoveSettingsDialog(context),
+                      onPressed: (context) => showRemoveSettingsDialog(context, widget.settingsManager),
                     ),
                     SettingsTile.navigation(
                       title: Text(AppLocale.appVersion.getString(context)), 
@@ -386,10 +273,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ]
                 )
               ],
-            );
-          }
+            )
+          );
         }
-      )
-    );
-  }
 }

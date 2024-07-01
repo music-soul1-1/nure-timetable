@@ -18,6 +18,7 @@
 import 'dart:ui';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:nure_timetable/models/lesson.dart';
+import 'package:nure_timetable/models/lesson_type.dart';
 import 'package:nure_timetable/models/theme_colors.dart';
 
 
@@ -32,25 +33,29 @@ class LessonAppointment extends CalendarEventData {
     required String subject,
     required super.color,
   }) : super(
-    title: lesson.subject.brief,
+    title: lesson.brief,
     event: lesson.type,
     date: DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000),
   );
 }
 
 /// Returns a color for a lesson type.
-Color lessonColor(String lessonType, ThemeColors themeColors) {
-  switch (lessonType) {
-    case "Лк":
+Color lessonColor(LessonType lessonType, ThemeColors themeColors) {
+  switch (lessonType.idBase) {
+    case 0:
       return Color(int.parse(themeColors.lecture));
-    case "Лб":
-      return Color(int.parse(themeColors.laboratory));
-    case "Пз":
+    case 10:
       return Color(int.parse(themeColors.practice));
-    case "Конс":
+    case 20:
+      return Color(int.parse(themeColors.laboratory));
+    case 30:
       return Color(int.parse(themeColors.consultation));
-    case "Екз":
+    case 40:
+      return Color(int.parse(themeColors.test));
+    case 50:
       return Color(int.parse(themeColors.exam));
+    case 60:
+      return Color(int.parse(themeColors.courseWork));
     default:
       return Color(int.parse(themeColors.other));
   }

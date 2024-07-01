@@ -13,10 +13,10 @@ void main() {
       final teachers = await timetableApi.getTeachers();
 
       if (kDebugMode) {
-        print("Got teacher:\n ${teachers[0].fullName}, ${teachers[0].id}");
+        print("Got teacher:\n ${teachers?[0].fullName}, ${teachers?[0].id}");
       }
       // Assert
-      expect(teachers.first, isA<Teacher>());
+      expect(teachers?.first, isA<Teacher>());
     });
   });
 }

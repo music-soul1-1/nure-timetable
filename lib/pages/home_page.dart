@@ -22,22 +22,26 @@ import 'package:nure_timetable/api/timetable.dart';
 import 'package:flutter/material.dart';
 import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/lesson.dart';
-import 'package:nure_timetable/models/settings.dart';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:nure_timetable/models/lesson_appointment.dart';
+import 'package:nure_timetable/settings/settings_manager.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
+import 'package:nure_timetable/types/entity_type.dart';
 import 'package:nure_timetable/widgets/home_page_widgets.dart';
 import 'package:nure_timetable/widgets/settings_page_widgets.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
+
 
 GlobalKey<WeekViewState> weekViewKey = GlobalKey<WeekViewState>();
 var isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 var systemBrightness = Brightness.dark;
 
+
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.themeManager});
+  const HomePage({super.key, required this.settingsManager, required this.themeManager});
 
   final ThemeManager themeManager;
+  final SettingsManager settingsManager;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -45,19 +49,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var timetable = Timetable();
-  var settings = AppSettings.getDefaultSettings();
   final EventController controller = EventController();
 
   @override
   void initState() {
     super.initState();
-    //SharedPreferences.getInstance().then((value) => value.clear());
-    loadSettings().then((value) => setState(() {
-          widget.themeManager.toggleTheme(value.useSystemTheme
-              ? (systemBrightness == Brightness.dark)
-              : value.darkThemeEnabled);
-          settings = value;
-        }));
+
+    setState(() {
+      widget.themeManager.toggleTheme(widget.settingsManager.settings.useSystemTheme
+        ? (systemBrightness == Brightness.dark)
+        : widget.settingsManager.settings.darkThemeEnabled);
+    });
   }
 
   Future<void> _refresh() async {
@@ -71,58 +73,83 @@ class _HomePageState extends State<HomePage> {
 
     eventsToRemove.map((event) => controller.remove(event));
 
-    loadSettings().then((value) => setState(() {
-          widget.themeManager.toggleTheme(value.useSystemTheme
-              ? (systemBrightness == Brightness.dark)
-              : settings.darkThemeEnabled);
-          settings = value;
-
-          ScaffoldMessenger.of(context).removeCurrentSnackBar();
-          ScaffoldMessenger.of(context)
-              .showSnackBar(snackbar(AppLocale.scheduleUpdated.getString(context)));
-        }));
+    if (mounted) {
+      setState(() {
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            ScaffoldMessenger.of(context)
+                .showSnackBar(snackbar(AppLocale.scheduleUpdated.getString(context)));
+      });
+    }
   }
 
-  /// Loads lessons from API or cache.
+  /// Loads lessons from API or local storage.
   ///
   /// If `updateFromAPI` is true, then lessons will be loaded from API, and then saved to local storage.
-  Future<List<Lesson>> _loadLessons({bool updateFromAPI = false}) async {
+  Future<List<Lesson>>? _loadLessons({bool updateFromAPI = false}) async {
     try {
       if (!updateFromAPI) {
-        return await loadSchedule();
+        return await widget.settingsManager.loadSchedule();
       }
 
-      if (settings.group.id != 0 && settings.type == 'group') {
-        final lessons = timetable.getLessons(
-          settings.group.id, settings.startTime, settings.endTime
-        );
-        settings.type = 'group';
-        settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-        await saveSettings(settings);
+      int id;
 
-        lessons.then((lessons) => saveSchedule(lessons));
-
-        return lessons;
+      switch (widget.settingsManager.settings.type) {
+        case EntityType.group:
+          id = widget.settingsManager.settings.group.id;
+          break;
+        
+        case EntityType.teacher:
+          id = widget.settingsManager.settings.teacher.id;
+          break;
+        
+        case EntityType.auditory:
+          id = widget.settingsManager.settings.auditory.id;
+          break;
+        
+        default:
+          return [];
       }
-      else if (settings.teacher.id != 0 && settings.type == 'teacher') {
-        final lessons = timetable.getLessons(
-          settings.teacher.id, settings.startTime, settings.endTime, true
-        );
-        settings.type = 'teacher';
-        settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-        await saveSettings(settings);
 
-        lessons.then((lessons) => saveSchedule(lessons));
-
-        return lessons;
-      }
-      else {
+      if (id == 0) {
         return [];
       }
-    } catch (error) {
+
+      final lessons = timetable.getLessons(
+        id, widget.settingsManager.settings.startTime, widget.settingsManager.settings.endTime, widget.settingsManager.settings.type
+      );
+      widget.settingsManager.settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      
+      await widget.settingsManager.saveSettings(widget.settingsManager.settings);
+
+      lessons!.then((lessons) => widget.settingsManager.saveSchedule(lessons));
+
+      return lessons;
+    }
+    catch (error) {
       showErrorSnackbar(error);
       return [];
     }
+  }
+
+  void updateEvents(List<Lesson> lessons) {
+    // Clear the controller before adding new events
+    controller.removeWhere((event) => true);
+
+    // Map lessons to events
+    final events = lessons.map((lesson) {
+      return LessonAppointment(
+        startTime: DateTime.fromMillisecondsSinceEpoch(
+            lesson.startTime * 1000),
+        endTime: DateTime.fromMillisecondsSinceEpoch(
+            lesson.endTime * 1000),
+        lesson: lesson,
+        subject: lesson.title,
+        color: lessonColor(lesson.type, widget.settingsManager.settings.themeColors),
+      );
+    }).toList();
+
+    // Add the new events
+    controller.addAll(events);
   }
 
   @override
@@ -130,7 +157,7 @@ class _HomePageState extends State<HomePage> {
     systemBrightness = MediaQuery.of(context).platformBrightness;
 
     return Scaffold(
-      appBar: HomeHeader(settings, Icons.calendar_month_outlined),
+      appBar: HomeHeader(widget.settingsManager.settings, Icons.calendar_month_outlined),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -157,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                         Text('${AppLocale.error.getString(context)}: ${snapshot.error}'),
                         Text("${AppLocale.tryToResetSettings.getString(context)}:"),
                         TextButton(
-                            onPressed: () => showRemoveSettingsDialog(context),
+                            onPressed: () => showRemoveSettingsDialog(context, widget.settingsManager),
                             child: Text(AppLocale.resetSettings.getString(context))),
                       ],
                     );
@@ -165,19 +192,7 @@ class _HomePageState extends State<HomePage> {
                   else if (snapshot.hasData) {
                     final lessons = snapshot.data!;
 
-                    final events = lessons.map((lesson) {
-                      return LessonAppointment(
-                        startTime: DateTime.fromMillisecondsSinceEpoch(
-                            lesson.startTime * 1000),
-                        endTime: DateTime.fromMillisecondsSinceEpoch(
-                            lesson.endTime * 1000),
-                        lesson: lesson,
-                        subject: lesson.subject.title,
-                        color: lessonColor(lesson.type, settings.themeColors),
-                      );
-                    }).toList();
-
-                    controller.addAll(events);
+                    updateEvents(lessons);
 
                     return SizedBox(
                       height: MediaQuery.of(context).size.height -
@@ -211,7 +226,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         controller: controller,
                         eventTileBuilder: ((date, events, boundary, start, end) =>
-                            customEventTileBuilder(date, events, boundary, start, end, settings.themeColors)),
+                            customEventTileBuilder(date, events, boundary, start, end, widget.settingsManager.settings.themeColors)),
                         timeLineWidth: 50,
                         // Taken from calendar_view lib with small changes:
                         timeLineBuilder: (date) {
@@ -230,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           );
                         },
-                        startHour: 7,
+                        startHour: DateTime.now().timeZoneOffset.inHours + 4,
                         liveTimeIndicatorSettings: const LiveTimeIndicatorSettings(
                           color: Color(0xFF06DDF6),
                         ),
@@ -240,9 +255,9 @@ class _HomePageState extends State<HomePage> {
                         },
                         showLiveTimeLineInAllDays: false,
                         minDay: DateTime.fromMillisecondsSinceEpoch(
-                            settings.startTime * 1000),
+                            widget.settingsManager.settings.startTime * 1000),
                         maxDay: DateTime.fromMillisecondsSinceEpoch(
-                            settings.endTime * 1000),
+                            widget.settingsManager.settings.endTime * 1000),
                         pageTransitionDuration:
                             const Duration(milliseconds: 200),
                         hourIndicatorSettings: HourIndicatorSettings(

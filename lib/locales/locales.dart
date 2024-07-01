@@ -62,6 +62,7 @@ mixin AppLocale {
   static const enterNameOfGroupOrTeacher = "enterNameOfGroupOrTeacher";
   static const groupChanged = "groupChanged";
   static const teacherChanged = "teacherChanged";
+  static const auditoryChanged = "auditoryChanged";
   static const other = "other";
   static const appVersion = "appVersion";
   static const loading = "loading...";
@@ -91,8 +92,12 @@ mixin AppLocale {
   static const selectLabColor = "selectLabColor";
   static const consultationColor = "consultationColor";
   static const selectConsultationColor = "selectConsultationColor";
+  static const testColor = "testColor";
+  static const selectTestColor = "selectTestColor";
   static const examColor = "examColor";
   static const selectExamColor = "selectExamColor";
+  static const courseWorkColor = "courseWorkColor";
+  static const selectCourseWorkColor = "selectCourseWorkColor";
   static const othersColor = "othersColor";
   static const selectOthersColor = "selectOthersColor";
   static const resetColorSettings = "resetColorSettings";
@@ -146,6 +151,7 @@ mixin AppLocale {
     enterNameOfGroupOrTeacher: "Enter the name of group or teacher",
     groupChanged: "Group changed",
     teacherChanged: "Teacher changed",
+    auditoryChanged: "Auditory changed",
     other: "Other",
     appVersion: "App version",
     loading: "Loading...",
@@ -175,9 +181,13 @@ mixin AppLocale {
     selectLabColor: "Select lab color",
     consultationColor: "Consultation color",
     selectConsultationColor: "Select consultation color",
+    testColor: "Test color",
+    selectTestColor: "Select test color",
     examColor: "Exam color",
     selectExamColor: "Select exam color",
     othersColor: "Others color",
+    courseWorkColor: "Course work color",
+    selectCourseWorkColor: "Select course work color",
     selectOthersColor: "Select others color",
     resetColorSettings: "Reset color settings",
     doYouReallyWantToResetThisSettings: "Do you really want to reset this settings?",
@@ -230,6 +240,7 @@ mixin AppLocale {
     enterNameOfGroupOrTeacher: "Введіть назву групи або ім'я викладача",
     groupChanged: "Групу змінено",
     teacherChanged: "Викладача змінено",
+    auditoryChanged: "Аудиторію змінено",
     other: "Інше",
     appVersion: "Версія застосунку",
     loading: "Завантаження...",
@@ -259,9 +270,13 @@ mixin AppLocale {
     selectLabColor: "Оберіть колір ЛБ",
     consultationColor: "Колір консультацій",
     selectConsultationColor: "Оберіть колір консультацій",
+    testColor: "Колір заліків",
+    selectTestColor: "Оберіть колір заліків",
     examColor: "Колір екзаменів",
     selectExamColor: "Оберіть колір екзаменів",
     othersColor: "Колір інших занять",
+    courseWorkColor: "Колір курсових робіт",
+    selectCourseWorkColor: "Оберіть колір курсових робіт",
     selectOthersColor: "Оберіть колір інших занять",
     resetColorSettings: "Скинути налаштування кольорів",
     doYouReallyWantToResetThisSettings: "Ви дійсно хочете скинути ці налаштування?",

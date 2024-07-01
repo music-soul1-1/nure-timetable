@@ -6,6 +6,8 @@ enum LessonType {
   practice,
   laboratory,
   consultation,
+  test,
   exam,
+  courseWork,
   other,
 }
