@@ -27,8 +27,8 @@ import 'package:nure_timetable/types/entity_type.dart';
 
 class Timetable {
   Timetable();
-  /// The domain of the API.
-  static const domain = "https://nure-time.runasp.net/api";
+  /// The domain of the API. Uses API version 1.
+  static const domain = "https://nure-time.runasp.net/api/v1";
 
   /// Gets a list of groups.
   Future<List<Group>?> getGroups() async {
