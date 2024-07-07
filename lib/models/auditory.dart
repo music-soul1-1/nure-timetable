@@ -9,7 +9,7 @@ class Auditory {
   Auditory({
     required this.id,
     required this.name,
-    this.floor,
+    required this.floor,
     required this.hasPower,
     required this.auditoryTypes,
     required this.building,
@@ -19,8 +19,8 @@ class Auditory {
   final int id;
   @JsonKey(name: 'name')
   final String name;
-  @JsonKey(name: 'floor', defaultValue: 0)
-  final int? floor;
+  @JsonKey(name: 'floor')
+  final int floor;
   @JsonKey(name: 'hasPower')
   final bool hasPower;
   @JsonKey(name: 'auditoryTypes')

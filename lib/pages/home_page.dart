@@ -332,7 +332,7 @@ class _HomePageState extends State<HomePage> {
                     DateFormat.d().format(date),
                     style: TextStyle(
                       fontSize: 16,
-                      color: DateTime.now().day == date.day
+                      color: DateTime.now().compareWithoutTime(date)
                           ? Colors.white
                           : widget.themeManager.themeMode == ThemeMode.dark
                               ? Colors.white

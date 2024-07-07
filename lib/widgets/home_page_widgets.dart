@@ -203,7 +203,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
                 ),
               ),
               Text(
-                '👨🏼‍🏫${AppLocale.teachers.getString(context)}: ${lesson.teachers.map((teacher) => teacher.fullName).join(", ")}',
+                '👨🏼‍🏫${AppLocale.teachers.getString(context)}: ${lesson.teachers.map((teacher) => "${teacher.fullName}(${teacher.faculty.shortName})").join(", ")}',
                 style: const TextStyle(
                   fontSize: 16,
                 ),  
@@ -226,13 +226,13 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
                 ),
               ),
               Text(
-                '🧑‍🤝‍🧑${AppLocale.groups.getString(context)}: ${lesson.groups.map((group) => group.name).join(", ")}',
+                '🧑‍🤝‍🧑${AppLocale.groups.getString(context)}: ${lesson.groups.map((group) => "${group.name}(${group.faculty.shortName})").join(", ")}',
                 style: const TextStyle(
                   fontSize: 16,
                 ),
               ),
               Text(
-                '🏫${AppLocale.auditory.getString(context)}: ${lesson.auditory.name}',
+                '🏫${AppLocale.auditory.getString(context)}: ${lesson.auditory.name}, ${AppLocale.floor.getString(context).toLowerCase()} - ${lesson.auditory.floor}',
                 style: const TextStyle(
                   fontSize: 16,
                 ),
