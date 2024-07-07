@@ -108,6 +108,7 @@ mixin AppLocale {
   static const primary = "primary";
   static const shade = "shade";
   static const selectShade = "selectShade";
+  static const floor = "floor";
 
 
   // ignore: constant_identifier_names
@@ -197,6 +198,7 @@ mixin AppLocale {
     primary: "Primary",
     shade: "Shade",
     selectShade: "Select shade",
+    floor: "Floor",
   };
 
   // ignore: constant_identifier_names
@@ -286,6 +288,7 @@ mixin AppLocale {
     primary: "Основний",
     shade: "Відтінок",
     selectShade: "Оберіть відтінок",
+    floor: "Поверх",
   };
 
   static String getSchedule(FlutterLocalization localization) {

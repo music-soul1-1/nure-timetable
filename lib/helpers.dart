@@ -31,7 +31,7 @@ void copyLessonDetails(BuildContext context, Lesson lesson) {
     ClipboardData(
       text: "${lesson.title}" "\n\n"
       "${AppLocale.type.getString(context)}: ${lesson.type.fullName}" "\n"
-      "${AppLocale.teachers.getString(context)}: ${lesson.teachers.map((teacher) => teacher.fullName).join(", ")}" "\n"
+      "${AppLocale.teachers.getString(context)}: ${lesson.teachers.map((teacher) => "${teacher.fullName}(${teacher.faculty.shortName})").join(", ")}" "\n"
       "${AppLocale.time.getString(context)}: ${
         lesson.startTimeToString()} - ${
         lesson.endTimeToString()}; ${
@@ -39,8 +39,8 @@ void copyLessonDetails(BuildContext context, Lesson lesson) {
             DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000)
       )}" "\n"
       "${AppLocale.pairNumber.getString(context)}: ${lesson.numberPair}" "\n"
-      "${AppLocale.groups.getString(context)}: ${lesson.groups.map((group) => group.name).join(", ")}" "\n"
-      "${AppLocale.auditory.getString(context)}: ${lesson.auditory.name}"
+      "${AppLocale.groups.getString(context)}: ${lesson.groups.map((group) => "${group.name}(${group.faculty.shortName})").join(", ")}" "\n"
+      "${AppLocale.auditory.getString(context)}: ${lesson.auditory.name}, ${AppLocale.floor.getString(context).toLowerCase()} - ${lesson.auditory.floor}"
     ),
   );
 }

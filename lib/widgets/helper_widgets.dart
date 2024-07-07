@@ -45,7 +45,11 @@ AppBar HomeHeader(AppSettings settings, IconData iconData) {
           ),
         ),
         Text(
-          settings.type == EntityType.group ? settings.group.name : settings.teacher.shortName,
+          switch (settings.type) {
+            EntityType.group => "${settings.group.name}, ${settings.group.faculty.shortName}",
+            EntityType.teacher => "${settings.teacher.shortName}, ${settings.teacher.faculty.shortName}",
+            EntityType.auditory => "${settings.auditory.name}, ${settings.auditory.building.shortName}",
+          },
           style: const TextStyle(
             color: Color(0xFF06DDF6),
             fontSize: 20,

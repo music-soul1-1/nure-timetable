@@ -1,5 +1,8 @@
-// NureTimetable is an app for viewing schedule for groups or teachers of Kharkiv National University of Radio Electronics.
 // Copyright (C) 2023-2024  music-soul1-1
+
+// You should have received a copy of the GNU General Public License 
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 
 enum LessonType {
   lecture,

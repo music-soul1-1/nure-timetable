@@ -9,7 +9,7 @@ part of 'auditory.dart';
 Auditory _$AuditoryFromJson(Map<String, dynamic> json) => Auditory(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
-      floor: (json['floor'] as num?)?.toInt() ?? 0,
+      floor: (json['floor'] as num).toInt(),
       hasPower: json['hasPower'] as bool,
       auditoryTypes: (json['auditoryTypes'] as List<dynamic>)
           .map((e) => AuditoryType.fromJson(e as Map<String, dynamic>))
