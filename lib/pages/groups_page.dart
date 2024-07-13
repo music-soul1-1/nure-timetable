@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -110,7 +111,7 @@ class _GroupsPageState extends State<GroupsPage> {
               ),
             ),
             SizedBox(
-              height: 450,
+              height: Platform.isAndroid ? 600 : 450,
               child: ListView(
                 children: searchResult.map((item) => ListTile(
                   title: Text(item.name),

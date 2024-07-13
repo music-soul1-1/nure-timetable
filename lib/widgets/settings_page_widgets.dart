@@ -154,7 +154,7 @@ Future<dynamic> showRemoveSettingsDialog(BuildContext context, SettingsManager s
 }
 
 Future<void> _launchUrl(String url) async {
-  if (!await launchUrl(Uri.parse(url))) {
+  if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
     throw Exception('Could not launch $url');
   }
 }
