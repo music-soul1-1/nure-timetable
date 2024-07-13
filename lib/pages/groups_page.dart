@@ -31,6 +31,7 @@ import 'package:nure_timetable/widgets/helper_widgets.dart';
 
 
 var systemBrightness = Brightness.dark;
+var isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
 
 class GroupsPage extends StatefulWidget {
@@ -111,7 +112,7 @@ class _GroupsPageState extends State<GroupsPage> {
               ),
             ),
             SizedBox(
-              height: Platform.isAndroid ? 600 : 450,
+              height: isMobile ? 600 : 450,
               child: ListView(
                 children: searchResult.map((item) => ListTile(
                   title: Text(item.name),
