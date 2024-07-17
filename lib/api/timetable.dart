@@ -27,13 +27,13 @@ import 'package:nure_timetable/types/entity_type.dart';
 
 class Timetable {
   Timetable();
-  /// The domain of the API. Uses API version 1.
-  static const domain = "https://nure-time.runasp.net/api/v1";
+  /// The domain of the API.
+  static const domain = "https://nure-time.runasp.net/api/v2";
 
   /// Gets a list of groups.
   Future<List<Group>?> getGroups() async {
     try {
-      const url = '$domain/groups/all';
+      const url = '$domain/Groups/GetAll';
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -55,7 +55,7 @@ class Timetable {
   {
     try
     {
-      final response = await http.get(Uri.parse('$domain/groups/$id'));
+      final response = await http.get(Uri.parse('$domain/Groups/Get/$id'));
 
       if (response.statusCode != 200)
       {
@@ -75,13 +75,18 @@ class Timetable {
   /// Gets a group by name.
   Future<Group?> getGroup(String groupName) async {
     try {
-      List<Group>? groups = await getGroups();
+      final response = await http.get(Uri.parse('$domain/Groups/GetByName?name=$groupName'));
 
-      if (groups == null) {
-        return null;
+      if (response.statusCode != 200)
+      {
+        throw Exception('Failed to get group with name $groupName: ${response.statusCode}');
       }
 
-      return groups.firstWhere((group) => group.name.toLowerCase() == groupName.toLowerCase());
+      final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+      
+      List<Group> groups = data.map((item) => Group.fromJson(item)).toList();
+
+      return groups.first;
     }
     catch(error) {
       throw Exception('Error in <getGroup>: $error');
@@ -101,7 +106,7 @@ class Timetable {
   /// Gets lessons for a group/teacher/auditory.
   Future<List<Lesson>>? getLessons(int id, int startTime, int endTime, [EntityType entityType= EntityType.group]) async {
     try {
-      final url = '$domain/Lessons/Get?id=$id&type=${entityType.index}&start_time=$startTime&end_time=$endTime';
+      final url = '$domain/Lessons/GetById?id=$id&type=${entityType.index}&startTime=$startTime&endTime=$endTime';
 
       if (kDebugMode) {
         print(url);
@@ -111,6 +116,7 @@ class Timetable {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         List<Lesson> lessons = data.map((item) => Lesson.fromJson(item)).toList();
+
         return lessons;
       }
       else {
@@ -139,17 +145,17 @@ class Timetable {
   /// Gets a list of teachers.
   Future<List<Teacher>>? getTeachers() async {
     try {
-      const url = '$domain/teachers/all';
+      const url = '$domain/Teachers/GetAll';
       final response = await http.get(Uri.parse(url));
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
-        List<Teacher> teachers = data.map((item) => Teacher.fromJson(item)).toList();
-        return teachers;
-      }
-      else {
+      if (response.statusCode != 200) {
         throw Exception('Failed to load teachers: ${response.statusCode}');
       }
+
+      final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+      List<Teacher> teachers = data.map((item) => Teacher.fromJson(item)).toList();
+
+      return teachers;
     }
     catch(error) {
       throw Exception('Error in <getTeachers>: $error');
@@ -160,7 +166,7 @@ class Timetable {
   {
     try
     {
-      final response = await http.get(Uri.parse('$domain/teachers/$id'));
+      final response = await http.get(Uri.parse('$domain/Teachers/Get/$id'));
 
       if (response.statusCode != 200)
       {
@@ -180,13 +186,16 @@ class Timetable {
   /// Gets a teacher by name.
   Future<Teacher?> getTeacher(String shortName) async {
     try {
-      List<Teacher>? teachers = await getTeachers();
+      final response = await http.get(Uri.parse('$domain/Teachers/GetByName?name=$shortName'));
 
-      if (teachers == null){
-        return null;
+      if (response.statusCode != 200) {
+        throw Exception('Failed to get teacher with name $shortName: ${response.statusCode}');
       }
 
-      return teachers.firstWhere((teacher) => teacher.shortName.toLowerCase() == shortName.toLowerCase());
+      final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+      List<Teacher> teachers = data.map((item) => Teacher.fromJson(item)).toList();
+
+      return teachers.first;
     }
     catch(error) {
       throw Exception('Error in <getTeacher>: $error');
@@ -195,23 +204,15 @@ class Timetable {
 
   Future<List<Auditory>>? getAuditories() async {
     try {
-      const url = '$domain/auditories/all';
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse('$domain/Auditories/GetAll'));
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
-
-        try {
-          List<Auditory> auditories = data.map((item) => Auditory.fromJson(item)).toList();
-          return auditories;
-        }
-        catch(error) {
-          throw Exception('Error in <getAuditories>: $error');
-        }
-      }
-      else {
+      if (response.statusCode != 200) {
         throw Exception('Failed to load auditories: ${response.statusCode}');
       }
+      final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+      List<Auditory> auditories = data.map((item) => Auditory.fromJson(item)).toList();
+
+      return auditories;
     }
     catch(error) {
       throw Exception('Error in <getAuditories>: $error');
@@ -222,7 +223,7 @@ class Timetable {
   {
     try
     {
-      final response = await http.get(Uri.parse('$domain/auditories/$id'));
+      final response = await http.get(Uri.parse('$domain/Auditories/Get/$id'));
 
       if (response.statusCode != 200)
       {
@@ -241,13 +242,16 @@ class Timetable {
 
   Future<Auditory?> getAuditory(String name) async {
     try {
-      List<Auditory>? auditories = await getAuditories();
+      final response = await http.get(Uri.parse('$domain/Auditories/GetByName?name=$name'));
 
-      if (auditories == null) {
-        return null;
+      if (response.statusCode != 200) {
+        throw Exception('Failed to get auditory with name $name: ${response.statusCode}');
       }
 
-      return auditories.firstWhere((auditory) => auditory.name.toLowerCase() == name.toLowerCase());
+      final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+      List<Auditory> auditories = data.map((item) => Auditory.fromJson(item)).toList();
+
+      return auditories.first;
     }
     catch(error) {
       throw Exception('Error in <getAuditory>: $error');
