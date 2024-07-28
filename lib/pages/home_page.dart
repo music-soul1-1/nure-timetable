@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'dart:io';
 import 'package:intl/intl.dart';
@@ -67,13 +68,13 @@ class _HomePageState extends State<HomePage> {
         .showSnackBar(snackbar(AppLocale.updatingSchedule.getString(context), duration: 4));
 
     // Updates lessons data
-    await _loadLessons(updateFromAPI: true);
+    var lessons = await _loadLessons(updateFromAPI: true);
 
     List<CalendarEventData<Object?>> eventsToRemove = List.from(controller.allEvents);
 
     eventsToRemove.map((event) => controller.remove(event));
 
-    if (mounted) {
+    if (mounted && lessons != null && lessons.isNotEmpty) {
       setState(() {
             ScaffoldMessenger.of(context).removeCurrentSnackBar();
             ScaffoldMessenger.of(context)
@@ -114,16 +115,18 @@ class _HomePageState extends State<HomePage> {
         return [];
       }
 
-      final lessons = timetable.getLessons(
-        id, widget.settingsManager.settings.startTime, widget.settingsManager.settings.endTime, widget.settingsManager.settings.type
+      final lessons = await timetable.getLessons(
+        id, widget.settingsManager.settings.type, widget.settingsManager.settings.startTime, widget.settingsManager.settings.endTime
       );
       widget.settingsManager.settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       
       await widget.settingsManager.saveSettings(widget.settingsManager.settings);
 
-      lessons!.then((lessons) => widget.settingsManager.saveSchedule(lessons));
+      if (lessons != null) {
+        await widget.settingsManager.saveSchedule(lessons);
+      }
 
-      return lessons;
+      return Future<List<Lesson>>.value(lessons);
     }
     catch (error) {
       showErrorSnackbar(error);
@@ -300,7 +303,14 @@ class _HomePageState extends State<HomePage> {
       content: error.toString().contains('No such host is known')
           ? Text(AppLocale.noConnectionToInternet.getString(context))
           : Text('${AppLocale.error.getString(context)}: ${error.toString()}'),
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 4),
+      action: SnackBarAction(
+        label: AppLocale.copy,
+        textColor: widget.themeManager.themeMode == ThemeMode.dark
+            ? const Color(0xFF06DDF6)
+            : Colors.white,
+        onPressed: () => Clipboard.setData(ClipboardData(text: error.toString())),
+      ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }

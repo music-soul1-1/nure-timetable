@@ -109,6 +109,7 @@ mixin AppLocale {
   static const shade = "shade";
   static const selectShade = "selectShade";
   static const floor = "floor";
+  static const copy = "copy";
 
 
   // ignore: constant_identifier_names
@@ -199,6 +200,7 @@ mixin AppLocale {
     shade: "Shade",
     selectShade: "Select shade",
     floor: "Floor",
+    copy: "Copy",
   };
 
   // ignore: constant_identifier_names
@@ -289,6 +291,7 @@ mixin AppLocale {
     shade: "Відтінок",
     selectShade: "Оберіть відтінок",
     floor: "Поверх",
+    copy: "Cкопіювати",
   };
 
   static String getSchedule(FlutterLocalization localization) {

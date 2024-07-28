@@ -103,45 +103,6 @@ class Timetable {
     }
   }
 
-  /// Gets lessons for a group/teacher/auditory.
-  Future<List<Lesson>>? getLessons(int id, int startTime, int endTime, [EntityType entityType= EntityType.group]) async {
-    try {
-      final url = '$domain/Lessons/GetById?id=$id&type=${entityType.index}&startTime=$startTime&endTime=$endTime';
-
-      if (kDebugMode) {
-        print(url);
-      }
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
-        List<Lesson> lessons = data.map((item) => Lesson.fromJson(item)).toList();
-
-        return lessons;
-      }
-      else {
-        throw Exception('Failed to load lessons: ${response.statusCode}');
-      }
-    }
-    catch(error) {
-      throw Exception('Error in <getLessons>: $error');
-    }
-  }
-
-  Lesson? getNextLessonFromList(List<Lesson> lessons) {
-    try {
-      if (lessons.isNotEmpty) {
-        return lessons.where((lesson) => lesson.startTime >= (DateTime.now().millisecondsSinceEpoch ~/ 1000)).first;
-      }
-      else {
-        return null;
-      }
-    }
-    catch(error) {
-      throw Exception('Error in <getNextLessonFromList>: $error');
-    }
-  }
-
   /// Gets a list of teachers.
   Future<List<Teacher>>? getTeachers() async {
     try {
@@ -255,6 +216,45 @@ class Timetable {
     }
     catch(error) {
       throw Exception('Error in <getAuditory>: $error');
+    }
+  }
+
+  /// Gets lessons for a group/teacher/auditory.
+  Future<List<Lesson>>? getLessons(int id, [EntityType entityType= EntityType.group, int? startTime, int? endTime]) async {
+    try {
+      final url = '$domain/Lessons/GetById?id=$id&type=${entityType.index}&startTime=$startTime&endTime=$endTime';
+
+      if (kDebugMode) {
+        print(url);
+      }
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        List<Lesson> lessons = data.map((item) => Lesson.fromJson(item)).toList();
+
+        return lessons;
+      }
+      else {
+        throw Exception('Failed to load lessons. Status code: ${response.statusCode}. Response: ${response.body}');
+      }
+    }
+    catch(error) {
+      throw Exception('Error in <getLessons>: $error');
+    }
+  }
+
+  Lesson? getNextLessonFromList(List<Lesson> lessons) {
+    try {
+      if (lessons.isNotEmpty) {
+        return lessons.where((lesson) => lesson.startTime >= (DateTime.now().millisecondsSinceEpoch ~/ 1000)).first;
+      }
+      else {
+        return null;
+      }
+    }
+    catch(error) {
+      throw Exception('Error in <getNextLessonFromList>: $error');
     }
   }
 }
