@@ -56,10 +56,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    setState(() {
-      widget.themeManager.toggleTheme(widget.settingsManager.settings.useSystemTheme
-        ? (systemBrightness == Brightness.dark)
-        : widget.settingsManager.settings.darkThemeEnabled);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      systemBrightness = MediaQuery.of(context).platformBrightness;
+      final useDarkTheme = widget.settingsManager.settings.useSystemTheme
+          ? (systemBrightness == Brightness.dark)
+          : widget.settingsManager.settings.darkThemeEnabled;
+
+      setState(() {
+        widget.themeManager.toggleTheme(useDarkTheme);
+      });
     });
   }
 
@@ -74,7 +79,7 @@ class _HomePageState extends State<HomePage> {
 
     eventsToRemove.map((event) => controller.remove(event));
 
-    if (mounted && lessons != null && lessons.isNotEmpty) {
+    if (mounted && lessons != null) {
       setState(() {
             ScaffoldMessenger.of(context).removeCurrentSnackBar();
             ScaffoldMessenger.of(context)
