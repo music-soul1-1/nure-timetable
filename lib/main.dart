@@ -88,7 +88,7 @@ class _MyAppState extends State<MyApp> {
   themeListener() {
     if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {});
+        setState(() {_themeManager.themeMode;});
       });
     }
   }
