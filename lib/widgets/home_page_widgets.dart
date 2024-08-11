@@ -205,7 +205,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
                 fontSize: 16,
               ),
             ),
-            Row(
+            Wrap(
               children: [
                 Text(
                   '👨🏼‍🏫${AppLocale.teachers.getString(context)}: ',
@@ -246,7 +246,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
                 fontSize: 16,
               ),
             ),
-            Row(
+            Wrap(
               children: [
                 Text(
                   '🧑‍🤝‍🧑${AppLocale.groups.getString(context)}: ',
