@@ -110,6 +110,12 @@ mixin AppLocale {
   static const selectShade = "selectShade";
   static const floor = "floor";
   static const copy = "copy";
+  static const faculty = "faculty";
+  static const direction = "direction";
+  static const department = "department";
+  static const building = "building";
+  static const auditoryTypes = "auditoryTypes";
+  static const hasPower = "hasPower";
 
 
   // ignore: constant_identifier_names
@@ -201,6 +207,12 @@ mixin AppLocale {
     selectShade: "Select shade",
     floor: "Floor",
     copy: "Copy",
+    faculty: "Faculty",
+    direction: "Direction",
+    department: "Department",
+    building: "Building",
+    auditoryTypes: "Auditory types",
+    hasPower: "Has power",
   };
 
   // ignore: constant_identifier_names
@@ -292,6 +304,12 @@ mixin AppLocale {
     selectShade: "Оберіть відтінок",
     floor: "Поверх",
     copy: "Cкопіювати",
+    faculty: "Факультет",
+    direction: "Напрямок",
+    department: "Кафедра",
+    building: "Корпус",
+    auditoryTypes: "Типи аудиторій",
+    hasPower: "Є розетка",
   };
 
   static String getSchedule(FlutterLocalization localization) {

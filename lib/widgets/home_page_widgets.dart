@@ -19,12 +19,16 @@ import 'dart:io';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:intl/intl.dart';
 import 'package:nure_timetable/helpers.dart';
 import 'package:nure_timetable/locales/locales.dart';
+import 'package:nure_timetable/models/auditory.dart';
+import 'package:nure_timetable/models/group.dart';
 import 'package:nure_timetable/models/lesson.dart';
 import 'package:nure_timetable/models/lesson_appointment.dart';
+import 'package:nure_timetable/models/teacher.dart';
 import 'package:nure_timetable/models/theme_colors.dart';
 
 
@@ -190,55 +194,108 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text(lesson.title),
-        content: SizedBox(
-          height: 200,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '📚${AppLocale.type.getString(context)}: ${lesson.type.fullName}',
-                style: const TextStyle(
-                  fontSize: 16,
+        scrollable: true,
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '📚${AppLocale.type.getString(context)}: ${lesson.type.fullName}',
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            Row(
+              children: [
+                Text(
+                  '👨🏼‍🏫${AppLocale.teachers.getString(context)}: ',
+                  style: const TextStyle(fontSize: 16 ),
                 ),
+                ...lesson.teachers.map((teacher) {
+                  return TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).textTheme.labelMedium?.color,
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(0, 0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      alignment: Alignment.bottomCenter,
+                    ),
+                    onPressed: () => showTeacherInfoDialog(context, teacher),
+                    child: Text(
+                      "${teacher.fullName}(${teacher.faculty.shortName})${teacher != lesson.teachers.last ? ', ' : ''}",
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                    ),
+                  );
+                }),
+              ],
+            ),
+            Text(
+              '📆${AppLocale.time.getString(context)}: ${
+                lesson.startTimeToString()} - ${
+                lesson.endTimeToString()}; ${
+                  DateFormat.yMMMMd(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(
+                    DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000)
+              )}',
+              style: const TextStyle(
+                fontSize: 16,
               ),
-              Text(
-                '👨🏼‍🏫${AppLocale.teachers.getString(context)}: ${lesson.teachers.map((teacher) => "${teacher.fullName}(${teacher.faculty.shortName})").join(", ")}',
-                style: const TextStyle(
-                  fontSize: 16,
-                ),  
+            ),
+            Text(
+              "🔢${AppLocale.pairNumber.getString(context)}: ${lesson.numberPair}",
+              style: const TextStyle(
+                fontSize: 16,
               ),
-              Text(
-                '📆${AppLocale.time.getString(context)}: ${
-                  lesson.startTimeToString()} - ${
-                  lesson.endTimeToString()}; ${
-                    DateFormat.yMMMMd(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(
-                      DateTime.fromMillisecondsSinceEpoch(lesson.startTime * 1000)
-                )}',
-                style: const TextStyle(
-                  fontSize: 16,
+            ),
+            Row(
+              children: [
+                Text(
+                  '🧑‍🤝‍🧑${AppLocale.groups.getString(context)}: ',
+                  style: const TextStyle(fontSize: 16),
                 ),
-              ),
-              Text(
-                "🔢${AppLocale.pairNumber.getString(context)}: ${lesson.numberPair}",
-                style: const TextStyle(
-                  fontSize: 16,
+                ...lesson.groups.map((group) {
+                  return 
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Theme.of(context).textTheme.labelMedium?.color,
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        alignment: Alignment.bottomCenter,
+                      ),
+                      onPressed: () => showGroupInfoDialog(context, group),
+                      child: Text(
+                        "${group.name}(${group.faculty.shortName})${group != lesson.groups.last ? ', ' : ''}",
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                      ),
+                    );
+                }),
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  '🏫${AppLocale.auditory.getString(context)}: ',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
                 ),
-              ),
-              Text(
-                '🧑‍🤝‍🧑${AppLocale.groups.getString(context)}: ${lesson.groups.map((group) => "${group.name}(${group.faculty.shortName})").join(", ")}',
-                style: const TextStyle(
-                  fontSize: 16,
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).textTheme.labelMedium?.color,
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(0, 0),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    alignment: Alignment.bottomCenter,
+                  ),
+                  onPressed: () => showAuditoryInfoDialog(context, lesson.auditory),
+                  child: Text(
+                    "${lesson.auditory.name}, ${AppLocale.floor.getString(context).toLowerCase()} - ${lesson.auditory.floor}",
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                  ),
                 ),
-              ),
-              Text(
-                '🏫${AppLocale.auditory.getString(context)}: ${lesson.auditory.name}, ${AppLocale.floor.getString(context).toLowerCase()} - ${lesson.auditory.floor}',
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
         actions: <Widget>[
           TextButton(
@@ -259,5 +316,234 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
         ],
       );
     },
+  );
+}
+
+
+Future<dynamic> showGroupInfoDialog(BuildContext context, Group group) {
+  return showDialog(
+    context: context, 
+    builder: (context) {
+      return AlertDialog(
+        scrollable: true,
+        contentPadding: EdgeInsetsGeometry.lerp(
+          const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          0.5,
+        ),
+        title: Text(group.name),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  "🪪ID: ${group.id}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(0),
+                  child: IconButton(
+                    style: ButtonStyle(
+                      minimumSize: WidgetStateProperty.all(Size.zero),
+                    ),
+                    onPressed: () => Clipboard.setData(ClipboardData(text: "${group.id}")),
+                    icon: const Icon(Icons.copy_outlined),
+                    iconSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              "👨🏼‍🏫${AppLocale.faculty.getString(context)}: ${group.faculty.fullName}",
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              "📚${AppLocale.direction.getString(context)}: ${group.direction.fullName}",
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              copyGroupDetails(context, group);
+
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocale.copyDetails.getString(context)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocale.close.getString(context)),
+          ),
+        ],
+      );
+    }
+  );
+}
+
+showTeacherInfoDialog(BuildContext context, Teacher teacher) {
+    return showDialog(
+    context: context, 
+    builder: (context) {
+      return AlertDialog(
+        scrollable: true,
+        contentPadding: EdgeInsetsGeometry.lerp(
+          const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          0.5,
+        ),
+        title: Text(teacher.fullName),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  "🪪ID: ${teacher.id}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(0),
+                  child: IconButton(
+                    style: ButtonStyle(
+                      minimumSize: WidgetStateProperty.all(Size.zero),
+                    ),
+                    onPressed: () => Clipboard.setData(ClipboardData(text: "${teacher.id}")),
+                    icon: const Icon(Icons.copy_outlined),
+                    iconSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              "👨🏼‍🏫${AppLocale.faculty.getString(context)}: ${teacher.faculty.fullName}",
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              "📚${AppLocale.department.getString(context)}: ${teacher.department.fullName}",
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              copyTeacherDetails(context, teacher);
+
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocale.copyDetails.getString(context)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocale.close.getString(context)),
+          ),
+        ],
+      );
+    }
+  );
+}
+
+Future<dynamic> showAuditoryInfoDialog(BuildContext context, Auditory auditory) {
+    return showDialog(
+    context: context, 
+    builder: (context) {
+      return AlertDialog(
+        scrollable: true,
+        contentPadding: EdgeInsetsGeometry.lerp(
+          const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+          0.5,
+        ),
+        title: Text(auditory.name),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  "🪪ID: ${auditory.id}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(0),
+                  child: IconButton(
+                    style: ButtonStyle(
+                      minimumSize: WidgetStateProperty.all(Size.zero),
+                    ),
+                    onPressed: () => Clipboard.setData(ClipboardData(text: "${auditory.id}")),
+                    icon: const Icon(Icons.copy_outlined),
+                    iconSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              "👨🏼‍🏫${AppLocale.building.getString(context)}: ${auditory.building.fullName}",
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              "🏢${AppLocale.floor.getString(context)}: ${auditory.floor}",
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              "🎨${AppLocale.auditoryTypes.getString(context)}: ${auditory.auditoryTypes.map((t) => t.name).join(", ")}",
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              "🔌${AppLocale.hasPower.getString(context)}: ${auditory.hasPower ? AppLocale.yes.getString(context) : AppLocale.no.getString(context)}",
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              copyAuditoryDetails(context, auditory);
+
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocale.copyDetails.getString(context)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(AppLocale.close.getString(context)),
+          ),
+        ],
+      );
+    }
   );
 }
