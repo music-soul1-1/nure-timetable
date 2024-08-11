@@ -18,6 +18,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/api/timetable.dart';
 import 'package:nure_timetable/locales/locales.dart';
@@ -78,14 +79,21 @@ class _GroupsPageState extends State<GroupsPage> {
     }
   }
 
-  void showErrorSnackbar(Object error, [BuildContext? ctx]) {
+  void showErrorSnackbar(Object error) {
     var snackbar = SnackBar(
       content: error.toString().contains('No such host is known')
-            ? Text(AppLocale.noConnectionToInternet.getString(context))
+          ? Text(AppLocale.noConnectionToInternet.getString(context))
           : Text('${AppLocale.error.getString(context)}: ${error.toString()}'),
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 4),
+      action: SnackBarAction(
+        label: AppLocale.copy,
+        textColor: widget.themeManager.themeMode == ThemeMode.dark
+            ? const Color(0xFF06DDF6)
+            : Colors.white,
+        onPressed: () => Clipboard.setData(ClipboardData(text: error.toString())),
+      ),
     );
-    ScaffoldMessenger.of(ctx ?? context).showSnackBar(snackbar);
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
   @override
