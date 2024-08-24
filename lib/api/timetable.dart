@@ -18,6 +18,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:nure_timetable/models/auditory.dart';
+import 'package:nure_timetable/models/combined_entity.dart';
 import 'dart:convert';
 import 'package:nure_timetable/models/lesson.dart';
 import 'package:nure_timetable/models/teacher.dart';
@@ -219,6 +220,25 @@ class Timetable {
     }
   }
 
+  Future<CombinedEntity?> getCombinedEntity() async {
+    try {
+      final response = await http.get(Uri.parse('$domain/Entities/GetAll'), headers: {
+        "Keep-Alive": "timeout=10, max=100",
+      });
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to get combined entity: ${response.statusCode}');
+      }
+
+      final dynamic data = json.decode(utf8.decode(response.bodyBytes));
+
+      return CombinedEntity.fromJson(data);
+    }
+    catch(error) {
+      throw Exception('Error in <getCombinedEntity>: $error');
+    }
+  }
+
   /// Gets lessons for a group/teacher/auditory.
   Future<List<Lesson>>? getLessons(int id, [EntityType entityType= EntityType.group, int? startTime, int? endTime]) async {
     try {
@@ -227,7 +247,10 @@ class Timetable {
       if (kDebugMode) {
         print(url);
       }
-      final response = await http.get(Uri.parse(url));
+      
+      final response = await http.get(Uri.parse(url), headers: {
+        "Keep-Alive": "timeout=10, max=100",
+      });
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
