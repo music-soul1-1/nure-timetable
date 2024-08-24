@@ -22,23 +22,17 @@ class SearchItem {
 
 Future<List<SearchItem>> getItems() async {
   final timetable = Timetable();
-  final groups = await timetable.getGroups();
-  final teachers = await timetable.getTeachers();
-  final auditories = await timetable.getAuditories();
+  final combinedEntity = await timetable.getCombinedEntity();
+
+  if (combinedEntity == null) {
+    return [];
+  }
 
   final searchResult = <SearchItem>[];
-  
-  if (groups != null) {
-    searchResult.addAll(groups.map((group) => SearchItem(group: group, name: group.name, type: EntityType.group)));
-  }
-  
-  if (teachers != null) {
-    searchResult.addAll(teachers.map((teacher) => SearchItem(teacher: teacher, name: teacher.fullName, type: EntityType.teacher)));
-  }
-  
-  if (auditories != null) {
-  searchResult.addAll(auditories.map((auditory) => SearchItem(auditory: auditory, name: auditory.name, type: EntityType.auditory)));
-  }
+
+  searchResult.addAll(combinedEntity.groups.map((group) => SearchItem(group: group, name: group.name, type: EntityType.group)));
+  searchResult.addAll(combinedEntity.teachers.map((teacher) => SearchItem(teacher: teacher, name: teacher.fullName, type: EntityType.teacher)));
+  searchResult.addAll(combinedEntity.auditories.map((auditory) => SearchItem(auditory: auditory, name: auditory.name, type: EntityType.auditory)));
 
   return searchResult;
 }
