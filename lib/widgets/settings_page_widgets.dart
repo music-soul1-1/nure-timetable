@@ -50,7 +50,7 @@ class AboutAppDialog extends StatelessWidget {
           child: Column(
             children: [
               const Text(
-                "NureTimetable is an app for viewing schedule for groups or teachers of \n"
+                "NureTimetable is an app for viewing schedule for groups, teachers or auditoriums of \n"
                 "Kharkiv National University of Radio Electronics.\n"
                 "Copyright (C) 2023-2024  music-soul1-1\n\n"
 

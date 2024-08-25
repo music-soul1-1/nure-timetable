@@ -209,7 +209,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
               children: [
                 Text(
                   '👨🏼‍🏫${AppLocale.teachers.getString(context)}: ',
-                  style: const TextStyle(fontSize: 16 ),
+                  style: const TextStyle(fontSize: 16, height: 1.3),
                 ),
                 ...lesson.teachers.map((teacher) {
                   return TextButton(
@@ -250,7 +250,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
               children: [
                 Text(
                   '🧑‍🤝‍🧑${AppLocale.groups.getString(context)}: ',
-                  style: const TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16, height: 1.3),
                 ),
                 ...lesson.groups.map((group) {
                   return 
@@ -277,6 +277,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
                   '🏫${AppLocale.auditory.getString(context)}: ',
                   style: const TextStyle(
                     fontSize: 16,
+                    height: 1.3,
                   ),
                 ),
                 TextButton(
