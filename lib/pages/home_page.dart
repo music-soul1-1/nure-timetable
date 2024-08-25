@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
     systemBrightness = MediaQuery.of(context).platformBrightness;
 
     return Scaffold(
-      appBar: HomeHeader(widget.settingsManager.settings, Icons.calendar_month_outlined),
+      appBar: HomeHeader(context, widget.settingsManager.settings, Icons.calendar_month_outlined),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
