@@ -5,9 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/api/timetable.dart';
 import 'package:nure_timetable/locales/locales.dart';
-import 'package:nure_timetable/models/group.dart';
 import 'package:nure_timetable/models/search_item.dart';
-import 'package:nure_timetable/models/teacher.dart';
 import 'package:nure_timetable/settings/settings_manager.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:nure_timetable/types/entity_type.dart';
@@ -30,50 +28,55 @@ class GroupsPage extends StatefulWidget {
 
 class _GroupsPageState extends State<GroupsPage> {
   var timetable = Timetable();
-  List<Group> groups = [];
-  List<Teacher> teachers = [];
+  Future<List<SearchItem>>? allItems;
   List<SearchItem> searchResult = [];
-  List<SearchItem> allItems = [];
 
   @override
   void initState() {
     super.initState();
-    loadItems().then((_) {
-      if (mounted) {
-        setState(() {
-          widget.themeManager.toggleTheme(widget.settingsManager.settings.useSystemTheme ? 
-            (systemBrightness == Brightness.dark) : 
-            widget.settingsManager.settings.darkThemeEnabled
-          );
-        });
-      }
+
+    allItems = loadItems();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      systemBrightness = MediaQuery.of(context).platformBrightness;
+      final useDarkTheme = widget.settingsManager.settings.useSystemTheme
+          ? (systemBrightness == Brightness.dark)
+          : widget.settingsManager.settings.darkThemeEnabled;
+
+      setState(() {
+        widget.themeManager.toggleTheme(useDarkTheme);
+      });
     });
   }
 
-  Future<void> loadItems() async {
+  Future<List<SearchItem>>? loadItems() async {
     try {
-      allItems = await getItems();
+      var items = await SearchItem.getItems();
+
+      return items;
     }
     catch(error) {
       if (kDebugMode) {
         print(error);
       }
-      showErrorSnackbar(error);
+      showErrorSnackbar(error.toString());
+
+      return Future.value([]);
     }
   }
 
-  void showErrorSnackbar(Object error) {
+  void showErrorSnackbar(String error) {
     var snackbar = SnackBar(
-      content: error.toString().contains('No such host is known')
+      content: error.contains('No such host is known')
           ? Text(AppLocale.noConnectionToInternet.getString(context))
-          : Text('${AppLocale.error.getString(context)}: ${error.toString()}'),
+          : Text('${AppLocale.error.getString(context)}: $error'),
       duration: const Duration(seconds: 4),
       action: SnackBarAction(
         label: AppLocale.copy,
         textColor: widget.themeManager.themeMode == ThemeMode.dark
             ? const Color(0xFF06DDF6)
             : Colors.white,
-        onPressed: () => Clipboard.setData(ClipboardData(text: error.toString())),
+        onPressed: () => Clipboard.setData(ClipboardData(text: error)),
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
@@ -86,70 +89,100 @@ class _GroupsPageState extends State<GroupsPage> {
     return Scaffold(
       appBar: Header(AppLocale.groups.getString(context), Icons.people_alt),
       body: Center(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 40, right: 40, top: 15, bottom: 10),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: AppLocale.enterNameOfGroupOrTeacher.getString(context),
-                ),
-                onChanged: (value) async => {
-                  setState(() {
-                    searchResult = allItems.where((element) => element.name.toLowerCase().contains(value.toLowerCase())).toList();
-                  }),
-                },
-              ),
-            ),
-            SizedBox(
-              height: isMobile ? 600 : 450,
-              child: ListView(
-                children: searchResult.map((item) => ListTile(
-                  title: Text(item.name),
-                  onTap: () async {
-                    try {
-                      switch (item.type) {
-                        case EntityType.group:
-                          widget.settingsManager.settings.group = item.group!;
-                          widget.settingsManager.settings.type = EntityType.group;
+        child: FutureBuilder<List<SearchItem>>(
+          future: allItems,
+          builder: (context, snapshot) {
 
-                          break;
-                        case EntityType.teacher:
-                          widget.settingsManager.settings.teacher = item.teacher!;
-                          widget.settingsManager.settings.type = EntityType.teacher;
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(AppLocale.loading.getString(context)),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                ],
+              );
+            }
 
-                          break;
-                        case EntityType.auditory:
-                          widget.settingsManager.settings.auditory = item.auditory!;
-                          widget.settingsManager.settings.type = EntityType.auditory;
+            if (snapshot.hasError) {
+              showErrorSnackbar(snapshot.error.toString());
+            }
 
-                          break;
-                      }
-                      
-                      widget.settingsManager.saveSettings(widget.settingsManager.settings);
+            if (snapshot.hasData) {
+              var items = snapshot.data!;
 
-                      var snackbar = SnackBar(
-                        content: 
-                          Text(
-                            switch (widget.settingsManager.settings.type) {
-                              (EntityType.group) => AppLocale.groupChanged.getString(context),
-                              (EntityType.teacher) => AppLocale.teacherChanged.getString(context),
-                              (EntityType.auditory) => AppLocale.auditoryChanged.getString(context),
-                            },
-                          ),
-                        duration: const Duration(seconds: 1),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackbar);
-                    }
-                    catch(error) {
-                      showErrorSnackbar(error);
-                    }
-                  },
-                )).toList(),
-              ),
-            ),
-          ],
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40, right: 40, top: 15, bottom: 10),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: AppLocale.enterNameOfGroupOrTeacher.getString(context),
+                      ),
+                      onChanged: (value) async => {
+                        setState(() {
+                          searchResult = items.where((element) => element.name.toLowerCase().contains(value.toLowerCase())).toList();                          
+                        }),
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: isMobile ? 600 : 450,
+                    child: ListView(
+                      children: searchResult.map((item) => ListTile(
+                        title: Text(item.name),
+                        onTap: () async {
+                          try {
+                            switch (item.type) {
+                              case EntityType.group:
+                                widget.settingsManager.settings.group = item.group!;
+                                widget.settingsManager.settings.type = EntityType.group;
+              
+                                break;
+                              case EntityType.teacher:
+                                widget.settingsManager.settings.teacher = item.teacher!;
+                                widget.settingsManager.settings.type = EntityType.teacher;
+              
+                                break;
+                              case EntityType.auditory:
+                                widget.settingsManager.settings.auditory = item.auditory!;
+                                widget.settingsManager.settings.type = EntityType.auditory;
+              
+                                break;
+                            }
+                            
+                            widget.settingsManager.saveSettings(widget.settingsManager.settings);
+              
+                            var snackbar = SnackBar(
+                              content: 
+                                Text(
+                                  switch (widget.settingsManager.settings.type) {
+                                    (EntityType.group) => AppLocale.groupChanged.getString(context),
+                                    (EntityType.teacher) => AppLocale.teacherChanged.getString(context),
+                                    (EntityType.auditory) => AppLocale.auditoryChanged.getString(context),
+                                  },
+                                ),
+                              duration: const Duration(seconds: 1),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                          }
+                          catch(error) {
+                            showErrorSnackbar(error.toString());
+                          }
+                        },
+                      )).toList(),
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return const Text('Error');
+          }
         ),
       ),
     );

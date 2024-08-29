@@ -136,6 +136,34 @@ Future<dynamic> showRemoveSettingsDialog(BuildContext context, SettingsManager s
   );
 }
 
+Future<dynamic> showRemoveScheduleDateSettingsDialog(BuildContext context, SettingsManager settingsManager) {
+  return showDialog(
+    context: context, 
+    builder:  (BuildContext context) {
+      return AlertDialog(
+        title: Text(AppLocale.doYouReallyWantToResetSettings.getString(context)),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              settingsManager.settings.startTime = null;
+              settingsManager.settings.endTime = null;
+
+              settingsManager.saveSettings(settingsManager.settings).then((_) {
+                Navigator.of(context).pop();
+              });
+            },
+            child: Text(AppLocale.yes.getString(context)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(AppLocale.no.getString(context)),
+          ),
+        ],
+      );
+    }
+  );
+}
+
 Future<void> _launchUrl(String url) async {
   if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
     throw Exception('Could not launch $url');

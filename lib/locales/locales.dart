@@ -99,6 +99,9 @@ mixin AppLocale {
   static const building = "building";
   static const auditoryTypes = "auditoryTypes";
   static const hasPower = "hasPower";
+  static const getAllLessons = "getAllLessons";
+  static const resetDateSettings = "resetDateSettings";
+  static const scrollToFirstLesson = "scrollToFirstLesson";
 
 
   // ignore: constant_identifier_names
@@ -196,6 +199,9 @@ mixin AppLocale {
     building: "Building",
     auditoryTypes: "Auditory types",
     hasPower: "Has power",
+    getAllLessons: "Get all lessons",
+    resetDateSettings: "Reset date settings",
+    scrollToFirstLesson: "Scroll to the first lesson",
   };
 
   // ignore: constant_identifier_names
@@ -293,6 +299,9 @@ mixin AppLocale {
     building: "Корпус",
     auditoryTypes: "Типи аудиторій",
     hasPower: "Є розетка",
+    getAllLessons: "Отримувати всі заняття",
+    resetDateSettings: "Скинути налаштування дати",
+    scrollToFirstLesson: "Прокручувати до першого заняття",
   };
 
   static String getSchedule(FlutterLocalization localization) {

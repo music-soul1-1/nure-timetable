@@ -35,10 +35,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var timetable = Timetable();
   final EventController controller = EventController();
+  Future<List<Lesson>>? _lessonsFuture;
 
   @override
   void initState() {
     super.initState();
+
+    _lessonsFuture = _loadLessons();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       systemBrightness = MediaQuery.of(context).platformBrightness;
@@ -65,9 +68,10 @@ class _HomePageState extends State<HomePage> {
 
     if (mounted && lessons != null) {
       setState(() {
-            ScaffoldMessenger.of(context).removeCurrentSnackBar();
-            ScaffoldMessenger.of(context)
-                .showSnackBar(snackbar(AppLocale.scheduleUpdated.getString(context)));
+        _lessonsFuture = Future<List<Lesson>>.value(lessons);
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(snackbar(AppLocale.scheduleUpdated.getString(context)));
       });
     }
   }
@@ -160,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                   ? const EdgeInsets.all(0)
                   : const EdgeInsets.only(left: 40, right: 40),
               child: FutureBuilder<List<Lesson>>(
-                future: _loadLessons(),
+                future: _lessonsFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     // Handle loading state
@@ -243,13 +247,19 @@ class _HomePageState extends State<HomePage> {
                         ),
                         weekPageHeaderBuilder: (startTime, endTime) {
                           return customCalendarHeaderBuilder(
-                              startTime, endTime, controller, weekViewKey, context);
+                              startTime, endTime, context, controller, weekViewKey, 
+                              widget.settingsManager.settings.scrollToFirstLesson 
+                                ? (widget.settingsManager.getFirstLesson() != null
+                                    ? DateTime.fromMillisecondsSinceEpoch(widget.settingsManager.getFirstLesson()!.startTime * 1000)
+                                    : DateTime.now())
+                                : DateTime.now(),
+                          );
                         },
                         showLiveTimeLineInAllDays: false,
                         minDay: DateTime.fromMillisecondsSinceEpoch(
-                            widget.settingsManager.settings.startTime * 1000),
+                            widget.settingsManager.settings.startTime != null ? widget.settingsManager.settings.startTime !* 1000 : DateTime.now().subtract(const Duration(days: 300)).millisecondsSinceEpoch),
                         maxDay: DateTime.fromMillisecondsSinceEpoch(
-                            widget.settingsManager.settings.endTime * 1000),
+                            widget.settingsManager.settings.endTime != null ? widget.settingsManager.settings.endTime !* 1000 : DateTime.now().add(const Duration(days: 300)).millisecondsSinceEpoch),
                         pageTransitionDuration:
                             const Duration(milliseconds: 200),
                         hourIndicatorSettings: HourIndicatorSettings(
@@ -257,7 +267,11 @@ class _HomePageState extends State<HomePage> {
                               ? const Color.fromARGB(64, 0, 70, 95)
                               : Colors.black12,
                         ),
-                        initialDay: DateTime.now(),
+                        initialDay: widget.settingsManager.settings.scrollToFirstLesson 
+                          ? (widget.settingsManager.getFirstLesson() != null
+                              ? DateTime.fromMillisecondsSinceEpoch(widget.settingsManager.getFirstLesson()!.startTime * 1000)
+                              : DateTime.now())
+                          : DateTime.now(),
                         heightPerMinute:
                             1, // height occupied by 1 minute time span.
                         onEventTap: (events, date) {
