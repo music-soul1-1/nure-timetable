@@ -5,7 +5,6 @@ import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/settings/settings_manager.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
-import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/models/update_info.dart';
 import 'package:nure_timetable/types/entity_type.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -45,13 +44,6 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     systemBrightness = MediaQuery.of(context).platformBrightness;
     PackageInfo packageInfo;
-
-    if (widget.settingsManager.settings.checkFields())
-    {
-      setState(() {
-        widget.settingsManager.saveSettings(AppSettings.getDefaultSettings());
-      });
-    }
 
     return Scaffold(
       appBar: Header(
@@ -149,21 +141,33 @@ class _SettingsPageState extends State<SettingsPage> {
                 SettingsSection(
                   title: Text(AppLocale.schedule.getString(context)),
                   tiles: <SettingsTile>[
+                    SettingsTile.switchTile(
+                      title: Text(AppLocale.scrollToFirstLesson.getString(context)),
+                      leading: const Icon(Icons.skip_next_outlined),
+                      initialValue: widget.settingsManager.settings.scrollToFirstLesson,
+                      onToggle: (value) async {
+                        widget.settingsManager.settings.scrollToFirstLesson = value;
+                        await widget.settingsManager.saveSettings(widget.settingsManager.settings);
+
+                        setState(() {});
+                      },
+                    ),
                     SettingsTile.navigation(
                       title: Text(AppLocale.startAndEndDateOfSchedule.getString(context)),
                       leading: const Icon(Icons.calendar_month_outlined),
+                      value: Text(
+                        widget.settingsManager.settings.startTime == null
+                        ? AppLocale.getAllLessons.getString(context)
+                        : "${DateTime.fromMillisecondsSinceEpoch((widget.settingsManager.settings.startTime ?? 0) * 1000).toLocal().toString().substring(0, 10)} - " 
+                        "${DateTime.fromMillisecondsSinceEpoch((widget.settingsManager.settings.endTime ?? 0) * 1000).toLocal().toString().substring(0, 10)}",
+                      ),
                       onPressed: (context) {
                         showDateRangePicker(
                           context: context,
                           firstDate: DateTime.now().subtract(const Duration(days: 365)),
                           lastDate: DateTime.now().add(const Duration(days: 365)),
-                          initialEntryMode: DatePickerEntryMode.calendar,
-                          initialDateRange: DateTimeRange(
-                            start: DateTime.fromMillisecondsSinceEpoch(
-                                widget.settingsManager.settings.startTime * 1000),
-                            end: DateTime.fromMillisecondsSinceEpoch(
-                                widget.settingsManager.settings.endTime * 1000),
-                          ),
+                          initialEntryMode: DatePickerEntryMode.input,
+                          locale: widget.localization.currentLocale,
                         ).then((value) {
                           setState(() {
                             if (value != null) {
@@ -176,6 +180,13 @@ class _SettingsPageState extends State<SettingsPage> {
                             }
                           });
                         });
+                      },
+                    ),
+                    SettingsTile.navigation(
+                      title: Text(AppLocale.resetDateSettings.getString(context)),
+                      leading: const Icon(Icons.restore),
+                      onPressed: (context) {
+                        showRemoveScheduleDateSettingsDialog(context, widget.settingsManager);
                       },
                     ),
                     SettingsTile.navigation(

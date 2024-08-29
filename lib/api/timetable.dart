@@ -226,7 +226,7 @@ class Timetable {
   /// Gets lessons for a group/teacher/auditory.
   Future<List<Lesson>>? getLessons(int id, [EntityType entityType= EntityType.group, int? startTime, int? endTime]) async {
     try {
-      final url = '$domain/Lessons/GetById?id=$id&type=${entityType.index}&startTime=$startTime&endTime=$endTime';
+      final url = '$domain/Lessons/GetById?id=$id&type=${entityType.index}&startTime=${startTime ?? ""}&endTime=${endTime ?? ""}';
 
       if (kDebugMode) {
         print(url);

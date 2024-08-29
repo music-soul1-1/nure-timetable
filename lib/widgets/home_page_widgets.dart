@@ -79,7 +79,7 @@ Widget customEventTileBuilder(date, events, boundary, start, end, ThemeColors th
 }
 
 
-Widget customCalendarHeaderBuilder(startDate, endDate, EventController controller, GlobalKey<WeekViewState> weekViewKey, BuildContext context) {
+Widget customCalendarHeaderBuilder(startDate, endDate, BuildContext context, EventController controller, GlobalKey<WeekViewState> weekViewKey, DateTime scrollToWeekOnPress) {
   final nextLesson = controller.allEvents
       .map((event) => event as LessonAppointment)
       .where((event) => event.startTime!.isAfter(DateTime.now()) && event.startTime!.isBefore(DateTime.now().add(const Duration(hours: 8))))
@@ -146,7 +146,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, EventController controlle
                   IconButton(
                     onPressed: () {
                       weekViewKey.currentState?.animateToWeek(
-                        DateTime.now(),
+                        scrollToWeekOnPress.toLocal(),
                         duration: const Duration(milliseconds: 350)
                       );
                     },
