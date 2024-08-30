@@ -118,7 +118,7 @@ mixin AppLocale {
     resetSettings: "Reset settings",
     noData: "No data",
     error: "Error",
-    noConnectionToInternet: "No connection to internet",
+    noConnectionToInternet: "No connection to the Internet",
     nextLesson: "Next lesson",
     noLessonsInNearFuture: "No lessons in the near future",
     previousWeek: "Previous week",

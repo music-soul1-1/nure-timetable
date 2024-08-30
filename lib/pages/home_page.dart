@@ -11,7 +11,6 @@ import 'package:calendar_view/calendar_view.dart';
 import 'package:nure_timetable/models/lesson_appointment.dart';
 import 'package:nure_timetable/settings/settings_manager.dart';
 import 'package:nure_timetable/theme/theme_manager.dart';
-import 'package:nure_timetable/types/entity_type.dart';
 import 'package:nure_timetable/widgets/home_page_widgets.dart';
 import 'package:nure_timetable/widgets/settings_page_widgets.dart';
 import 'package:nure_timetable/widgets/helper_widgets.dart';
@@ -23,10 +22,16 @@ var systemBrightness = Brightness.dark;
 
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.settingsManager, required this.themeManager});
+  const HomePage({
+    super.key, 
+    required this.settingsManager, 
+    required this.themeManager,
+    required this.scheduleFetchedNotifier,
+  });
 
   final ThemeManager themeManager;
   final SettingsManager settingsManager;
+  final ValueNotifier<bool> scheduleFetchedNotifier;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -38,8 +43,17 @@ class _HomePageState extends State<HomePage> {
   Future<List<Lesson>>? _lessonsFuture;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!widget.scheduleFetchedNotifier.value) {
+      _loadLessons(updateFromAPI: true);
+    }
+  }
+
+  @override
   void initState() {
-    super.initState();
+    widget.settingsManager.addListener(_onSettingsChanged);
+    widget.scheduleFetchedNotifier.addListener(_onScheduleFetchedChanged);
 
     _lessonsFuture = _loadLessons();
 
@@ -53,6 +67,30 @@ class _HomePageState extends State<HomePage> {
         widget.themeManager.toggleTheme(useDarkTheme);
       });
     });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.settingsManager.removeListener(_onSettingsChanged);
+    widget.scheduleFetchedNotifier.removeListener(_onScheduleFetchedChanged);
+
+    super.dispose();
+  }
+
+  void _onSettingsChanged() {
+    setState(() {
+      _lessonsFuture = Future<List<Lesson>>.value(widget.settingsManager.schedule);
+    });
+  }
+
+  void _onScheduleFetchedChanged() {
+    if (widget.scheduleFetchedNotifier.value) {
+      setState(() {
+        _lessonsFuture = _loadLessons();
+      });
+    }
   }
 
   Future<void> _refresh() async {
@@ -69,6 +107,8 @@ class _HomePageState extends State<HomePage> {
     if (mounted && lessons != null) {
       setState(() {
         _lessonsFuture = Future<List<Lesson>>.value(lessons);
+        widget.scheduleFetchedNotifier.value = true;
+
         ScaffoldMessenger.of(context).removeCurrentSnackBar();
         ScaffoldMessenger.of(context)
             .showSnackBar(snackbar(AppLocale.scheduleUpdated.getString(context)));
@@ -81,45 +121,11 @@ class _HomePageState extends State<HomePage> {
   /// If `updateFromAPI` is true, then lessons will be loaded from API, and then saved to local storage.
   Future<List<Lesson>>? _loadLessons({bool updateFromAPI = false}) async {
     try {
-      if (!updateFromAPI) {
-        return await widget.settingsManager.loadSchedule();
-      }
+      var lessons = await widget.settingsManager.loadSchedule(updateFromAPI: updateFromAPI);
 
-      int id;
+      widget.scheduleFetchedNotifier.value = true;
 
-      switch (widget.settingsManager.settings.type) {
-        case EntityType.group:
-          id = widget.settingsManager.settings.group.id;
-          break;
-        
-        case EntityType.teacher:
-          id = widget.settingsManager.settings.teacher.id;
-          break;
-        
-        case EntityType.auditory:
-          id = widget.settingsManager.settings.auditory.id;
-          break;
-        
-        default:
-          return [];
-      }
-
-      if (id == 0) {
-        return [];
-      }
-
-      final lessons = await timetable.getLessons(
-        id, widget.settingsManager.settings.type, widget.settingsManager.settings.startTime, widget.settingsManager.settings.endTime
-      );
-      widget.settingsManager.settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-      
-      await widget.settingsManager.saveSettings(widget.settingsManager.settings);
-
-      if (lessons != null) {
-        await widget.settingsManager.saveSchedule(lessons);
-      }
-
-      return Future<List<Lesson>>.value(lessons);
+      return lessons;
     }
     catch (error) {
       showErrorSnackbar(error);
