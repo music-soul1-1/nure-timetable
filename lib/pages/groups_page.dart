@@ -17,10 +17,16 @@ var isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
 
 class GroupsPage extends StatefulWidget {
-  const GroupsPage({super.key, required this.settingsManager, required this.themeManager});
+  const GroupsPage({
+    super.key, 
+    required this.settingsManager, 
+    required this.themeManager,
+    required this.scheduleFetchedNotifier,
+  });
 
   final ThemeManager themeManager;
   final SettingsManager settingsManager;
+  final ValueNotifier<bool> scheduleFetchedNotifier;
 
   @override
   State<GroupsPage> createState() => _GroupsPageState();
@@ -169,6 +175,8 @@ class _GroupsPageState extends State<GroupsPage> {
                               duration: const Duration(seconds: 1),
                             );
                             ScaffoldMessenger.of(context).showSnackBar(snackbar);
+
+                            widget.scheduleFetchedNotifier.value = false; // Makes the app update schedule from the API when going back to home page
                           }
                           catch(error) {
                             showErrorSnackbar(error.toString());

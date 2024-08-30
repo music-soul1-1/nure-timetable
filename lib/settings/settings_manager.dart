@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:nure_timetable/api/timetable.dart';
 import 'package:nure_timetable/models/auditory.dart';
 import 'package:nure_timetable/models/group.dart';
 import 'package:nure_timetable/models/settings.dart' as app_settings;
@@ -96,11 +97,60 @@ class SettingsManager with ChangeNotifier {
   }
 
   /// Loads schedule from SharedPreferences.
-  Future<List<Lesson>> loadSchedule() async {
+  Future<List<Lesson>> loadSchedule({bool updateFromAPI = false}) async {
     final prefs = await SharedPreferences.getInstance();
     final scheduleJsonList = prefs.getStringList("schedule");
 
     try {
+      if (updateFromAPI) {
+        final timetable = Timetable();
+        int id;
+
+        switch (settings.type) {
+          case EntityType.group:
+            id = settings.group.id;
+            break;
+          
+          case EntityType.teacher:
+            id = settings.teacher.id;
+            break;
+          
+          case EntityType.auditory:
+            id = settings.auditory.id;
+            break;
+          
+          default:
+            return [];
+        }
+
+        if (id == 0) {
+          return [];
+        }
+
+        List<Lesson>? lessons;
+
+        try {
+          lessons = await timetable.getLessons(
+            id, settings.type, settings.startTime, settings.endTime
+          );
+        }
+        catch (e) {
+          if (kDebugMode) {
+            print("Error in loadSchedule(updateFromAPI: true): $e");
+          }
+        }
+
+        settings.lastUpdated = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+        
+        await saveSettings(settings);
+
+        if (lessons != null) {
+          await saveSchedule(lessons);
+
+          return lessons;
+        }
+      }
+
       if (scheduleJsonList == null) {
         _schedule = [];
 
@@ -108,8 +158,10 @@ class SettingsManager with ChangeNotifier {
       }
 
       _schedule = scheduleJsonList
-          .map((jsonString) => Lesson.fromJson(jsonDecode(jsonString)))
-          .toList();      
+        .map((jsonString) => Lesson.fromJson(jsonDecode(jsonString)))
+        .toList();
+      
+      return _schedule;
     }
     catch (e) {
       if (kDebugMode) {
@@ -172,4 +224,6 @@ class SettingsManager with ChangeNotifier {
 
     return (_schedule..sort((a, b) => a.startTime.compareTo(b.startTime))).first;
   }
+
+
 }

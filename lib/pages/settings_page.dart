@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/settings/settings_manager.dart';
@@ -29,15 +30,39 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   String latestVersion = "";
   
-  Future<void> checkForUpdates() async {
-    final packageInfo = await PackageInfo.fromPlatform();
+  Future<void> checkForUpdates(BuildContext context) async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
 
-    getLatestVersion().then((updateInfo) => {
+      var updateInfo = await getLatestVersion();
+
       setState(() {
-        latestVersion = updateInfo.version;
-        showUpdateDialog(context, packageInfo, updateInfo);
-      }),
-    });
+        if (updateInfo != null) {
+          latestVersion = updateInfo.version;
+          showUpdateDialog(context, packageInfo, updateInfo);
+        }
+      });
+    }
+    catch (e) {
+      showErrorSnackbar("Error while checking for updates: $e");
+    }
+  }
+
+  void showErrorSnackbar(String error) {
+    var snackbar = SnackBar(
+      content: error.contains('No such host is known')
+          ? Text(AppLocale.noConnectionToInternet.getString(context))
+          : Text('${AppLocale.error.getString(context)}: $error'),
+      duration: const Duration(seconds: 4),
+      action: SnackBarAction(
+        label: AppLocale.copy,
+        textColor: widget.themeManager.themeMode == ThemeMode.dark
+            ? const Color(0xFF06DDF6)
+            : Colors.white,
+        onPressed: () => Clipboard.setData(ClipboardData(text: error)),
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 
   @override
@@ -257,7 +282,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: Text(AppLocale.checkUpdates.getString(context)),
                       enabled: !kIsWeb,
                       leading: const Icon(Icons.update),
-                      onPressed: (context) => checkForUpdates(),
+                      onPressed: (context) async {
+                          await checkForUpdates(context);
+                      }
                     ),
                     SettingsTile.navigation(
                       title: Text(AppLocale.sendReviewOrBugReport.getString(context)),

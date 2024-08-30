@@ -17,7 +17,6 @@ Uses [NureTimetableAPI](https://github.com/music-soul1-1/NureTimetableAPI).
 
 
 ## Plans
-- automate or remove schedule date picker (so that the app shows schedule for current semester automatically)
 - change app icons for Linux
 - refactor and optimize code
 - update some dependencies

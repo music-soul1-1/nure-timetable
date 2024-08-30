@@ -38,6 +38,7 @@ import 'theme/theme_manager.dart';
 var _themeManager = ThemeManager();
 var _settingsManager = SettingsManager();
 final FlutterLocalization localization = FlutterLocalization.instance;
+ValueNotifier<bool> scheduleFetchedNotifier = ValueNotifier<bool>(false);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +47,10 @@ void main() async {
   
   runApp(const MyApp());
   initializeDateFormatting(localization.currentLocale?.languageCode == "uk" ? 'uk_UA' : 'en_UK');
+
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    scheduleFetchedNotifier.value = true;
+  });
 }
 
 
@@ -93,13 +98,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  settingsListener() {
-    if (mounted) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        //setState(() {});
-      });
-    }
-  }
+  settingsListener() {}
 
 
   @override
@@ -118,8 +117,8 @@ class _MyAppState extends State<MyApp> {
           child: Scaffold(
             body: TabBarView(
               children: [
-                HomePage(settingsManager: _settingsManager, themeManager: _themeManager),
-                GroupsPage(settingsManager: _settingsManager, themeManager: _themeManager),
+                HomePage(settingsManager: _settingsManager, themeManager: _themeManager, scheduleFetchedNotifier: scheduleFetchedNotifier,),
+                GroupsPage(settingsManager: _settingsManager, themeManager: _themeManager, scheduleFetchedNotifier: scheduleFetchedNotifier),
                 SettingsPage(settingsManager: _settingsManager, themeManager: _themeManager, localization: localization),
               ],
             ),
