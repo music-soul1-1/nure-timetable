@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -20,15 +21,19 @@ final FlutterLocalization localization = FlutterLocalization.instance;
 
 
 Widget customEventTileBuilder(date, events, boundary, start, end, ThemeColors themeColors) {
+  FlutterView view = WidgetsBinding.instance.platformDispatcher.views.first;
+  Size size = view.physicalSize / view.devicePixelRatio;
+  double width = size.width;
+  
   final event = events[0] as LessonAppointment;
   // Taken from calendar_view lib with small changes:
   return Container(
-    margin: isMobile ? const EdgeInsets.only(right: 2) : const EdgeInsets.only(right: 10),
+    margin: isMobile || width < 700 ? const EdgeInsets.only(right: 2) : const EdgeInsets.only(right: 10),
     decoration: BoxDecoration(
       color: lessonColor(event.lesson.type, themeColors),
       borderRadius:
-          isMobile
-              ? BorderRadius.circular(6)
+          isMobile || width < 700
+              ? BorderRadius.circular(8)
               : BorderRadius.circular(12),
       boxShadow: List<BoxShadow>.generate(
         2,
@@ -48,28 +53,28 @@ Widget customEventTileBuilder(date, events, boundary, start, end, ThemeColors th
             event.lesson.brief,
             style: TextStyle(
               color: Colors.white,
-              fontSize: isMobile ? 12 : 14,
+              fontSize: isMobile || width < 700 ? 12 : 14,
             ),
           ),
           Text(
             event.lesson.type.shortName,
             style: TextStyle(
               color: Colors.white,
-              fontSize: isMobile ? 11 : 13,
+              fontSize: isMobile || width < 700 ? 11 : 13,
             ),
           ),
           Text(
             event.lesson.auditory.name,
             style: TextStyle(
               color: Colors.white,
-              fontSize: isMobile ? 9 : 12,
+              fontSize: isMobile || width < 700 ? 9 : 12,
             ),
           ),
           Text(
             '${event.lesson.startTimeToString()} - ${event.lesson.endTimeToString()}',
             style: TextStyle(
               color: Colors.white,
-              fontSize: isMobile ? 11 : 13,
+              fontSize: isMobile || width < 700 ? 11 : 13,
             ),
           ),
         ],
@@ -85,6 +90,10 @@ Widget customCalendarHeaderBuilder(startDate, endDate, BuildContext context, Eve
       .where((event) => event.startTime!.isAfter(DateTime.now()) && event.startTime!.isBefore(DateTime.now().add(const Duration(hours: 8))))
       .firstOrNull;
 
+  // Dimensions in logical pixels (dp)
+  Size size = MediaQuery.of(context).size;
+  double width = size.width;
+
   return SizedBox(
     height: isMobile ? 80 : 70,
     child: Center(
@@ -92,7 +101,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, BuildContext context, Eve
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          isMobile
+          isMobile || width < 700
             ? 
           Padding(
             padding: const EdgeInsets.only(top: 5),
@@ -101,7 +110,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, BuildContext context, Eve
                   ? "${AppLocale.nextLesson.getString(context)}: ${nextLesson.lesson.brief}; " 
                   "${nextLesson.lesson.startTimeToString()}, ${DateFormat.Md(localization.currentLocale?.languageCode == "uk" ? "uk_UA" : "en_UK").format(nextLesson.startTime!)}"
                   : "${AppLocale.noLessonsInNearFuture.getString(context)} 😎",
-              textScaler: const TextScaler.linear(1.2),
+              textScaler: const TextScaler.linear(1.1),
             ),
           ) : 
           const SizedBox(
@@ -129,7 +138,7 @@ Widget customCalendarHeaderBuilder(startDate, endDate, BuildContext context, Eve
                   )
                 ],
               ),
-              isMobile
+              isMobile || width < 700
                 ? 
               const SizedBox(
                 height: 0,
@@ -254,7 +263,7 @@ Future<dynamic> showLessonInfoDialog(BuildContext context, Lesson lesson) {
                 }),
               ],
             ),
-            Row(
+            Wrap(
               children: [
                 Text(
                   '🏫${AppLocale.auditory.getString(context)}: ',
