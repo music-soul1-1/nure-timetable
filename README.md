@@ -6,6 +6,7 @@ Uses [NureTimetableAPI](https://github.com/music-soul1-1/NureTimetableAPI).
 
 ## Features
 - view schedule for group, teacher or auditorium.
+- view groups, teachers and auditoriums information (by clicking on their names).
 - fast app start.
 - cross-platform (web version [available](https://www.nure-time.pp.ua/)).
 - uses [NureTimetableAPI](https://github.com/music-soul1-1/NureTimetableAPI).
