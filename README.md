@@ -31,6 +31,9 @@ Windows:
 Android:
 ![imgonline-com-ua-twotoone-kpiWCmWmVtg0i](https://github.com/music-soul1-1/nure-timetable/assets/72669184/cbce1fbf-5600-416f-b58e-e779671829ff)
 
+See more info:
+![Screenshot web](https://github.com/user-attachments/assets/a0179d41-b1a2-485f-866a-1269409f0a96)
+
 
 ## For developers
 
