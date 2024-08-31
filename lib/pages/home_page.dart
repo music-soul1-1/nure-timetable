@@ -166,9 +166,9 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: isMobile
+              padding: isMobile || MediaQuery.of(context).size.width < 700
                   ? const EdgeInsets.all(0)
-                  : const EdgeInsets.only(left: 40, right: 40),
+                  : const EdgeInsets.only(left: 20, right: 20),
               child: FutureBuilder<List<Lesson>>(
                 future: _lessonsFuture,
                 builder: (context, snapshot) {
@@ -229,6 +229,12 @@ class _HomePageState extends State<HomePage> {
                         controller: controller,
                         eventTileBuilder: ((date, events, boundary, start, end) =>
                             customEventTileBuilder(date, events, boundary, start, end, widget.settingsManager.settings.themeColors)),
+                        onEventTap: (events, date) {
+                          if (events.isNotEmpty) {
+                            final lessonEvent = events[0] as LessonAppointment;
+                            showLessonInfoDialog(context, lessonEvent.lesson);
+                          }
+                        },
                         timeLineWidth: 50,
                         // Taken from calendar_view lib with small changes:
                         timeLineBuilder: (date) {
@@ -280,12 +286,6 @@ class _HomePageState extends State<HomePage> {
                           : DateTime.now(),
                         heightPerMinute:
                             1, // height occupied by 1 minute time span.
-                        onEventTap: (events, date) {
-                          if (events.isNotEmpty) {
-                            final lessonEvent = events[0] as LessonAppointment;
-                            showLessonInfoDialog(context, lessonEvent.lesson);
-                          }
-                        },
                         startDay: WeekDays.monday,
                       ),
                     );

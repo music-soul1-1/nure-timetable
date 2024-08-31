@@ -34,8 +34,13 @@ Android:
 ## For developers
 
 If you are going to change models (that use JsonSerializableGenerator), please regenetate part files before starting debugging:
-```
+```bash
 flutter pub run build_runner build
+```
+
+To run the app on the web, use the following command:
+```bash
+flutter run -d chrome --web-renderer html
 ```
 
 

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +12,6 @@ import 'package:nure_timetable/widgets/helper_widgets.dart';
 
 
 var systemBrightness = Brightness.dark;
-var isMobile = !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
 
 class GroupsPage extends StatefulWidget {
@@ -128,6 +126,7 @@ class _GroupsPageState extends State<GroupsPage> {
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
                         labelText: AppLocale.enterNameOfGroupOrTeacher.getString(context),
+                        labelStyle: TextStyle(fontSize: MediaQuery.of(context).size.width < 700 ? 14 : 16),
                       ),
                       onChanged: (value) async => {
                         setState(() {
@@ -137,7 +136,7 @@ class _GroupsPageState extends State<GroupsPage> {
                     ),
                   ),
                   SizedBox(
-                    height: isMobile ? 600 : 450,
+                    height: MediaQuery.of(context).size.height - 210,
                     child: ListView(
                       children: searchResult.map((item) => ListTile(
                         title: Text(item.name),

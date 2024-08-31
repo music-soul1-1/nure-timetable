@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:nure_timetable/locales/locales.dart';
 import 'package:nure_timetable/models/settings.dart';
 import 'package:nure_timetable/types/entity_type.dart';
 import 'package:nure_timetable/widgets/home_page_widgets.dart';
@@ -28,6 +30,7 @@ AppBar HomeHeader(BuildContext context, AppSettings settings, IconData iconData)
             color: const Color(0xFF06DDF6),
           ),
         ),
+        settings.auditory.id != 0 || settings.group.id != 0 || settings.teacher.id != 0 ? 
         TextButton(
           onPressed: () => switch (settings.type) {
             EntityType.group => showGroupInfoDialog(context, settings.group),
@@ -46,6 +49,18 @@ AppBar HomeHeader(BuildContext context, AppSettings settings, IconData iconData)
               fontWeight: FontWeight.normal,
               fontFamily: 'Inter',
             ),
+          ),
+        ) : 
+        Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: Text(
+            AppLocale.schedule.getString(context),
+            style: const TextStyle(
+                color: Color(0xFF06DDF6),
+                fontSize: 20,
+                fontWeight: FontWeight.normal,
+                fontFamily: 'Inter',
+              ),
           ),
         ),
       ],
