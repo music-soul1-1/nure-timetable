@@ -30,4 +30,15 @@ class Auditory {
 
   factory Auditory.fromJson(Map<String, dynamic> json) => _$AuditoryFromJson(json);
   Map<String, dynamic> toJson() => _$AuditoryToJson(this);
+
+  static Auditory getDefaultAuditory() {
+    return Auditory(
+      id: 0,
+      name: "",
+      floor: 0,
+      hasPower: false,
+      auditoryTypes: [],
+      building: Building(id: "", shortName: "", fullName: ""),
+    );
+  }
 }

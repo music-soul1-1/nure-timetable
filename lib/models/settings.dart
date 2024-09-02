@@ -1,5 +1,4 @@
 import 'package:nure_timetable/models/auditory.dart';
-import 'package:nure_timetable/models/auditory_type.dart';
 import 'package:nure_timetable/models/building.dart';
 import 'package:nure_timetable/models/entity.dart';
 import 'package:nure_timetable/models/group.dart';
@@ -45,13 +44,13 @@ class AppSettings {
     return AppSettings(
       group: Group(id: 0, name: "", direction: Entity(id: 0, shortName: "", fullName: ""), faculty: Entity(id: 0, shortName: "", fullName: "")),
       teacher: Teacher(id: 0, shortName: "", fullName: "", department: Entity(id: 0, shortName: "", fullName: ""), faculty: Entity(id: 0, shortName: "", fullName: "")),
-      auditory: Auditory(id: 0, name: "", floor: 0, hasPower: false, auditoryTypes: List<AuditoryType>.empty(), building: Building(id: "", shortName: "", fullName: "")),
+      auditory: Auditory(id: 0, name: "", floor: 0, hasPower: false, auditoryTypes: [], building: Building(id: "", shortName: "", fullName: "")),
       startTime: null,
       endTime: null,
       language: "uk",
       useSystemTheme: true,
       darkThemeEnabled: false,
-      themeColors: ThemeColors.getDefaultSettings(),
+      themeColors: ThemeColors.getDefaultColors(),
       type: EntityType.group,
       lastUpdated: 0,
       scrollToFirstLesson: true,

@@ -25,4 +25,13 @@ class Group {
   final Entity direction;
   @JsonKey(name: 'faculty')
   final Entity faculty;
+
+  static Group getDefaultGroup() {
+    return Group(
+      id: 0,
+      name: "",
+      direction: Entity(id: 0, shortName: "", fullName: ""),
+      faculty: Entity(id: 0, shortName: "", fullName: ""),
+    );
+  }
 }

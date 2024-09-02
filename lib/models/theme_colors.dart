@@ -44,7 +44,7 @@ class ThemeColors {
   @JsonKey(name: 'other')
   late String other;
 
-  static ThemeColors getDefaultSettings() {
+  static ThemeColors getDefaultColors() {
     return ThemeColors(
       lecture: "0xFFAD8827",
       practice: "0xFF1C8834",

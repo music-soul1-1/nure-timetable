@@ -29,4 +29,13 @@ class Teacher {
   final Entity department;
   @JsonKey(name: 'faculty')
   final Entity faculty;
+
+  static Teacher getDefaultTeacher() {
+    return Teacher(
+        id: 0,
+        shortName: "",
+        fullName: "",
+        department: Entity(id: 0, shortName: "", fullName: ""),
+        faculty: Entity(id: 0, shortName: "", fullName: ""));
+  }
 }
