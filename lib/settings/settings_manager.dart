@@ -84,9 +84,53 @@ class SettingsManager with ChangeNotifier {
         print("Error while loading settings: $e");
       }
 
-      await prefs.clear(); // TODO: add keys check, and remove only invalid keys
-      
-      _settings = app_settings.AppSettings.getDefaultSettings();
+      Group group;
+      Teacher teacher;
+      Auditory auditory;
+      ThemeColors themeColors;
+
+      try {
+        group = Group.fromJson(jsonDecode(prefs.getString("group") ?? "{}"));
+      }
+      catch (_) {
+        group = Group.getDefaultGroup();
+      }
+
+      try {
+        teacher = Teacher.fromJson(jsonDecode(prefs.getString("teacher") ?? "{}"));
+      }
+      catch (_) {
+        teacher = Teacher.getDefaultTeacher();
+      }
+
+      try {
+        auditory = Auditory.fromJson(jsonDecode(prefs.getString("auditory") ?? "{}"));
+      }
+      catch (_) {
+        auditory = Auditory.getDefaultAuditory();
+      }
+
+      try {
+        themeColors = ThemeColors.fromJson(jsonDecode(prefs.getString("themeColors") ?? "{}"));
+      }
+      catch (_) {
+        themeColors = ThemeColors.getDefaultColors();
+      }
+
+      _settings = app_settings.AppSettings(
+        group: group,
+        teacher: teacher,
+        auditory: auditory,
+        startTime: prefs.getInt("startTime") != 0 ? prefs.getInt("startTime") : null,
+        endTime: prefs.getInt("endTime") != 0 ? prefs.getInt("endTime") : null,
+        language: prefs.getString("language") ?? "uk",
+        useSystemTheme: prefs.getBool("useSystemTheme") ?? true,
+        darkThemeEnabled: prefs.getBool("darkThemeEnabled") ?? true,
+        themeColors: themeColors,
+        type: EntityType.values[prefs.getInt("type") ?? 0],
+        lastUpdated: prefs.getInt("lastUpdated") ?? 0,
+        scrollToFirstLesson: prefs.getBool("scrollToFirstLesson") ?? true,
+      );
 
       await saveSettings(_settings);
     }
@@ -168,7 +212,7 @@ class SettingsManager with ChangeNotifier {
         print("Error while loading schedule: $e");
       }
 
-      await prefs.clear();
+      await prefs.remove("schedule");
 
       _schedule = [];
 
