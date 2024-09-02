@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'dart:io';
@@ -94,10 +95,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _refresh() async {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(snackbar(AppLocale.updatingSchedule.getString(context), duration: 4));
-
-    // Updates lessons data
+    // Updates lessons from the API and saves them to local storage
     var lessons = await _loadLessons(updateFromAPI: true);
 
     List<CalendarEventData<Object?>> eventsToRemove = List.from(controller.allEvents);
@@ -108,10 +106,6 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _lessonsFuture = Future<List<Lesson>>.value(lessons);
         widget.scheduleFetchedNotifier.value = true;
-
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context)
-            .showSnackBar(snackbar(AppLocale.scheduleUpdated.getString(context)));
       });
     }
   }
@@ -121,7 +115,22 @@ class _HomePageState extends State<HomePage> {
   /// If `updateFromAPI` is true, then lessons will be loaded from API, and then saved to local storage.
   Future<List<Lesson>>? _loadLessons({bool updateFromAPI = false}) async {
     try {
+      if (updateFromAPI) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context)
+            .showSnackBar(snackbar(AppLocale.updatingSchedule.getString(context), duration: 4));
+        });
+      }
+
       var lessons = await widget.settingsManager.loadSchedule(updateFromAPI: updateFromAPI);
+
+      if (updateFromAPI) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).removeCurrentSnackBar();
+          ScaffoldMessenger.of(context)
+            .showSnackBar(snackbar(AppLocale.scheduleUpdated.getString(context)));
+        });
+      }
 
       widget.scheduleFetchedNotifier.value = true;
 
