@@ -7,13 +7,13 @@ class UpdateInfo {
   final String version;
   final String apkDownloadUrl;
   final String exeDownloadUrl;
-  final String url;
+  final String githubUrl;
 
   UpdateInfo({
     required this.version,
     required this.apkDownloadUrl,
     required this.exeDownloadUrl,
-    required this.url,
+    required this.githubUrl,
   });
 }
 
@@ -45,7 +45,7 @@ Future<UpdateInfo?> getLatestVersion() async {
         version: json['tag_name'],
         apkDownloadUrl: apkDownloadUrl,
         exeDownloadUrl: exeDownloadUrl,
-        url: json['html_url'],
+        githubUrl: json['html_url'],
       );
     }
 

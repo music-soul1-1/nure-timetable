@@ -26,7 +26,7 @@ class AboutAppDialog extends StatelessWidget {
       applicationName: packageInfo.appName,
       applicationVersion: '${packageInfo.version}. Version code: ${packageInfo.buildNumber}',
       applicationIcon: const Icon(Icons.info_outline),
-      applicationLegalese: "© 2023-2024 music-soul1-1",
+      applicationLegalese: "© 2023-${DateTime.now().year} music-soul1-1",
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 15),
@@ -187,11 +187,7 @@ Future<dynamic> showUpdateDialog(BuildContext context, PackageInfo packageInfo, 
           TextButton(
             child: Text(AppLocale.yes.getString(context)),
             onPressed: () {
-              _launchUrl(Platform.isAndroid
-                      ? updateInfo.apkDownloadUrl
-                      : (Platform.isWindows
-                          ? updateInfo.exeDownloadUrl
-                          : updateInfo.url));
+              _launchUrl(Platform.isWindows ? updateInfo.exeDownloadUrl : updateInfo.githubUrl);
             }
           ),
           TextButton(
@@ -205,7 +201,7 @@ Future<dynamic> showUpdateDialog(BuildContext context, PackageInfo packageInfo, 
         content: Text("${AppLocale.yourVersion.getString(context)}: v.${packageInfo.version}\n"),
         actions: [
           TextButton(
-            onPressed: () => _launchUrl(updateInfo.url),
+            onPressed: () => _launchUrl(updateInfo.githubUrl),
             child: Text(AppLocale.goToGithub.getString(context))
           ),
           TextButton(
