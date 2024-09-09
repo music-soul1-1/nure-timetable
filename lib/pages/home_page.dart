@@ -163,6 +163,21 @@ class _HomePageState extends State<HomePage> {
     controller.addAll(events);
   }
 
+  /// Gets preferred initial day for the calendar view.
+  DateTime getInitialDay() {
+    if (widget.settingsManager.settings.scrollToFirstLesson) {
+      var firstLesson = widget.settingsManager.getFirstLesson();
+
+      if (firstLesson != null) {
+        if (firstLesson.startTime * 1000 > DateTime.now().millisecondsSinceEpoch) {
+          return DateTime.fromMillisecondsSinceEpoch(firstLesson.startTime * 1000);
+        }
+      }
+    }
+
+    return DateTime.now();
+  }
+
   @override
   Widget build(BuildContext context) {
     systemBrightness = MediaQuery.of(context).platformBrightness;
@@ -268,12 +283,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         weekPageHeaderBuilder: (startTime, endTime) {
                           return customCalendarHeaderBuilder(
-                              startTime, endTime, context, controller, weekViewKey, 
-                              widget.settingsManager.settings.scrollToFirstLesson 
-                                ? (widget.settingsManager.getFirstLesson() != null
-                                    ? DateTime.fromMillisecondsSinceEpoch(widget.settingsManager.getFirstLesson()!.startTime * 1000)
-                                    : DateTime.now())
-                                : DateTime.now(),
+                              startTime, endTime, context, controller, weekViewKey, getInitialDay(),
                           );
                         },
                         showLiveTimeLineInAllDays: false,
@@ -288,11 +298,7 @@ class _HomePageState extends State<HomePage> {
                               ? const Color.fromARGB(64, 0, 70, 95)
                               : Colors.black12,
                         ),
-                        initialDay: widget.settingsManager.settings.scrollToFirstLesson 
-                          ? (widget.settingsManager.getFirstLesson() != null
-                              ? DateTime.fromMillisecondsSinceEpoch(widget.settingsManager.getFirstLesson()!.startTime * 1000)
-                              : DateTime.now())
-                          : DateTime.now(),
+                        initialDay: getInitialDay(),
                         heightPerMinute:
                             1, // height occupied by 1 minute time span.
                         startDay: WeekDays.monday,
