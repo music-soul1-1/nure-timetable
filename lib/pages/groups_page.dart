@@ -139,7 +139,13 @@ class _GroupsPageState extends State<GroupsPage> {
                     height: MediaQuery.of(context).size.height - 210,
                     child: ListView(
                       children: searchResult.map((item) => ListTile(
-                        title: Text(item.name),
+                        title: Text(
+                          switch (item.type) {
+                            EntityType.group => "${item.group?.name} (${item.group?.faculty.shortName})",
+                            EntityType.teacher => "${item.teacher?.fullName} (${item.teacher?.faculty.shortName})",
+                            EntityType.auditory => "${item.auditory?.name} (${item.auditory?.building.shortName})",
+                          },
+                        ),
                         onTap: () async {
                           try {
                             switch (item.type) {
