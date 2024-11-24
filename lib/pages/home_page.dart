@@ -229,20 +229,24 @@ class _HomePageState extends State<HomePage> {
                         weekDayBuilder: (date) =>
                             customWeekDayBuilder(date, context),
                         weekTitleHeight: 60,
-                        headerStyle: const HeaderStyle(
-                          leftIcon: Icon(
-                            Icons.arrow_back_rounded,
-                            color: Color(0xFF06DDF6),
+                        headerStyle: HeaderStyle(
+                          leftIconConfig: IconDataConfig(
+                            icon: (context) => const Icon(
+                              Icons.arrow_back_rounded,
+                            ),
+                            color: const Color(0xFF06DDF6),
                           ),
-                          rightIcon: Icon(
-                            Icons.arrow_forward_rounded,
-                            color: Color(0xFF06DDF6),
+                          rightIconConfig: IconDataConfig(
+                            icon: (context) => const Icon(
+                              Icons.arrow_forward_rounded,
+                            ),
+                            color: const Color(0xFF06DDF6),
                           ),
-                          headerTextStyle: TextStyle(
+                          headerTextStyle: const TextStyle(
                             color: Color(0xFF06DDF6),
                             fontSize: 16,
                           ),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Color(0xFF00465F),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(10),
