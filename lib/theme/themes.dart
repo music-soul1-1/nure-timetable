@@ -21,7 +21,7 @@ var darkTheme = ThemeData(
       fontFamily: 'Inter'
     ),
   ),
-  dialogTheme: const DialogTheme(
+  dialogTheme: const DialogThemeData(
     backgroundColor: Color(0xFF0d242c),
   )
 );
